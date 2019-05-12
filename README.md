@@ -1,22 +1,10 @@
 # Avian
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/avian`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Avian is a 2D Ruby game development framework that abstracts away underlying platform-specific intricacies. Like some other well-known frameworks, Avian encourages beautiful code by favoring convention over configuration.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'avian'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install it yourself as:
 
     $ gem install avian
 
