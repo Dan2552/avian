@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+
+project_root = ENV['GAME_ROOT']
+avian_root = ENV['AVIAN_ROOT']
+
+build = ""
+fastlane = ""
+case ENV['AVIAN_BUILD']
+when "run_simulator"
+  build = ""
+when "run_device"
+  build = "device"
+  fastlane = "development"
+when "build_device"
+  build = "clean archive:distribution"
+  fastlane = "appstore"
+else
+  raise "Invalid AVIAN_BUILD"
+end
+
+Bundler.with_clean_env do
+  build_dir = File.join(project_root, "tmp", "build")
+  code_dir = File.join(build_dir, "app")
+  platform_support = File.join(project_root, "platform_support", "ios")
+
+  gemfile = File.join(platform_support, "Gemfile")
+  system("BUNDLE_GEMFILE=#{gemfile} bundle check >/dev/null 2>/dev/null") ||
+    system("bundle install --gemfile=#{gemfile}") || begin
+      STDERR.puts "Bundling #{gemfile} failed"
+      exit 1
+  end
+
+  FileUtils.rm_r(build_dir) if File.exists?(build_dir)
+  FileUtils.mkdir_p(build_dir)
+  FileUtils.mkdir_p(File.join(code_dir, "app"))
+  FileUtils.cp_r(File.join(project_root, "app"), code_dir)
+  FileUtils.cp_r(File.join(project_root, "config"), code_dir)
+  FileUtils.cp_r(File.join(project_root, "lib"), code_dir)
+  FileUtils.cp_r(File.join(project_root, "resources"), build_dir)
+  FileUtils.cp_r(File.join(platform_support, "resources"), build_dir)
+  FileUtils.cp_r(File.join(platform_support, "Gemfile"), build_dir)
+  FileUtils.cp_r(File.join(platform_support, "Gemfile.lock"), build_dir)
+  FileUtils.cp_r(File.join(platform_support, "Rakefile"), build_dir)
+  FileUtils.cp_r(File.join(platform_support, "fastlane"), build_dir)
+  FileUtils.cp_r(File.join(avian_root, "lib", "Avian", "platforms", "rubymotion", "ios"), code_dir)
+  FileUtils.cp_r(File.join(avian_root, "lib", "Avian", "engine"), File.join(code_dir, "avian"))
+  FileUtils.cd(build_dir)
+
+
+  if fastlane != ""
+    system("bundle exec fastlane match #{fastlane}")
+  end
+
+  system("BUNDLE_GEMFILE=#{gemfile} bundle exec rake #{build}")
+
+  FileUtils.rm_r(build_dir) if File.exists?(build_dir)
+end

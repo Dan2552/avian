@@ -1,0 +1,10 @@
+source "https://rubygems.org"
+
+gem "avian", path: "/Users/dan2552/Dropbox/avian"
+
+# Tests
+group :spec do
+  gem 'rspec'
+  gem 'pry'
+  gem 'activesupport'
+end

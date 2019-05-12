@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+$:.unshift("~/.rubymotion/rubymotion-templates")
+
+require 'motion/project/template/ios'
+
+begin
+  require 'bundler'
+  Bundler.require
+rescue LoadError
+  puts "Failed to load gems"
+  exit 1
+end
+
+Motion::Project::App.setup do |app|
+  define_icon_defaults!(app)
+
+  app.name = '<%= @name %>'
+  app.version = '1.0'
+  app.identifier = 'com.example.<%= @name.underscore.downcase %>'
+
+  %w(CoreGraphics AVFoundation UIKit QuartzCore SpriteKit Foundation AudioToolbox).each do |framework|
+    app.frameworks << framework
+  end
+
+  app.device_family = [:iphone, :ipad]
+  app.interface_orientations = [:portrait]
+  app.info_plist['UIRequiresFullScreen'] = true
+  app.info_plist['ITSAppUsesNonExemptEncryption'] = false
+  app.provisioning_profile = find_profile("match Development #{app.identifier}")
+end
+
+def define_icon_defaults!(app)
+  app.info_plist['CFBundleIcons'] = {
+    'CFBundlePrimaryIcon' => {
+      'CFBundleIconName' => 'AppIcon',
+      'CFBundleIconFiles' => ['AppIcon60x60']
+    }
+  }
+
+  app.info_plist['CFBundleIcons~ipad'] = {
+    'CFBundlePrimaryIcon' => {
+      'CFBundleIconName' => 'AppIcon',
+      'CFBundleIconFiles' => ['AppIcon60x60', 'AppIcon76x76']
+    }
+  }
+end
+
+def find_profile(name)
+  filepath = File.join(ENV["HOME"], "Library", "MobileDevice", "Provisioning Profiles", "*")
+  Dir.glob(filepath).each do |profile|
+    return profile if system("cat \"#{profile}\" | grep \"#{name}\" >/dev/null 2>&1")
+  end
+  nil
+end

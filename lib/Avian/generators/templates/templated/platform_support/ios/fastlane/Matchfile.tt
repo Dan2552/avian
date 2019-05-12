@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+# A Git repo to store your encrypted signing credentials
+git_url("https://github.com/YourGitHubUsername/<%= @name.underscore.downcase %>-signing.git")
+
+# Your app identifier in the Developer Portal
+app_identifier(["com.example.<%= @name.underscore.downcase %>"])
+
+# Your Apple Developer Portal username
+username("example@example.com")

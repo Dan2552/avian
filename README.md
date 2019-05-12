@@ -1,6 +1,6 @@
 # Avian
 
-Avian is a 2D Ruby game development framework that abstracts away underlying platform-specific intricacies. Like some other well-known frameworks, Avian encourages beautiful code by favoring convention over configuration.
+Avian is a 2D Ruby game engine and development framework that abstracts away underlying platform-specific intricacies. Like some other well-known frameworks, Avian encourages beautiful code by favoring convention over configuration.
 
 ## Installation
 

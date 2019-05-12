@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+
+require "thor"
+require "active_support/all"
+
+class AvianCLI < Thor
+  include Thor::Actions
+
+  desc "new APP_PATH", "Create a new game at APP_PATH"
+  def new(app_path)
+    templates = Bundler.root.join("lib", "Avian", "generators")
+    AvianCLI.source_root(templates)
+
+    @name = app_path.split("/").last
+
+    directory('templates/copy/', "#{app_path}/")
+
+    template('templates/templated/config/application.tt', "#{app_path}/config/application.rb")
+    template('templates/templated/platform_support/ios/fastlane/Matchfile.tt', "#{app_path}/platform_support/ios/fastlane/Matchfile")
+    template('templates/templated/platform_support/ios/Rakefile.tt', "#{app_path}/platform_support/ios/Rakefile")
+
+    inside(app_path) do |_|
+      exec("bundle install")
+    end
+  end
+
+  desc "start PLATFORM TYPE", "Start your game. Defaults to macos"
+  def start(platform = "macos", type = "simulator")
+    project_root = Bundler.root.to_s
+    avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
+
+    case platform.to_s
+    when "macos"
+      boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "gosu", "boot"))
+      system(
+        {
+          "GAME_ROOT" => project_root,
+          "AVIAN_ROOT" => avian_path
+        },
+        "ruby #{boot_file}"
+      )
+    when "ios"
+      boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "rubymotion", "boot"))
+      system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
+    else
+      puts "Unknown platform"
+      exit 1
+    end
+  rescue Interrupt
+  end
+
+  desc "s PLATFORM TYPE", "Alias of start"
+  def s(platform = "macos", type = "simulator")
+    start(*args)
+  end
+
+  desc "build", "Builds an iOS IPA."
+  def build
+    project_root = Bundler.root.to_s
+    avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
+    boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "rubymotion", "boot"))
+    system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "build_device" }, boot_file)
+  end
+
+  desc "b", "Alias of build"
+  def b
+    build(*args)
+  end
+
+  desc "console", "Starts a console."
+  def console
+    project_root = Bundler.root.to_s
+    avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
+    boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "gosu", "boot"))
+    system(
+      {
+        "GAME_ROOT" => project_root,
+        "AVIAN_ROOT" => avian_path,
+        "CONSOLE" => "true"
+      },
+      "ruby #{boot_file}"
+    )
+  end
+
+  desc "c", "Alias of console."
+  def c
+    console(*args)
+  end
+
+  desc "clean", "Clean."
+  def clean
+    project_root = Bundler.root.to_s
+    build_dir = File.join(project_root, "tmp", "build")
+    rm_dir = File.join(ENV["HOME"], "Library", "RubyMotion", "build")
+    FileUtils.rm_r(build_dir) if File.exists?(build_dir)
+    FileUtils.rm_r(rm_dir) if File.exists?(rm_dir)
+  end
+end
+
+AvianCLI.start(ARGV)

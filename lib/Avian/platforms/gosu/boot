@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+project_root = ENV['GAME_ROOT']
+avian_root = ENV['AVIAN_ROOT']
+
+gemfile_path = File.join(project_root, "platform_support", "macos", "Gemfile").to_s
+
+env = { "BUNDLE_GEMFILE" => gemfile_path }
+
+
+system(env, "bundle check", out: File::NULL) ||
+  system("bundle install --gemfile=#{gemfile_path}") || (
+    STDERR.puts("Failed to bundle #{gemfile_path}") and exit(1)
+    )
+
+
+entry = File.join(__dir__, "entry.rb")
+
+system(env, "bundle exec ruby #{entry}")
