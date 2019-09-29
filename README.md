@@ -2,22 +2,49 @@
 
 Avian is a 2D Ruby game engine and development framework that abstracts away underlying platform-specific intricacies. Like some other well-known frameworks, Avian encourages beautiful code by favoring convention over configuration.
 
+Avian stands on the shoulders of giants, taking advantage of various pre-existing technologies such as RubyMotion (for building to iOS) and Gosu and SpriteKit (which handle drawing to screen).
+
 ## Installation
 
-Install it yourself as:
+Install HEAD straight from GitHub:
 
-    $ gem install avian
+``` bash
+gem install specific_install
+gem specific_install Dan2552/avian
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+Create a new project:
 
-## Development
+``` bash
+avian new MyProject
+cd ./MyProject
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Run specs on your project:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+``` bash
+bundle exec rspec
+```
 
+Run your project:
+
+``` bash
+avian s
+```
+
+Run your project on iOS simulator (requires Rubymotion installed):
+
+``` bash
+avian s ios
+```
+
+Run your project on iOS device (requires Rubymotion installed and an Apple Developer account):
+
+``` bash
+avian s ios device
+```
 
 ## License
 
