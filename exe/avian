@@ -8,7 +8,9 @@ class AvianCLI < Thor
 
   desc "new APP_PATH", "Create a new game at APP_PATH"
   def new(app_path)
-    templates = Bundler.root.join("lib", "Avian", "generators")
+    avian_path = File.expand_path(File.join(__dir__, ".."))
+
+    templates = File.join(avian_path, "lib", "Avian", "generators")
     AvianCLI.source_root(templates)
 
     @name = app_path.split("/").last
@@ -26,6 +28,11 @@ class AvianCLI < Thor
 
   desc "start PLATFORM TYPE", "Start your game. Defaults to macos"
   def start(platform = "macos", type = "simulator")
+    unless defined?(Bundler)
+      exit 0 if system("bundle exec avian start #{platform} #{type}")
+      exit 1
+    end
+
     project_root = Bundler.root.to_s
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
 
@@ -56,6 +63,11 @@ class AvianCLI < Thor
 
   desc "build", "Builds an iOS IPA."
   def build
+    unless defined?(Bundler)
+      exit 0 if system("bundle exec avian build")
+      exit 1
+    end
+
     project_root = Bundler.root.to_s
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
     boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "rubymotion", "boot"))
@@ -69,6 +81,11 @@ class AvianCLI < Thor
 
   desc "console", "Starts a console."
   def console
+    unless defined?(Bundler)
+      exit 0 if system("bundle exec avian console")
+      exit 1
+    end
+
     project_root = Bundler.root.to_s
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
     boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "gosu", "boot"))
@@ -89,6 +106,11 @@ class AvianCLI < Thor
 
   desc "clean", "Clean."
   def clean
+    unless defined?(Bundler)
+      exit 0 if system("bundle exec avian clean")
+      exit 1
+    end
+
     project_root = Bundler.root.to_s
     build_dir = File.join(project_root, "tmp", "build")
     rm_dir = File.join(ENV["HOME"], "Library", "RubyMotion", "build")
