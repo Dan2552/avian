@@ -8,14 +8,13 @@ class AvianCLI < Thor
 
   desc "new APP_PATH", "Create a new game at APP_PATH"
   def new(app_path)
-    avian_path = File.expand_path(File.join(__dir__, ".."))
-
-    templates = File.join(avian_path, "lib", "Avian", "generators")
+    avian_path = Pathname.new(__dir__).join("..")
+    templates = avian_path.join("lib", "avian", "generators")
     AvianCLI.source_root(templates)
 
     @name = app_path.split("/").last
 
-    directory('templates/copy/', "#{app_path}/")
+    directory('templates/copy', app_path)
 
     template('templates/templated/config/application.tt', "#{app_path}/config/application.rb")
     template('templates/templated/platform_support/ios/fastlane/Matchfile.tt', "#{app_path}/platform_support/ios/fastlane/Matchfile")
