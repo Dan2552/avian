@@ -44,8 +44,8 @@ Bundler.with_clean_env do
   FileUtils.cp_r(File.join(platform_support, "Gemfile.lock"), build_dir)
   FileUtils.cp_r(File.join(platform_support, "Rakefile"), build_dir)
   FileUtils.cp_r(File.join(platform_support, "fastlane"), build_dir)
-  FileUtils.cp_r(File.join(avian_root, "lib", "Avian", "platforms", "rubymotion", "ios"), code_dir)
-  FileUtils.cp_r(File.join(avian_root, "lib", "Avian", "engine"), File.join(code_dir, "avian"))
+  FileUtils.cp_r(File.join(avian_root, "lib", "avian", "platforms", "rubymotion", "ios"), code_dir)
+  FileUtils.cp_r(File.join(avian_root, "lib", "avian", "engine"), File.join(code_dir, "avian"))
   FileUtils.cd(build_dir)
 
 

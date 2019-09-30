@@ -16,7 +16,7 @@ module Avian
     "engine/core/**/*.rb",
     "engine/application.rb"
   ].each do |matcher|
-    Dir[File.join(__dir__, "Avian", matcher)].each do |f|
+    Dir[File.join(__dir__, "avian", matcher)].each do |f|
       require f
     end
   end

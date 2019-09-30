@@ -37,7 +37,7 @@ class AvianCLI < Thor
 
     case platform.to_s
     when "macos"
-      boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "gosu", "boot"))
+      boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "gosu", "boot"))
       system(
         {
           "GAME_ROOT" => project_root,
@@ -46,7 +46,7 @@ class AvianCLI < Thor
         "ruby #{boot_file}"
       )
     when "ios"
-      boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "rubymotion", "boot"))
+      boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "rubymotion", "boot"))
       system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
     else
       puts "Unknown platform"
@@ -69,7 +69,7 @@ class AvianCLI < Thor
 
     project_root = Bundler.root.to_s
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
-    boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "rubymotion", "boot"))
+    boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "rubymotion", "boot"))
     system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "build_device" }, boot_file)
   end
 
@@ -87,7 +87,7 @@ class AvianCLI < Thor
 
     project_root = Bundler.root.to_s
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
-    boot_file = File.expand_path(File.join(avian_path, "lib", "Avian", "platforms", "gosu", "boot"))
+    boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "gosu", "boot"))
     system(
       {
         "GAME_ROOT" => project_root,
