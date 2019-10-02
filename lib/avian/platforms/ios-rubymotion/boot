@@ -44,15 +44,15 @@ Bundler.with_clean_env do
   FileUtils.cp_r(File.join(platform_support, "Gemfile.lock"), build_dir)
   FileUtils.cp_r(File.join(platform_support, "Rakefile"), build_dir)
   FileUtils.cp_r(File.join(platform_support, "fastlane"), build_dir)
-  FileUtils.cp_r(File.join(avian_root, "lib", "avian", "platforms", "rubymotion", "ios"), code_dir)
+  FileUtils.cp_r(File.join(avian_root, "lib", "avian", "platforms", "ios-rubymotion", "ios"), code_dir)
   FileUtils.cp_r(File.join(avian_root, "lib", "avian", "engine"), File.join(code_dir, "avian"))
   FileUtils.cd(build_dir)
-
 
   if fastlane != ""
     system("bundle exec fastlane match #{fastlane}")
   end
 
+  system("BUNDLE_GEMFILE=#{gemfile} bundle exec rake pod:install") || exit(1)
   system("BUNDLE_GEMFILE=#{gemfile} bundle exec rake #{build}")
 
   FileUtils.rm_r(build_dir) if File.exists?(build_dir)
