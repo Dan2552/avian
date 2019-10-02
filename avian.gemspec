@@ -30,4 +30,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "thor", "~> 0.20.3"
   spec.add_dependency "activesupport", "~> 5.2"
+  spec.add_dependency "process_output_wrapper", "> 0"
 end

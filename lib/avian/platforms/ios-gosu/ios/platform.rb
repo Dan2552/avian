@@ -39,7 +39,7 @@ class Platform
   # ** Shared **
   #
   def create_texture(texture_name)
-    ::Gosu::Image.new("resources/#{texture_name}.png", tileable: true)
+    ::Gosu::Image.new("#{texture_name}.png", tileable: true)
   rescue
     raise "Failed to load texture: resources/#{texture_name}.png"
   end
@@ -64,7 +64,7 @@ class Platform
     # I'm not sure why the Avian::Platforms::Gosu::Camera position needs
     # to be scaled, but it caused all kinds of inconsistencies with iOS in
     # regards to touch locations relative to the camera scale.
-    if sprite.is_a? Avian::Platforms::Gosu::Camera
+    if sprite.is_a? Avian::IOSGosuPlatform::Camera
       sprite.x = position.x * sprite.scale
       sprite.y = position.y * sprite.scale
     else

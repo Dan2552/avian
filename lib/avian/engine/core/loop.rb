@@ -38,6 +38,6 @@ class Loop
   attr_reader :root
 
   def renderer
-    @renderer ||= Renderer.new(root)
+    @renderer ||= "Renderer".constantize.new(root)
   end
 end

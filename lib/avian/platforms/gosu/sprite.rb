@@ -11,14 +11,14 @@ module Avian
         attr_accessor :flipped_vertically
         attr_accessor :flipped_horizontally
 
-        def initialize(image:, x:, y:, z:, angle:, anchor_point:, flipped_vertically: false, flipped_horizontally: false)
-          @image = image
-          @x = x
-          @y = y
-          @z = z
-          @angle = angle
-          @flipped_vertically = flipped_vertically
-          @flipped_horizontally = flipped_horizontally
+        def initialize(attributes)
+          @image = attributes[:image]
+          @x = attributes[:x]
+          @y = attributes[:y]
+          @z = attributes[:z]
+          @angle = attributes[:angle]
+          @flipped_vertically = attributes[:flipped_vertically] || false
+          @flipped_horizontally = attributes[:flipped_horizontally] || false
         end
 
         def draw_using_camera(camera)
