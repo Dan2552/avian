@@ -86,7 +86,7 @@ Bundler.with_clean_env do
 
   printed_warnings = []
   success = false
-  run_this "BUNDLE_GEMFILE=#{gemfile} bundle exec rake #{build}" do
+  run_this "BUNDLE_GEMFILE=#{gemfile} bundle exec rake #{build} device_name=\"iPhone 11 Pro\"" do
     whenever { line.start_with?("   Compile") }
       .do { print("\e[32m.\e[0m") }
 
@@ -122,6 +122,15 @@ Bundler.with_clean_env do
       }
 
     whenever { line.start_with?("Remote process has quit.") }
+      .do { print_wrapped! }
+
+    whenever { line.start_with?("*** First throw call stack:") }
+      .do { print_wrapped! }
+
+    whenever { line.start_with?("rake aborted!") || line.start_with?("(main)> rake aborted!") }
+      .do { print_wrapped! }
+
+    whenever { line.include?("Terminating app due to uncaught exception") }
       .do { print_wrapped! }
   end
 end

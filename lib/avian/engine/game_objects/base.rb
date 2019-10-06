@@ -139,3 +139,14 @@ class GameObject::Base
     self.class.parent_relationships.map { |r| self.send(r) }.compact.freeze
   end
 end
+
+class GameObject::Text < GameObject::Base
+  string :font_name, default: "Arial"
+  string :text
+  number :font_size, default: 24
+  string :font_color, default: "white"
+
+  def renderable?
+    true
+  end
+end

@@ -27,6 +27,7 @@ class Renderer
   end
 
   def draw(renderable)
+    return draw_text(renderable) if renderable.is_a?(GameObject::Text)
     sprite_node = find_or_create_sprite(renderable)
 
     if renderable.destroyed?
@@ -39,11 +40,32 @@ class Renderer
     end
   end
 
+  def draw_text(renderable)
+    text = find_or_create_text(renderable)
+
+    if renderable.destroyed?
+      Platform.remove_text(text)
+    else
+      Platform.set_text_attributes(
+        text,
+        renderable.text,
+        renderable.font_size,
+        renderable.font_color,
+        renderable.position.x,
+        renderable.position.y
+      )
+    end
+  end
+
   def pool
     @pool ||= {}
   end
 
   def texture_pool
+    @texture_pool ||= {}
+  end
+
+  def text_pool
     @texture_pool ||= {}
   end
 
@@ -56,6 +78,12 @@ class Renderer
   def find_or_create_texture(texture_name)
     texture_pool[texture_name] = (
       texture_pool[texture_name] || Platform.create_texture(texture_name)
+    )
+  end
+
+  def find_or_create_text(renderable)
+    text_pool[renderable.id] = (
+      text_pool[renderable.id] || Platform.create_text(renderable.font_name)
     )
   end
 

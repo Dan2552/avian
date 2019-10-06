@@ -14,6 +14,8 @@ class Platform
     def create_sprite(*args); shared_instance.create_sprite(*args); end
     def create_texture(*args); shared_instance.create_texture(*args); end
     def set_sprite_texture(*args); shared_instance.set_sprite_texture(*args); end
+    def create_text(*args); shared_instance.create_text(*args); end
+    def set_text_attributes(*args); shared_instance.set_text_attributes(*args); end
     def camera(*args); shared_instance.camera(*args); end
     def set_sprite_position(*args); shared_instance.set_sprite_position(*args); end
     def set_sprite_rotation(*args); shared_instance.set_sprite_rotation(*args); end
@@ -42,6 +44,26 @@ class Platform
   #
   def create_texture(texture_name)
     SKTexture.textureWithImageNamed("#{texture_name}.png")
+  end
+
+  def create_text(font_name)
+    text = SKLabelNode.labelNodeWithFontNamed(font_name)
+    text.tap do |t|
+      scene.addChild(text)
+    end
+  end
+
+  # TODO: make it support color hashes instead
+  FONT_COLORS = {
+    "black" => UIColor.blackColor,
+    "white" => UIColor.whiteColor
+  }
+
+  def set_text_attributes(node, text, font_size, font_color, x, y)
+    node.text = text
+    node.fontSize = font_size
+    node.fontColor = FONT_COLORS[font_color]
+    node.position = CGPoint.new(x, y)
   end
 
   # ** Shared **
