@@ -9,7 +9,7 @@ def require_all(matcher)
 end
 
 def mac_os_start
-  window = Avian::Platforms::Gosu::Window.new(975, 667)
+  window = Avian::DesktopGosuPlatform::Window.new(975, 667)
   window.show
 rescue Interrupt
 end
@@ -20,6 +20,7 @@ require_relative "camera"
 require_relative "platform"
 require_relative "sprite"
 require_relative "window"
+require_relative "text"
 
 require_all('lib/**/*.rb')
 require_all('app/**/concerns/*.rb')
