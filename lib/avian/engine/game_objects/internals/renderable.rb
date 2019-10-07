@@ -6,6 +6,7 @@ module GameObject::Internals::Renderable
   boolean :flipped_vertically, default: false
   boolean :renderable, default: false
   vector :renderable_anchor_point, default: Vector[0.5, 0.5]
+  string :sprite_name
 
   def sprite_name
     @sprite_name ||= self.class.to_s.demodulize.underscore.downcase
