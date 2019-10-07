@@ -52,9 +52,8 @@ module Avian
         y = 0
         draw_quad(x, y, 0x000000000, x+width, y, 0x000000000, x, y+height, 0x000000000, x+width, y+height, 0x000000000, 0)
         sprites.each { |sprite| sprite.draw_using_camera(camera) }
-        texts.each { |text| text.draw }
+        texts.each { |text| text.draw_using_camera(camera) }
       end
-
 
       def add_sprite(texture)
         sprite = Avian::DesktopGosuPlatform::Sprite.new(

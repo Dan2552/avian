@@ -5,25 +5,64 @@ module Avian
         @font_name = font_name
       end
 
-      # TODO: if attributes change, @font needs to be cleared
-      attr_accessor :text,
-                    :font_size,
-                    :font_color,
-                    :x,
-                    :y
+      attr_reader :text,
+                  :font_size,
+                  :font_color,
+                  :x,
+                  :y
 
-      # TODO: relative to camera
-      def draw
-        @font ||= Gosu::Font.new(font_size, name: @font_name)
-        @font.draw_text(
+      def text=(set)
+        @sprite = nil
+        @text = set
+      end
+
+      def font_size=(set)
+        @sprite = nil
+        @font_size = set
+      end
+
+      def font_color=(set)
+        @sprite = nil
+        @font_color = set
+      end
+
+      def x=(set)
+        @sprite = nil
+        @x = set
+      end
+
+      def y=(set)
+        @sprite = nil
+        @y = set
+      end
+
+      def draw_using_camera(camera)
+        @sprite ||= build_sprite
+
+        @sprite.draw_using_camera(camera)
+      end
+
+      private
+
+      attr_reader :font_name
+
+      def build_sprite
+        image = Gosu::Image.from_text(
           text,
-          x,
-          y,
-          z = 999,
-          scale_x = 1,
-          scale_y = 1,
-          font_color,
-          mode = :default
+          (font_size * 2) + 16, # magic numbers to normalize close to iOS
+          font: font_name,
+          align: :center
+        )
+
+        sprite = Sprite.new(
+          image: image,
+          x: x,
+          y: y,
+          z: 999,
+          angle: 0,
+          flipped_vertically: false,
+          flipped_horizontally: false,
+          anchor_point: Vector[0.5, 0.5]
         )
       end
     end

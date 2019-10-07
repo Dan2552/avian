@@ -18,6 +18,7 @@ module Avian
         @angle = attributes[:angle]
         @flipped_vertically = attributes[:flipped_vertically] || false
         @flipped_horizontally = attributes[:flipped_horizontally] || false
+        @anchor_point = attributes[:anchor_point]
       end
 
       def draw_using_camera(camera)

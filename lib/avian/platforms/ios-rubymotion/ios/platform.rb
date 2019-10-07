@@ -88,7 +88,7 @@ class Platform
   # ** Shared **
   #
   def set_sprite_position(sprite, position, z_position)
-    sprite.position = CGPointMake(position.x, position.y)
+    sprite.position = CGPoint.new(position.x, position.y)
     sprite.zPosition = z_position if z_position
   end
 

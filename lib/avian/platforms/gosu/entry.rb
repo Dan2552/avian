@@ -9,7 +9,7 @@ def require_all(matcher)
 end
 
 def mac_os_start
-  window = Avian::DesktopGosuPlatform::Window.new(975, 667)
+  window = Avian::DesktopGosuPlatform::Window.new(1125 / 3, 2436 / 3)
   window.show
 rescue Interrupt
 end

@@ -143,7 +143,7 @@ end
 class GameObject::Text < GameObject::Base
   string :font_name, default: "Arial"
   string :text
-  number :font_size, default: 24
+  number :font_size, default: 32
   string :font_color, default: "white"
 
   def renderable?
