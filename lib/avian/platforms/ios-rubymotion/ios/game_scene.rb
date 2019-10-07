@@ -8,7 +8,7 @@ class GameScene < SKScene
     view.ignoresSiblingOrder = true
     self.scaleMode = SKSceneScaleModeAspectFit
     # self.backgroundColor = UIColor.whiteColor
-    self.backgroundColor = UIColor.alloc.initWithRed(56/255.0, green: 56/255.0, blue: 56/255.0, alpha: 1)
+    self.backgroundColor = UIColor.alloc.initWithRed(0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 1)
     self.camera = @strong_camera_reference
 
     config = Avian::Application.main.config
