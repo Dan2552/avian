@@ -57,7 +57,7 @@ module Avian
 
 
       def add_sprite(texture)
-        sprite = Avian::Platforms::Gosu::Sprite.new(
+        sprite = Avian::DesktopGosuPlatform::Sprite.new(
           image: texture,
           x: 100,
           y: 100,
