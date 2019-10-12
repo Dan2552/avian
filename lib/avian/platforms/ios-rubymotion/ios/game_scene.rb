@@ -6,8 +6,7 @@ class GameScene < SKScene
     view.showsFPS = true
     view.multipleTouchEnabled = true
     view.ignoresSiblingOrder = true
-    self.scaleMode = SKSceneScaleModeAspectFit
-    # self.backgroundColor = UIColor.whiteColor
+
     self.backgroundColor = UIColor.alloc.initWithRed(0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 1)
     self.camera = @strong_camera_reference
 
