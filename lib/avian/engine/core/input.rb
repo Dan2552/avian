@@ -131,7 +131,7 @@ end
 class Touch
   attr_accessor :id
 
-  # :moved, :began, :ended
+  # :moved, :began, :ended, :stationary
   #
   attr_accessor :phase
 
