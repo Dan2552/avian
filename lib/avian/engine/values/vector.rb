@@ -1,6 +1,4 @@
 class Vector
-  private_class_method :new
-
   attr_reader :x
   attr_reader :y
 

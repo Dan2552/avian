@@ -8,7 +8,7 @@ module Avian
       attr_accessor :primary_scene
     end
 
-    extend(MotionSupport::DescendantsTracker) if defined?(MotionSupport)
+    extend("MotionSupport::DescendantsTracker".constantize) if Object.const_defined?("MotionSupport")
 
     def self.main
       descendants.first

@@ -51,6 +51,9 @@ class AvianCLI < Thor
     when "ios-gosu"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "ios-gosu", "boot"))
       system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
+    when "ios-ruby2d"
+      boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "ios-ruby2d", "boot"))
+      system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
     else
       puts "Unknown platform"
       exit 1
