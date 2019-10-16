@@ -78,6 +78,10 @@ module GameObject
         attribute(attr_name, options)
       end
 
+      def behaviors(*attr_names)
+        attr_names.each { |attr_name| behavior(attr_name) }
+      end
+
       def vector(attr_name, options = {})
         options = { default: Vector[0, 0] }.merge(options).merge({ type: Vector })
         attribute(attr_name, options)
