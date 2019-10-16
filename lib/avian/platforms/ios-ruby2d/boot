@@ -42,6 +42,7 @@ require 'avian'
 
 app_load_order = [
   'lib/**/*.rb',
+  'app/values/**/*.rb',
   'app/**/concerns/*.rb',
   'app/**/*.rb',
   'config/**/*.rb'

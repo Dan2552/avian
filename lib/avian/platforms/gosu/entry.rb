@@ -23,6 +23,7 @@ require_relative "window"
 require_relative "text"
 
 require_all('lib/**/*.rb')
+require_all('app/values/**/*.rb')
 require_all('app/**/concerns/*.rb')
 require_all('app/**/*.rb')
 require_all('config/**/*.rb')
