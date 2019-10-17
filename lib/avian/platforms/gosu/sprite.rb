@@ -9,6 +9,7 @@ module Avian
       attr_accessor :anchor_point
       attr_accessor :flipped_vertically
       attr_accessor :flipped_horizontally
+      attr_accessor :visible
 
       def initialize(attributes)
         @image = attributes[:image]
@@ -19,9 +20,12 @@ module Avian
         @flipped_vertically = attributes[:flipped_vertically] || false
         @flipped_horizontally = attributes[:flipped_horizontally] || false
         @anchor_point = attributes[:anchor_point]
+        @visible = attributes[:visible] || true
       end
 
       def draw_using_camera(camera)
+        return unless visible
+
         # Scale position in general by camera scale
         draw_x = x * camera.scale
         draw_y = y * camera.scale

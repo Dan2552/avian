@@ -37,6 +37,7 @@ class Renderer
       Platform.set_sprite_position(sprite_node, renderable.renderable_position, renderable.renderable_z_position)
       Platform.set_sprite_rotation(sprite_node, renderable.rotation)
       Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
+      Platform.set_sprite_visible(sprite_node, renderable.visible)
     end
   end
 

@@ -5,6 +5,7 @@ module GameObject::Internals::Renderable
   boolean :flipped_horizontally, default: false
   boolean :flipped_vertically, default: false
   boolean :renderable, default: false
+  boolean :visible, default: true
   vector :renderable_anchor_point, default: Vector[0.5, 0.5]
   string :sprite_name
 

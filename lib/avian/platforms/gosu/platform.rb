@@ -22,6 +22,7 @@ class Platform
     def set_sprite_position(*args); shared_instance.set_sprite_position(*args); end
     def set_sprite_rotation(*args); shared_instance.set_sprite_rotation(*args); end
     def set_sprite_flipped(*args); shared_instance.set_sprite_flipped(*args); end
+    def set_sprite_visible(*args); shared_instance.set_sprite_visible(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
     def set_scale(*args); shared_instance.set_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
@@ -50,6 +51,10 @@ class Platform
   #
   def set_sprite_texture(sprite, texture)
     sprite.image = texture
+  end
+
+  def set_sprite_visible(sprite, visible)
+    sprite.visible = visible
   end
 
   def create_text(font_name)
