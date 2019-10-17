@@ -22,6 +22,7 @@ class Platform
     def set_sprite_flipped(*args); shared_instance.set_sprite_flipped(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
     def set_scale(*args); shared_instance.set_scale(*args); end
+    def set_sprite_visible(*args); shared_instance.set_sprite_visible(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
   end
 
@@ -58,6 +59,10 @@ class Platform
     "black" => UIColor.blackColor,
     "white" => UIColor.whiteColor
   }
+
+  def set_sprite_visible(sprite, visible)
+    sprite.hidden = !visible
+  end
 
   def set_text_attributes(node, text, font_size, font_color, x, y)
     node.text = text
