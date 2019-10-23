@@ -9,9 +9,21 @@
 class GameObject::Base
   extend GameObject::Internals::Attributes
   extend GameObject::Internals::Relationships
+  extend GameObject::Internals::PreviousFrameClass
+  include GameObject::Internals::PreviousFrameInstance
   include GameObject::Internals::Positional
   include GameObject::Internals::Renderable
-  include GameObject::Internals::Sizable
+
+  # Positional attributes are captured between frames.
+  #
+  # See `GameObject::Internals::PreviousFrame.capture_previous` for more
+  # information.
+  #
+  capture_previous :position,
+                   :rotation,
+                   :z_position,
+                   :size,
+                   :frame
 
   # Should be called to perform an update on the GameObject and it's children.
   #
@@ -24,6 +36,10 @@ class GameObject::Base
     raise "#perform_update called on destroyed GameObject" if destroyed
     delta = delta.to_f
     RenderList.shared_instance << self if renderable?
+
+    # Captures specified attributes' values defined by `.capture_previous`.
+    capture_previous
+
     Profiler.shared_instance.start_of(self.class.to_s)
 
     # This specifically runs *before* the children game objects.
@@ -67,7 +83,7 @@ class GameObject::Base
     false
   end
 
-  # When debugging, makes a GameObject recongizable compared to its id.
+  # When debugging, makes a GameObject recognizable compared to its id.
   #
   def inspect
     "#<#{self.class.to_s}::#{id[0..4]}>"

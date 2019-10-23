@@ -45,7 +45,6 @@ module GameObject
           end
 
           if type && new_value && !new_value.is_a?(type)
-            binding.pry
             raise "#{attr_name} (#{type}) cannot be assigned #{new_value} (#{new_value.class})"
           end
 
