@@ -1,4 +1,4 @@
-fdescribe Collisions::Grid do
+describe Collisions::Grid do
   let(:size) { Size[4, 4] }
   let(:cell_size) { Size[2, 2] }
   let(:origin) { Vector[0, 0] }
