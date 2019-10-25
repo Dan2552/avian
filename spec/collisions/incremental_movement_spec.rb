@@ -4,10 +4,7 @@ describe Collisions::IncrementalMovement do
   let(:described_instance) { described_class.new(game_object, increment) }
 
   describe "#move" do
-    let(:collision_check) { Proc.new {
-      puts "running"
-      true
-      } }
+    let(:collision_check) { Proc.new { true } }
 
     subject do
       described_instance.move(vector, &collision_check)
@@ -16,7 +13,7 @@ describe Collisions::IncrementalMovement do
     context "when moving up" do
       let(:vector) { Vector[0, 1] }
 
-      fit "checks collision 10 times" do
+      it "checks collision 10 times" do
         expect(collision_check)
           .to receive(:call)
           .exactly(10)
@@ -34,10 +31,77 @@ describe Collisions::IncrementalMovement do
       end
 
       context "when collision occurs" do
-        let(:collision_check) { Proc.new { game_object.position.y == 0.2 } }
+        let(:collision_check) { Proc.new { game_object.position.y < 0.5 } }
 
-        it "puts the player's position at the point where it collides" do
+        it "puts the player's position at the iteration before it collides" do
+          expect { subject }
+            .to change { game_object.position }
+            .from(Vector[0, 0])
+            .to(Vector[0, 0.4])
+        end
+      end
+    end
 
+    context "when moving right" do
+      let(:vector) { Vector[1, 0] }
+
+      it "checks collision 10 times" do
+        expect(collision_check)
+          .to receive(:call)
+          .exactly(10)
+          .times
+          .and_return(true)
+
+        subject
+      end
+
+      it "puts the player's position as moved by vector" do
+        expect { subject }
+          .to change { game_object.position }
+          .from(Vector[0, 0])
+          .to(vector)
+      end
+
+      context "when collision occurs" do
+        let(:collision_check) { Proc.new { game_object.position.x < 0.5 } }
+
+        it "puts the player's position at the iteration before it collides" do
+          expect { subject }
+            .to change { game_object.position }
+            .from(Vector[0, 0])
+            .to(Vector[0.4, 0])
+        end
+      end
+    end
+
+    context "when moving down" do
+      let(:vector) { Vector[0, -1] }
+
+      it "checks collision 10 times" do
+        expect(collision_check)
+          .to receive(:call)
+          .exactly(10)
+          .times
+          .and_return(true)
+
+        subject
+      end
+
+      it "puts the player's position as moved by vector" do
+        expect { subject }
+          .to change { game_object.position }
+          .from(Vector[0, 0])
+          .to(vector)
+      end
+
+      context "when collision occurs" do
+        let(:collision_check) { Proc.new { game_object.position.y > -0.5 } }
+
+        it "puts the player's position at the iteration before it collides" do
+          expect { subject }
+            .to change { game_object.position }
+            .from(Vector[0, 0])
+            .to(Vector[0, -0.4])
         end
       end
     end
