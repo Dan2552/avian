@@ -1,51 +1,3 @@
-# if(left_tile < 0) left_tile = 0
-# if(right_tile > tilemap.width) right_tile = tilemap.width
-# if(top_tile < 0) top_tile = 0
-# if(bottom_tile > tilemap.height) bottom_tile = tilemap.height
-
-# any_collision = false
-# for(i=left_tile; i<=right_tile; i++)
-# {
-#   for(j=top_tile; j<=bottom_tile; j++)
-#   {
-#     tile t = tilemap.tile_at(i, j)
-#     if(t.is_wall)
-#     {
-#       any_collision = true
-#     }
-#   }
-# }
-
-# class PlayerFactory
-#   def self.build
-#     player = Player.new
-#     player.incremental_movement =
-#       Collisions::IncrementalMovement.new(player, 0.1)
-#     player
-#   end
-# end
-
-# class Player
-#   behavior :incremental_movement
-
-#   def update
-#     move_in_direction
-#   end
-
-#   def move_in_direction
-#     movement_vector = Vector[
-#       input.vector.x * SPEED.x,
-#       input.vector.y * SPEED.y
-#     ]
-
-#     nearest_objects = map.collisions.nearest_objects_to(self)
-
-#     move(movement_vector) do
-#       nearest_objects.none? { |nearby| nearby.frame.intersects?(frame) }
-#     end
-#   end
-# end
-
 module Collisions
   # A collision grid keeps track of collidable game objects. To determine
   # whether one object is colliding with another, it's much more optimal to only
@@ -84,11 +36,21 @@ module Collisions
     # This should be called when loading the game map, and if any new collidable
     # objects spawn.
     #
+    # The object being added must have a size higher than Size[0, 0] to be
+    # added.
+    #
     # - parameter game_object: GameObject instance.
     #
     def add!(game_object)
+      if game_object.size.zero?
+        raise "A game object that has no size cannot be added to a collision grid"
+      end
+
       cells = cells_for(game_object.frame)
       cells.each { |c| c << game_object }
+
+      # puts "\nadding #{game_object}\n in #{cells}\n\n"
+      nil
     end
 
     # Keeps track of a moving game object.
@@ -130,11 +92,27 @@ module Collisions
     # - parameter depth: Integer value on how many cells beyond the given game
     #   object's cell(s) should be looked into.
     #
-    def nearest_objects_to(game_object, depth)
-      unless game_objects[game_object]
-        raise "The supplied #{game_object.class} has not been added to the grid"
-      end
-      []
+    def nearest_objects_for(game_object, depth)
+      x_depth_additions = cell_size.x * depth
+      y_depth_additions = cell_size.y * depth
+      frame = game_object.frame
+
+      frame = Rectangle.new(
+        Vector[
+          game_object.frame.left - x_depth_additions,
+          game_object.frame.bottom - y_depth_additions,
+        ],
+        Size[
+          game_object.size.width + x_depth_additions + x_depth_additions,
+          game_object.size.height + y_depth_additions + y_depth_additions
+        ]
+      )
+
+      cells_for(frame)
+        .map(&:all)
+        .flatten
+        .uniq
+        .select { |go| go != game_object }
     end
 
     private
@@ -146,17 +124,23 @@ module Collisions
     def cells_for(frame)
       return [] if frame.nil?
 
-      leftmost = frame.left / cell_size.width
-      rightmost = frame.right / cell_size.width
-      topmost = frame.top / cell_size.height
-      bottommost = frame.bottom / cell_size.height
+      # Here a tiny bit is trimmed off the `right` and `top` values so that if
+      # the object is right on the edge of the next tile, it doesn't count as
+      # being inside that tile.
+      leftmost = (frame.left / cell_size.width).floor
+      rightmost = ((frame.right - 0.01) / cell_size.width).floor
+      topmost = ((frame.top - 0.01) / cell_size.height).floor
+      bottommost = (frame.bottom / cell_size.height).floor
 
       cells = []
+
       (leftmost..rightmost).each do |x|
-        (topmost..bottommost).each do |y|
-          cells << store[x][y]
+        (bottommost..topmost).each do |y|
+          cell = store[x][y]
+          cells << cell if cell
         end
       end
+
       cells
     end
   end

@@ -89,6 +89,12 @@ class GameObject::Base
     "#<#{self.class.to_s}::#{id[0..4]}>"
   end
 
+  # When debugging, makes a GameObject recognizable compared to its id.
+  #
+  def to_s
+    inspect
+  end
+
   # Ensures each GameObject has a unique id.
   #
   # Particularly useful for referencing during rendering. Also helpful for

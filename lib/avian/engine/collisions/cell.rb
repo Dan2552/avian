@@ -19,12 +19,12 @@ module Collisions
       elements.delete(game_object.id)
     end
 
-    def each(*args, &blk)
-      elements.values.each(*args, &blk)
+    def all
+      elements.values
     end
 
-    def include?(game_object)
-      elements[game_object.id].present?
+    def inspect
+      "#<Collisions::Cell:#{col}, #{row}>"
     end
 
     private

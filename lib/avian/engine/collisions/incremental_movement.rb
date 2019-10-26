@@ -76,7 +76,7 @@ module Collisions
     def move_by_x
       @x_times ||= 0
       @x_times += 1
-      puts "#{@x_times} about to move by x ----- remaining: #{@remaining_x} -------"
+      # puts "#{@x_times} about to move by x ----- remaining: #{@remaining_x} -------"
 
       this_increment = [@increment, @remaining_x.abs].min
 
@@ -86,7 +86,7 @@ module Collisions
         new_x = @game_object.position.x - this_increment
       end
 
-      puts "moving by #{this_increment}"
+      # puts "moving by #{this_increment}"
 
       previous_position = @game_object.position
       @game_object.position = Vector[
@@ -105,19 +105,19 @@ module Collisions
     def move_by_y
       @y_times ||= 0
       @y_times += 1
-      puts "#{@y_times} about to move by y ----- remaining: #{@remaining_y} -------"
+      # puts "#{@y_times} about to move by y ----- remaining: #{@remaining_y} -------"
 
       this_increment = [@increment, @remaining_y.abs].min
 
       if @y_operator == :+
-        puts "adding"
+        # puts "adding"
         new_y = @game_object.position.y + this_increment
       elsif @y_operator == :-
-        puts "subtracting"
+        # puts "subtracting"
         new_y = @game_object.position.y - this_increment
       end
 
-      puts "moving by #{this_increment}"
+      # puts "moving by #{this_increment}"
 
       previous_position = @game_object.position
       @game_object.position = Vector[
@@ -125,12 +125,12 @@ module Collisions
         new_y.round(@decimal_places)
       ]
 
-      puts "new position: #{@game_object.position}"
+      # puts "new position: #{@game_object.position}"
 
       @remaining_y = (@remaining_y - this_increment).round(@decimal_places).abs
 
       if @collision_check.call != true # there is a collision
-        puts "there's a collision"
+        # puts "there's a collision"
         @game_object.position = previous_position
         @remaining_y = 0
       end

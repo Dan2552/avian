@@ -1,19 +1,55 @@
 describe Collisions::Grid do
-  let(:size) { Size[4, 4] }
+  let(:size) { Size[6, 6] }
   let(:cell_size) { Size[2, 2] }
-  let(:origin) { Vector[0, 0] }
-  let(:described_instance) { described_class.new(size, cell_size, origin) }
+  let(:described_instance) { described_class.new(size, cell_size) }
 
-  describe "#nearest_objects_to" do
+  describe "#add!" do
     let(:game_object) { GameObject::Base.new }
-    subject { described_instance.nearest_objects_to(game_object, 1) }
+    subject { described_instance.add!(game_object) }
+
+    context "when the size of the object is zero" do
+      before do
+        expect(game_object.size.zero?).to eq(true)
+      end
+
+      it "raises an exception" do
+        expect { subject }
+          .to raise_error("A game object that has no size cannot be added to a collision grid")
+      end
+    end
+
+    context "when the size of the object is non-zero" do
+      before do
+        game_object.size = Size[10, 10]
+      end
+
+      it "returns nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+  end
+
+  describe "#move!" do
+    xit "..."
+  end
+
+  describe "#remove!" do
+    xit "..."
+  end
+
+  describe "#nearest_objects_for" do
+    let(:game_object) do
+      game_object = GameObject::Base.new
+      game_object.size = Size[10, 10]
+      game_object
+    end
+    let(:depth) { 0 }
+
+    subject { described_instance.nearest_objects_for(game_object, depth) }
 
     context "when no objects have been added" do
-      it "raises that the supplied game object is not in the grid" do
-        expect { subject }
-          .to raise_error(
-            "The supplied GameObject::Base has not been added to the grid"
-          )
+      it "returns an empty array" do
+        expect(subject).to eq([])
       end
     end
 
@@ -27,117 +63,68 @@ describe Collisions::Grid do
       end
     end
 
-    context "when the game object has been added, but other objects are not within the depth" do
-      before do
-        described_instance.add!(game_object)
+    context "when objects have been added but are not within the depth" do
+      let(:size) { Size[6, 6] }
+      let(:cell_size) { Size[2, 2] }
+      let(:another1) { GameObject::Base.new }
+      let(:another2) { GameObject::Base.new }
 
+      before do
+        game_object.size = Size[1, 1]
+        another1.size = Size[1, 1]
+        another2.size = Size[1, 1]
+
+        game_object.position = Vector[2.5, 2.5]
+        another1.position = Vector[1.5, 5.5]
+        another2.position = Vector[2.5, 4.5]
+
+        described_instance.add!(another1)
+        described_instance.add!(another2)
       end
 
       it "returns an empty array" do
         expect(subject).to eq([])
       end
     end
+
+    context "when objects have been added and are within the depth" do
+      let(:size) { Size[6, 6] }
+      let(:cell_size) { Size[2, 2] }
+      let(:another1) { GameObject::Base.new }
+      let(:another2) { GameObject::Base.new }
+
+      before do
+        game_object.size = Size[1, 1]
+        another1.size = Size[1, 1]
+        another2.size = Size[1, 1]
+
+        game_object.position = Vector[2.5, 2.5]
+        another1.position = Vector[3.5, 3.5]
+        another2.position = Vector[2.5, 4.5]
+
+        described_instance.add!(another1)
+        described_instance.add!(another2)
+      end
+
+      context "with 0 depth" do
+        let(:depth) { 0 }
+
+        it "returns the objects in depth" do
+          expect(subject).to include(another1)
+        end
+
+        it "does not return objects not in depth" do
+          expect(subject).to_not include(another2)
+        end
+      end
+
+      context "with 1 depth" do
+        let(:depth) { 1 }
+
+        it "returns the objects in depth" do
+          expect(subject).to include(another1, another2)
+        end
+      end
+    end
   end
 end
-
-# fdescribe Collisions::Grid do
-#   let(:owner_frame) do
-#     Rectangle.new(Vector[10, 10], Size.new(20, 20))
-#   end
-#   let(:owner_size) do
-#     Size.new(200, 200)
-#   end
-
-#   let(:owner) { double("owner", frame: owner_frame, size: owner_size) }
-#   let(:size) { Size.new(10, 10) }
-#   let(:described_instance) { described_class.new(owner, size) }
-
-#   describe "#at" do
-#     let(:x) { 0 }
-#     let(:y) { 0 }
-#     subject { described_instance.at(x, y) }
-
-#     context "when in range" do
-#       let(:x) { 0 }
-#       let(:y) { 0 }
-
-#       it "returns a Cell" do
-#         expect(subject).to be_a(Collisions::Cell)
-#       end
-
-#       context "when mutating the array" do
-#         before do
-#           arr = described_instance.at(x, y)
-#           arr << "Something"
-#         end
-
-#         it "returns the mutated array" do
-#           expect(subject.first).to eq("Something")
-#         end
-#       end
-#     end
-
-#     context "when negative x" do
-#       let(:x) { -1 }
-
-#       it "raises an exception" do
-#         expect { subject }.to raise_error(Collisions::Grid::OutOfBounds, "(-1, 0)")
-#       end
-#     end
-
-#     context "when negative y" do
-#       let(:y) { -1 }
-
-#       it "raises an exception" do
-#         expect { subject }.to raise_error(Collisions::Grid::OutOfBounds, "(0, -1)")
-#       end
-#     end
-
-#     context "when higher than size width" do
-#       let(:x) { 10 }
-
-#       it "raises an exception" do
-#         expect { subject }.to raise_error(Collisions::Grid::OutOfBounds, "(10, 0)")
-#       end
-#     end
-
-#     context "when highter than size height" do
-#       let(:y) { 10 }
-
-#       it "raises an exception" do
-#         expect { subject }.to raise_error(Collisions::Grid::OutOfBounds, "(0, 10)")
-#       end
-#     end
-#   end
-
-#   describe "#cell_for_position" do
-#     let(:position) { raise "override" }
-#     subject { described_instance.cell_for_position(position) }
-
-#     context "when the position is outside of the frame" do
-#       context "x is less than frame bounds" do
-#         let(:position) { Vector[0, 10] }
-
-#         it "returns nil" do
-#           expect(subject).to eq(nil)
-#         end
-#       end
-
-#       context "x is higher than frame bounds" do
-#         let(:position) { Vector[211, 10] }
-
-#         it "returns nil" do
-#           expect(subject).to eq(nil)
-#         end
-#       end
-#     end
-
-#     context "when the position is inside the frame" do
-#       let(:position) { Vector[10, 10] }
-
-#       it "returns the cell for the given position relative to the owner" do
-#         subject
-#       end
-#     end
-#   end
-# end
