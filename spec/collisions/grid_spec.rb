@@ -45,7 +45,7 @@ describe Collisions::Grid do
     end
     let(:depth) { 0 }
 
-    subject { described_instance.nearest_objects_for(game_object, depth) }
+    subject { described_instance.nearest_objects_to(game_object, depth) }
 
     context "when no objects have been added" do
       it "returns an empty array" do

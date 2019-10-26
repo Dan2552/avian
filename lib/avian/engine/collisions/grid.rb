@@ -92,7 +92,7 @@ module Collisions
     # - parameter depth: Integer value on how many cells beyond the given game
     #   object's cell(s) should be looked into.
     #
-    def nearest_objects_for(game_object, depth)
+    def nearest_objects_to(game_object, depth)
       x_depth_additions = cell_size.x * depth
       y_depth_additions = cell_size.y * depth
       frame = game_object.frame
