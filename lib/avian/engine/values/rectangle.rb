@@ -18,6 +18,14 @@ class Rectangle
     intersection(comparison) != nil
   end
 
+  def inspect
+    "#<Rectangle:#{origin},#{size}>"
+  end
+
+  def to_s
+    inspect
+  end
+
   # The intersection of two rectangles is the rectangle where the two overlap.
   # Because of that, you want a rectangle with:
   #
