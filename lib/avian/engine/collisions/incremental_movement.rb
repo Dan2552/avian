@@ -22,6 +22,10 @@ module Collisions
     # - parameter increment: The number to move in each iteration.
     #
     def initialize(game_object, increment)
+      if game_object.size.zero?
+        raise "A game object that has no size cannot be added to IncrementalMovement"
+      end
+
       @game_object = game_object
       @increment = increment.abs
       @decimal_places = increment.to_s.split(".").last.length
