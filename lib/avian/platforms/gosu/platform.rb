@@ -12,6 +12,7 @@ class Platform
       @shared_instance ||= new
     end
 
+    def create_sprite(*args); shared_instance.create_rectangle(*args); end
     def create_sprite(*args); shared_instance.create_sprite(*args); end
     def create_sprite(*args); shared_instance.create_sprite(*args); end
     def create_texture(*args); shared_instance.create_texture(*args); end
@@ -29,6 +30,10 @@ class Platform
   end
 
   attr_accessor :window
+
+  def create_rectangle(rectangle)
+
+  end
 
   # ** Shared **
   #

@@ -53,6 +53,9 @@ module Avian
         draw_quad(x, y, 0x000000000, x+width, y, 0x000000000, x, y+height, 0x000000000, x+width, y+height, 0x000000000, 0)
         sprites.each { |sprite| sprite.draw_using_camera(camera) }
         texts.each { |text| text.draw_using_camera(camera) }
+        rectangles.each do |rectangle|
+          draw_rect(rectangle.origin.x, rectangle.origin.y, rectangle.size.width, rectangle.size.height, Gosu::Color::RED, 999)
+        end
       end
 
       def add_sprite(texture)
@@ -70,12 +73,20 @@ module Avian
         sprite
       end
 
+      def add_rectangle(rectangle)
+        rectangles << rectangle
+      end
+
       def texts
         @texts ||= []
       end
 
       def sprites
         @sprites ||= []
+      end
+
+      def rectangles
+        @rectangles ||= []
       end
 
       private
