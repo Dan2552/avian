@@ -1,5 +1,6 @@
-Bundler.require(:default)
 require 'active_support/all'
+
+Bundler.require(:default)
 
 def require_all(matcher)
   root = Bundler.root.join("..", "..")

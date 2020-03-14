@@ -7,10 +7,10 @@ module GameObject
       # into this method as an argument.
       #
       def capture_previous(*names)
-        if self == GameObject::Base
+        if self == "GameObject::Base".constantize
           @capture_previous ||= []
         else
-          @capture_previous = GameObject::Base.capture_previous
+          @capture_previous = "GameObject::Base".constantize.capture_previous
         end
 
         return @capture_previous if names.empty?
