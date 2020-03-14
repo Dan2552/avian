@@ -3,6 +3,10 @@ describe Collisions::IncrementalMovement do
   let(:increment) { 0.1 }
   let(:described_instance) { described_class.new(game_object, increment) }
 
+  before do
+    game_object.size = Size[1, 1]
+  end
+
   describe "#move" do
     let(:collision_check) { Proc.new { true } }
 
