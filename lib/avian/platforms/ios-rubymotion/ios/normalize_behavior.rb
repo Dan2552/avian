@@ -14,3 +14,13 @@ unless defined?(SecureRandom)
     end
   end
 end
+
+class File
+  def self.read(path)
+    if path.start_with?("resources/")
+      path.sub!("resources", NSBundle.mainBundle.resourcePath)
+    end
+
+    super(path)
+  end
+end
