@@ -13,8 +13,8 @@ AVIAN_LOAD_ORDER = [
   "engine/rendering/**/*.rb",
   "engine/core/**/*.rb",
   "engine/application.rb",
-  "tiled/layer.rb",
-  "tiled/map.rb"
+  "engine/tiled/layer.rb",
+  "engine/tiled/map.rb"
 ]
 
 module Avian
