@@ -24,3 +24,24 @@ class File
     super(path)
   end
 end
+
+unless defined?(JSON)
+  module JSON
+    class ParserError < StandardError; end
+    def self.parse(json_string)
+      puts json_string
+      opts = NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves | NSJSONReadingAllowFragments
+      data = json_string.dataUsingEncoding(NSUTF8StringEncoding)
+      error = Pointer.new(:id)
+      json_hash = NSJSONSerialization.JSONObjectWithData(
+        data,
+        options:opts,
+        error:error
+      )
+
+      raise ParserError, error[0].description if error[0]
+
+      json_hash
+    end
+  end
+end
