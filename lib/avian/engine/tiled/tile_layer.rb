@@ -1,13 +1,21 @@
 module Avian
   module Tiled
-    class Layer
+    class TileLayer
       def initialize(hash)
         @hash = hash
       end
 
+      def object_layer?
+        false
+      end
+
+      def tile_layer?
+        true
+      end
+
       # - blk: |x, y, tile|
       #
-      def each(&blk)
+      def each_tile(&blk)
         width = @hash["width"]
 
         @hash["data"].each.with_index do |tile, index|

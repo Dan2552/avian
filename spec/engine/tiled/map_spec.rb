@@ -1,6 +1,6 @@
 describe Avian::Tiled::Map do
   let(:described_instance) do
-    fixture_path = Bundler.root.join("spec", "tiled", "fixtures", "one.json")
+    fixture_path = Bundler.root.join("spec", "engine", "tiled", "fixtures", "one.json")
     described_class.new(JSON.parse(File.read(fixture_path)))
   end
 
@@ -8,7 +8,11 @@ describe Avian::Tiled::Map do
     subject { described_instance.layers }
 
     it "returns a collection of layers" do
-      expect(subject).to all(be_a(Avian::Tiled::Layer))
+      expect(subject.count).to eq(4)
+      expect(subject[0]).to be_a(Avian::Tiled::TileLayer)
+      expect(subject[1]).to be_a(Avian::Tiled::TileLayer)
+      expect(subject[2]).to be_a(Avian::Tiled::ObjectLayer)
+      expect(subject[3]).to be_a(Avian::Tiled::TileLayer)
     end
   end
 

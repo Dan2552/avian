@@ -11,7 +11,16 @@ module Avian
 
       def layers
         @layers ||= begin
-          @hash["layers"].map { |layer| Layer.new(layer) }
+          @hash["layers"].map do |layer|
+            case layer["type"]
+            when "tilelayer"
+              TileLayer.new(layer)
+            when "objectgroup"
+              ObjectLayer.new(layer)
+            else
+              raise "Unexpected layer of type #{layer["type"]}"
+            end
+          end
         end
       end
 

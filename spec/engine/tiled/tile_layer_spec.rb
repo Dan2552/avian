@@ -1,13 +1,13 @@
-describe Avian::Tiled::Layer do
+describe Avian::Tiled::TileLayer do
   let(:described_instance) do
-    fixture_path = Bundler.root.join("spec", "tiled", "fixtures", "one.json")
+    fixture_path = Bundler.root.join("spec", "engine", "tiled", "fixtures", "one.json")
     Avian::Tiled::Map.new(JSON.parse(File.read(fixture_path))).layers.first
   end
 
-  describe "#each" do
+  describe "#each_tile" do
     subject do
       output = []
-      described_instance.each do |x, y, tile|
+      described_instance.each_tile do |x, y, tile|
         output << [x, y, tile]
       end
       output
