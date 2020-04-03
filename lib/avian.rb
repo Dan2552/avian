@@ -17,6 +17,8 @@ AVIAN_LOAD_ORDER = [
   "engine/tiled/tile_layer.rb",
   "engine/tiled/object_layer.rb",
   "engine/tiled/map.rb",
+  "engine/astar/**/*.rb",
+  "engine/theta_star/**/*.rb"
 ]
 
 module Avian
