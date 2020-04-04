@@ -15,10 +15,10 @@ module AStar
     #
     def two_dimensional_manhatten_heuristic
       -> (lhs, rhs) do
-        lhs_x = lhs.info["x"]
-        lhs_y = lhs.info["y"]
-        rhs_x = rhs.info["x"]
-        rhs_y = rhs.info["y"]
+        lhs_x = lhs.x
+        lhs_y = lhs.y
+        rhs_x = rhs.x
+        rhs_y = rhs.y
 
         x = [lhs_x, rhs_x].max - [lhs_x, rhs_x].min
         y = [lhs_y, rhs_y].max - [lhs_y, rhs_y].min

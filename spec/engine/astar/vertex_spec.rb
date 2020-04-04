@@ -1,6 +1,42 @@
 RSpec.describe AStar::Vertex do
   let(:described_instance) { AStar::Vertex.new("a") }
 
+  describe "#x" do
+    subject { described_instance.x }
+
+    context "by default" do
+      it "is nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when initialized with a value" do
+      let(:described_instance) { AStar::Vertex.new("a", 1, 2) }
+
+      it "returns the value" do
+        expect(subject).to eq(1)
+      end
+    end
+  end
+
+  describe "#y" do
+    subject { described_instance.y }
+
+    context "by default" do
+      it "is nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when initialized with a value" do
+      let(:described_instance) { AStar::Vertex.new("a", 1, 2) }
+
+      it "returns the value" do
+        expect(subject).to eq(2)
+      end
+    end
+  end
+
   describe "#==" do
     let(:same) { AStar::Vertex.new("a") }
 

@@ -41,13 +41,13 @@ RSpec.describe AStar::GraphFactory do
 
     it "populates the info for each vertex" do
       one_two = subject.find("1,2")
-      expect(one_two.info["x"]).to eq(1)
-      expect(one_two.info["y"]).to eq(2)
+      expect(one_two.x).to eq(1)
+      expect(one_two.y).to eq(2)
 
       zero_two = subject.find("0,2")
 
-      expect(zero_two.info["x"]).to eq(0)
-      expect(zero_two.info["y"]).to eq(2)
+      expect(zero_two.x).to eq(0)
+      expect(zero_two.y).to eq(2)
     end
   end
 end

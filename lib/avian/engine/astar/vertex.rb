@@ -10,6 +10,13 @@ module AStar
     attr_reader :x
     attr_reader :y
 
+    # - parameter name: An identifier, for your own purposes. Useful for
+    #   debugging.
+    # - parameter x: (optional) If the vertex is on a grid, this is the x
+    #   co-ordinate.
+    # - parameter y: (optional) If the vertex is on a grid, this is the y
+    #   co-ordinate.
+    #
     def initialize(name, x = nil, y = nil)
       @name = name
       @blocked = false
