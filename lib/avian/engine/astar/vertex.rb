@@ -10,7 +10,7 @@ module AStar
     attr_reader :x
     attr_reader :y
 
-    def initialize(name, x, y)
+    def initialize(name, x = nil, y = nil)
       @name = name
       @blocked = false
       @x = x
