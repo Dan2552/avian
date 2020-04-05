@@ -158,8 +158,8 @@ RSpec.describe AStar::Graph do
     end
   end
 
-  describe "#reset_blockers" do
-    subject { described_instance.reset_blockers }
+  describe "#unblock_all" do
+    subject { described_instance.unblock_all }
 
     it "sets all the verteces to blocked = false" do
       a = AStar::Vertex.new("a")

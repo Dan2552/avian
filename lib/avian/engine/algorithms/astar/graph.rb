@@ -53,6 +53,8 @@ module AStar
     def remove(vertex)
       vertex.graph = nil
       vertices.delete(vertex)
+      mapped_vertex = map[vertex.x][vertex.y]
+      map[vertex.x][vertex.y] = nil if mapped_vertex == vertex
     end
 
     def unblock_all
