@@ -8,7 +8,7 @@ module AStar
     # Returns a function used to calculate heuristic between two
     # nodes for a 2D grid.
     #
-    # Assumption is that `info["x"]` and `info["y"]` are set with the position
+    # Assumption is that `x` and `y` are set with the position
     # of the vertex within the 2D grid.
     #
     # (compatible when using `GraphFactory#two_dimensional_graph`)

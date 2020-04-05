@@ -31,12 +31,15 @@ module AStar
         raise "Vertex cannot be in more than one graph."
       end
 
+      return if vertices.include?(vertex)
+
+      # TODO: spec
       if vertex.x != nil && vertex.y != nil
         map[vertex.x] ||= {}
         map[vertex.x][vertex.y] ||= vertex
       end
 
-      vertices << vertex unless vertices.include?(vertex)
+      vertices << vertex
 
       vertex.graph = self
     end
@@ -52,8 +55,17 @@ module AStar
       vertices.delete(vertex)
     end
 
-    def reset_blockers
+    def unblock_all
       vertices.each { |v| v.blocked = false }
+    end
+
+    # TODO: spec
+    def block_all
+      vertices.each { |v| v.blocked = true }
+    end
+
+    def inspect
+      "#<#{self.class.name}>"
     end
 
     private
