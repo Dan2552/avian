@@ -38,14 +38,9 @@ describe Collision::Grid do
   end
 
   describe "#nearest_objects_to" do
-    let(:game_object) do
-      game_object = GameObject::Base.new
-      game_object.size = Size[10, 10]
-      game_object
-    end
-    let(:depth) { 0 }
+    let(:rectangle) { Rectangle.new(Vector[0, 0], Size[1, 1]) }
 
-    subject { described_instance.nearest_objects_to(game_object, depth) }
+    subject { described_instance.nearest_objects_to(rectangle) }
 
     context "when no objects have been added" do
       it "returns an empty array" do
@@ -53,28 +48,30 @@ describe Collision::Grid do
       end
     end
 
-    context "when the game object has been added, but nothing else has" do
-      before do
-        described_instance.add!(game_object)
-      end
-
-      it "returns an empty array" do
-        expect(subject).to eq([])
-      end
-    end
-
+    #     01 23 45
+    # ---------------------
+    # 0 | XX XX XX XX XX XX
+    # 1 | XX XX XX XX XX XX
+    #
+    # 2 | XX RR XX XX XX XX
+    # 3 | XX RR XX XX XX XX
+    #
+    # 4 | XX 22 XX XX XX XX
+    # 5 | X1 32 XX XX XX XX
+    #
+    # 6 | X1 1X XX XX XX XX
+    # 7 | XX XX XX XX XX XX
     context "when objects have been added but are not within the depth" do
       let(:size) { Size[6, 6] }
       let(:cell_size) { Size[2, 2] }
       let(:another1) { GameObject::Base.new }
       let(:another2) { GameObject::Base.new }
+      let(:rectangle) { Rectangle.new(Vector[2.5, 2.5], Size[1, 1]) }
 
       before do
-        game_object.size = Size[1, 1]
         another1.size = Size[1, 1]
         another2.size = Size[1, 1]
 
-        game_object.position = Vector[2.5, 2.5]
         another1.position = Vector[1.5, 5.5]
         another2.position = Vector[2.5, 4.5]
 
@@ -94,11 +91,9 @@ describe Collision::Grid do
       let(:another2) { GameObject::Base.new }
 
       before do
-        game_object.size = Size[1, 1]
         another1.size = Size[1, 1]
         another2.size = Size[1, 1]
 
-        game_object.position = Vector[2.5, 2.5]
         another1.position = Vector[3.5, 3.5]
         another2.position = Vector[2.5, 4.5]
 
@@ -106,8 +101,8 @@ describe Collision::Grid do
         described_instance.add!(another2)
       end
 
-      context "with 0 depth" do
-        let(:depth) { 0 }
+      context "with 1x1 size" do
+        let(:rectangle) { Rectangle.new(Vector[2.5, 2.5], Size[1, 1]) }
 
         it "returns the objects in depth" do
           expect(subject).to include(another1)
@@ -118,8 +113,8 @@ describe Collision::Grid do
         end
       end
 
-      context "with 1 depth" do
-        let(:depth) { 1 }
+      context "with 2x2 size" do
+        let(:rectangle) { Rectangle.new(Vector[2.5, 2.5], Size[2, 2]) }
 
         it "returns the objects in depth" do
           expect(subject).to include(another1, another2)

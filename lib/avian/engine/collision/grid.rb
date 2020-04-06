@@ -84,27 +84,25 @@ module Collision
       new_cells.each { |c| c.delete(game_object) }
     end
 
-    # Returns an array of objects that are close to the given game object,
-    # within the given depth.
+    # Returns an array of objects that are close to the given rectangle.
     #
-    # - parameter game_object: GameObject instance.
+    # - parameter rectangle: Rectangle instance.
     #
-    # - parameter depth: Integer value on how many cells beyond the given game
-    #   object's cell(s) should be looked into.
-    #
-    def nearest_objects_to(game_object, depth)
-      x_depth_additions = cell_size.x * depth
-      y_depth_additions = cell_size.y * depth
-      frame = game_object.frame
+    def nearest_objects_to(rectangle)
+      x_depth = (rectangle.size.width / cell_size.width) #+ 1
+      y_depth = (rectangle.size.height / cell_size.height) #+ 1
+
+      x_depth_additions = cell_size.x * x_depth
+      y_depth_additions = cell_size.y * y_depth
 
       frame = Rectangle.new(
         Vector[
-          game_object.frame.left - x_depth_additions,
-          game_object.frame.bottom - y_depth_additions,
+          rectangle.left - x_depth_additions,
+          rectangle.bottom - y_depth_additions,
         ],
         Size[
-          game_object.size.width + x_depth_additions + x_depth_additions,
-          game_object.size.height + y_depth_additions + y_depth_additions
+          rectangle.size.width + x_depth_additions + x_depth_additions,
+          rectangle.size.height + y_depth_additions + y_depth_additions
         ]
       )
 
@@ -112,7 +110,6 @@ module Collision
         .map(&:all)
         .flatten
         .uniq
-        .select { |go| go != game_object }
     end
 
     private
@@ -136,7 +133,7 @@ module Collision
 
       (leftmost..rightmost).each do |x|
         (bottommost..topmost).each do |y|
-          cell = store[x][y]
+          cell = (store[x] || {})[y]
           cells << cell if cell
         end
       end
