@@ -31,7 +31,7 @@ RSpec.describe ThetaStar::Pathfinder do
       expect(path).to eq(expected_path)
     end
 
-    fit "finds a way through a maze" do
+    it "finds a way through a maze" do
       #   0 1 2 3 4
       #   ---------
       # 0|o x o o o
