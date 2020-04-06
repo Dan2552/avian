@@ -1,4 +1,4 @@
-module Collisions
+module Collision
   # A single cell from a CollisionGrid.
   #
   class Cell
@@ -24,7 +24,7 @@ module Collisions
     end
 
     def inspect
-      "#<Collisions::Cell:#{col}, #{row}>"
+      "#<Collision::Cell:#{col}, #{row}>"
     end
 
     private

@@ -1,4 +1,4 @@
-describe Collisions::Grid do
+describe Collision::Grid do
   let(:size) { Size[6, 6] }
   let(:cell_size) { Size[2, 2] }
   let(:described_instance) { described_class.new(size, cell_size) }
@@ -37,7 +37,7 @@ describe Collisions::Grid do
     xit "..."
   end
 
-  describe "#nearest_objects_for" do
+  describe "#nearest_objects_to" do
     let(:game_object) do
       game_object = GameObject::Base.new
       game_object.size = Size[10, 10]

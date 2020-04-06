@@ -1,4 +1,4 @@
-module Collisions
+module Collision
   # A collision grid keeps track of collidable game objects. To determine
   # whether one object is colliding with another, it's much more optimal to only
   # check objects close to the other. This can be achieved by keeping track of
@@ -25,7 +25,7 @@ module Collisions
       y_cell_count.times do |row|
         arr_for_row = []
         x_cell_count.times do |col|
-          arr_for_row << Collisions::Cell.new(row, col)
+          arr_for_row << Collision::Cell.new(row, col)
         end
         @store << arr_for_row
       end

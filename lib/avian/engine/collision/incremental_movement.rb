@@ -1,4 +1,4 @@
-module Collisions
+module Collision
   # IncrementalMovement can be used to move an object incrementally whilst
   # checking agaisn't collisions.
   #
