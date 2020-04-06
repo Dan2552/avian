@@ -8,7 +8,7 @@ AVIAN_LOAD_ORDER = [
   "engine/game_objects/**/*.rb",
   "engine/behaviors/behavior.rb",
   "engine/behaviors/**/*.rb",
-  "engine/collisions/**/*.rb",
+  "engine/collision/**/*.rb",
   "engine/math/**/*.rb",
   "engine/rendering/**/*.rb",
   "engine/core/**/*.rb",
