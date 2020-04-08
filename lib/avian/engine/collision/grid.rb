@@ -89,8 +89,8 @@ module Collision
     # - parameter rectangle: Rectangle instance.
     #
     def nearest_objects_to(rectangle)
-      x_depth = (rectangle.size.width / cell_size.width) #+ 1
-      y_depth = (rectangle.size.height / cell_size.height) #+ 1
+      x_depth = (rectangle.size.width / cell_size.width)
+      y_depth = (rectangle.size.height / cell_size.height)
 
       x_depth_additions = cell_size.x * x_depth
       y_depth_additions = cell_size.y * y_depth

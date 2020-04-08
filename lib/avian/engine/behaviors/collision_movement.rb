@@ -22,7 +22,11 @@ class CollisionMovement < Behavior
     shortened = Collision.reduce_vector(current_position, movement_vector, &comparison)
     # => V[2, 0]
 
+    return true if shortened.zero?
+
     game_object.position += shortened
+
+    false
   end
 
   private
