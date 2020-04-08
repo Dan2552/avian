@@ -16,21 +16,26 @@ module Collision
   # IncrementalMovement runs a loop, so in the given example, the player would
   # still move at a rate of `Vector[0, 10]` in a single frame.
   #
-  class IncrementalMovement < Behavior
+  class IncrementalMovement
     # - parameter game_object: GameObject instance.
     #
     # - parameter increment: The number to move in each iteration.
     #
-    def initialize(game_object, increment)
-      if game_object.size.zero?
-        raise "A game object that has no size cannot be added to IncrementalMovement"
-      end
-
-      @game_object = game_object
+    def initialize(current_position, increment)
+      @original_position = current_position
+      @current_position = current_position
       @increment = increment.abs
       @decimal_places = increment.to_s.split(".").last.length
     end
 
+    # Reduce the given vector if the vector would result in collisions.
+    #
+    # This can be used for moving game objects towards a direction but preventing
+    # them collide with other objects.
+    #
+    # E.g. if the vector were [2, 1], but there's a wall above, and therefore
+    # there should be no upwards movement, the returned value would be [2, 0].
+    #
     # Incrementally move by the given vector at the increment rate.
     #
     # - parameter vector: How much to move by. E.g. Vector[1, 1] would move up
@@ -45,7 +50,7 @@ module Collision
     # `position.x` would be `0.31`, and the increment was set as `0.1`, the
     # value would be set as `0.3`.
     #
-    def move(vector, &collision_check)
+    def reduce_vector(vector, &collision_check)
       @vector = vector
       @collision_check = collision_check
 
@@ -59,9 +64,14 @@ module Collision
       @y_operator = :- if vector.y < 0
 
       step_increment
+
+      current_position - original_position
     end
 
     private
+
+    attr_reader :original_position
+    attr_reader :current_position
 
     def step_increment
       current_increment = :x
@@ -85,23 +95,23 @@ module Collision
       this_increment = [@increment, @remaining_x.abs].min
 
       if @x_operator == :+
-        new_x = @game_object.position.x + this_increment
+        new_x = current_position.x + this_increment
       elsif @x_operator == :-
-        new_x = @game_object.position.x - this_increment
+        new_x = current_position.x - this_increment
       end
 
       # puts "moving by #{this_increment}"
 
-      previous_position = @game_object.position
-      @game_object.position = Vector[
+      previous_position = current_position
+      @current_position = Vector[
         new_x.round(@decimal_places),
-        @game_object.position.y
+        current_position.y
       ]
 
       @remaining_x = (@remaining_x - this_increment).round(@decimal_places).abs
 
-      if @collision_check.call != true # there is a collision
-        @game_object.position = previous_position
+      if @collision_check.call(current_position) != true # there is a collision
+        @current_position = previous_position
         @remaining_x = 0
       end
     end
@@ -115,27 +125,27 @@ module Collision
 
       if @y_operator == :+
         # puts "adding"
-        new_y = @game_object.position.y + this_increment
+        new_y = current_position.y + this_increment
       elsif @y_operator == :-
         # puts "subtracting"
-        new_y = @game_object.position.y - this_increment
+        new_y = current_position.y - this_increment
       end
 
       # puts "moving by #{this_increment}"
 
-      previous_position = @game_object.position
-      @game_object.position = Vector[
-        @game_object.position.x,
+      previous_position = current_position
+      @current_position = Vector[
+        current_position.x,
         new_y.round(@decimal_places)
       ]
 
-      # puts "new position: #{@game_object.position}"
+      # puts "new position: #{current_position}"
 
       @remaining_y = (@remaining_y - this_increment).round(@decimal_places).abs
 
-      if @collision_check.call != true # there is a collision
+      if @collision_check.call(current_position) != true # there is a collision
         # puts "there's a collision"
-        @game_object.position = previous_position
+        @current_position = previous_position
         @remaining_y = 0
       end
     end

@@ -1,17 +1,13 @@
 describe Collision::IncrementalMovement do
-  let(:game_object) { GameObject::Base.new }
   let(:increment) { 0.1 }
-  let(:described_instance) { described_class.new(game_object, increment) }
+  let(:described_instance) { described_class.new(current_position, increment) }
 
-  before do
-    game_object.size = Size[1, 1]
-  end
-
-  describe "#move" do
+  describe "#reduce_vector" do
+    let(:current_position) { Vector[0, 0] }
     let(:collision_check) { Proc.new { true } }
 
     subject do
-      described_instance.move(vector, &collision_check)
+      described_instance.reduce_vector(vector, &collision_check)
     end
 
     context "when moving up" do
@@ -27,21 +23,17 @@ describe Collision::IncrementalMovement do
         subject
       end
 
-      it "puts the player's position as moved by vector" do
-        expect { subject }
-          .to change { game_object.position }
-          .from(Vector[0, 0])
-          .to(vector)
+      it "returns the vector" do
+        expect(subject).to eq(vector)
       end
 
       context "when collision occurs" do
-        let(:collision_check) { Proc.new { game_object.position.y < 0.5 } }
+        let(:collision_check) do
+          -> (potential_position) { potential_position.y < 0.5 }
+        end
 
-        it "puts the player's position at the iteration before it collides" do
-          expect { subject }
-            .to change { game_object.position }
-            .from(Vector[0, 0])
-            .to(Vector[0, 0.4])
+        it "shorten's the vector to the iteration before it collides" do
+          expect(subject).to eq(Vector[0, 0.4])
         end
       end
     end
@@ -59,21 +51,17 @@ describe Collision::IncrementalMovement do
         subject
       end
 
-      it "puts the player's position as moved by vector" do
-        expect { subject }
-          .to change { game_object.position }
-          .from(Vector[0, 0])
-          .to(vector)
+      it "returns the vector" do
+        expect(subject).to eq(vector)
       end
 
       context "when collision occurs" do
-        let(:collision_check) { Proc.new { game_object.position.x < 0.5 } }
+        let(:collision_check) do
+          -> (potential_position) { potential_position.x < 0.5 }
+        end
 
-        it "puts the player's position at the iteration before it collides" do
-          expect { subject }
-            .to change { game_object.position }
-            .from(Vector[0, 0])
-            .to(Vector[0.4, 0])
+        it "shorten's the vector to the iteration before it collides" do
+          expect(subject).to eq(Vector[0.4, 0])
         end
       end
     end
@@ -91,21 +79,17 @@ describe Collision::IncrementalMovement do
         subject
       end
 
-      it "puts the player's position as moved by vector" do
-        expect { subject }
-          .to change { game_object.position }
-          .from(Vector[0, 0])
-          .to(vector)
+      it "returns the vector" do
+        expect(subject).to eq(vector)
       end
 
       context "when collision occurs" do
-        let(:collision_check) { Proc.new { game_object.position.y > -0.5 } }
+        let(:collision_check) do
+          -> (potential_position) { potential_position.y > -0.5 }
+        end
 
-        it "puts the player's position at the iteration before it collides" do
-          expect { subject }
-            .to change { game_object.position }
-            .from(Vector[0, 0])
-            .to(Vector[0, -0.4])
+        it "reduces the vector to the iteration before it collides" do
+          expect(subject).to eq(Vector[0, -0.4])
         end
       end
     end
