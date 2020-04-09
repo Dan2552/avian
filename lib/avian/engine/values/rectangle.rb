@@ -47,6 +47,7 @@ class Rectangle
   # into the upper-left and lower-right points as specified.
   #
   def intersection(comparison)
+    raise "comparison must be a rectangle" unless comparison.is_a?(Rectangle)
     x_min = [left, comparison.left].max
     x_max = [right, comparison.right].min
 
