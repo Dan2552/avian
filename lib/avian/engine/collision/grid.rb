@@ -22,6 +22,8 @@ module Collision
       x_cell_count = size.width / cell_size.width
       y_cell_count = size.height / cell_size.height
 
+      raise "Incompatible size" unless x_cell_count > 0 && y_cell_count > 0
+
       y_cell_count.times do |row|
         arr_for_row = []
         x_cell_count.times do |col|
