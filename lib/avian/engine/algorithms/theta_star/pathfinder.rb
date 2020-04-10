@@ -21,8 +21,19 @@ module ThetaStar
     def line_of_sight(lhs, rhs)
       return false unless lhs.present?
 
+      return false if lhs.neighbors.many? { |neighbor| neighbor.nil? || neighbor.blocked? }
+
       BresenhamLine.iterate_line(lhs, rhs) do |x, y|
         vertex = graph[x, y]
+
+        rel_x = (x - lhs.x).abs
+        rel_y = (y - lhs.y).abs
+        return false if rel_x == 2 && rel_y == 1
+        return false if rel_x == 1 && rel_y == 2
+        return false if rel_x == 1 && rel_y == 1
+
+        return false if vertex.neighbors.many? { |neighbor| neighbor.nil? || neighbor.blocked? }
+
         return false if vertex.nil? || vertex.blocked?
       end
 
