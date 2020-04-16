@@ -10,6 +10,8 @@ module Avian
       attr_accessor :flipped_vertically
       attr_accessor :flipped_horizontally
       attr_accessor :visible
+      attr_accessor :color
+      attr_accessor :color_blend_factor
 
       def initialize(attributes)
         @image = attributes[:image]
@@ -54,6 +56,24 @@ module Avian
           scale_x,
           scale_y
         )
+
+        if color_blend_factor > 0
+          alpha = ((0xff * color_blend_factor).to_i << 24)
+
+          image.draw_rot(
+            draw_x,
+            camera.upside_down(draw_y),
+            z,
+            angle,
+            center_x = 1.0 - anchor_point.x,
+            center_y = 1.0 - anchor_point.y,
+            scale_x,
+            scale_y,
+            alpha + color,
+            :add
+          )
+
+        end
       end
     end
   end

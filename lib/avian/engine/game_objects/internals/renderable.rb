@@ -8,6 +8,8 @@ module GameObject::Internals::Renderable
   boolean :visible, default: true
   vector :renderable_anchor_point, default: Vector[0.5, 0.5]
   string :sprite_name
+  number :color, default: 0x000000
+  number :color_blend_factor, default: 0.0
 
   def sprite_name
     @sprite_name ||= self.class.to_s.demodulize.underscore.downcase

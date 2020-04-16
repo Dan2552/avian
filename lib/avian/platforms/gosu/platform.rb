@@ -23,6 +23,7 @@ class Platform
     def set_sprite_rotation(*args); shared_instance.set_sprite_rotation(*args); end
     def set_sprite_flipped(*args); shared_instance.set_sprite_flipped(*args); end
     def set_sprite_visible(*args); shared_instance.set_sprite_visible(*args); end
+    def set_sprite_color_blend(*args); shared_instance.set_sprite_color_blend(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
     def set_scale(*args); shared_instance.set_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
@@ -37,6 +38,11 @@ class Platform
   def create_sprite(texture, anchor_point)
     sprite = window.add_sprite(texture)
     sprite.tap { |s| s.anchor_point = anchor_point }
+  end
+
+  def set_sprite_color_blend(sprite, color, blend_factor)
+    sprite.color = color
+    sprite.color_blend_factor = blend_factor
   end
 
   # ** Shared **

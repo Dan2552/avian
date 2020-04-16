@@ -41,6 +41,13 @@ class Platform
     end
   end
 
+  def set_sprite_color_blend(sprite, color, blend_factor)
+    #   yellow = 0xffff00
+    # r = ((yellow & 0xff0000) >> 16) / 255
+    # g = ((yellow & 0x00ff00) >> 8) / 255
+    # b = (yellow & 0x0000ff) / 255
+  end
+
   # ** Shared **
   #
   def create_texture(texture_name)
