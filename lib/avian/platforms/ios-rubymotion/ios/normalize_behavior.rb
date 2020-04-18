@@ -29,7 +29,6 @@ unless defined?(JSON)
   module JSON
     class ParserError < StandardError; end
     def self.parse(json_string)
-      puts json_string
       opts = NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves | NSJSONReadingAllowFragments
       data = json_string.dataUsingEncoding(NSUTF8StringEncoding)
       error = Pointer.new(:id)

@@ -32,7 +32,7 @@ class Platform
   # Create a sprite to be stored in the renderer's sprite pool.
   #
   def create_sprite(texture, anchor_point)
-    puts "create_sprite(texture, anchor_point)"
+    puts "unimplemented!!! create_sprite(texture, anchor_point)"
     # sprite = window.add_sprite(texture)
     # sprite.tap { |s| s.anchor_point = anchor_point }
   end
@@ -40,7 +40,7 @@ class Platform
   # ** Shared **
   #
   def create_texture(texture_name)
-    puts "create_texture(texture_name)"
+    puts "unimplemented!!! create_texture(texture_name)"
     # ::Gosu::Image.new("resources/#{texture_name}.png", tileable: true)
   rescue
     raise "Failed to load texture: resources/#{texture_name}.png"
@@ -49,12 +49,12 @@ class Platform
   # ** Shared **
   #
   def set_sprite_texture(sprite, texture)
-    puts "set_sprite_texture(sprite, texture)"
+    puts "unimplemented!!! set_sprite_texture(sprite, texture)"
     # sprite.image = texture
   end
 
   def create_text(font_name)
-    puts "create_text(font_name)"
+    puts "unimplemented!!! create_text(font_name)"
     # text = Avian::DesktopGosuPlatform::Text.new(font_name)
     # text.tap do |t|
     #   window.texts << text
@@ -62,7 +62,7 @@ class Platform
   end
 
   def set_text_attributes(node, text, font_size, font_color, x, y)
-    puts "set_text_attributes(node, text, font_size, font_color, x, y)"
+    puts "unimplemented!!! set_text_attributes(node, text, font_size, font_color, x, y)"
     # node.text = text
     # node.font_size = font_size
     # node.font_color = FONT_COLORS[font_color]
@@ -73,14 +73,14 @@ class Platform
   # ** Shared **
   #
   def camera
-    puts "camera"
+    puts "unimplemented!!! camera"
     # window.camera
   end
 
   # ** Shared **
   #
   def set_sprite_position(sprite, position, z_position)
-    puts "set_sprite_position(sprite, position, z_position)"
+    puts "unimplemented!!! set_sprite_position(sprite, position, z_position)"
     # return if sprite == nil
 
     # # I'm not sure why the Avian::Platforms::Gosu::Camera position needs
@@ -99,13 +99,13 @@ class Platform
   # ** Shared **
   #
   def set_sprite_rotation(sprite, vector)
-    puts "set_sprite_rotation(sprite, vector)"
+    puts "unimplemented!!! set_sprite_rotation(sprite, vector)"
     # return if sprite == nil
     # sprite.angle = 180 - ::Gosu.angle(0, 0, vector.x, vector.y)
   end
 
   def set_sprite_flipped(sprite, vertically, horizontally)
-    puts "set_sprite_flipped(sprite, vertically, horizontally)"
+    puts "unimplemented!!! set_sprite_flipped(sprite, vertically, horizontally)"
     # sprite.flipped_vertically = vertically
     # sprite.flipped_horizontally = horizontally
   end
@@ -113,21 +113,21 @@ class Platform
   # ** Shared **
   #
   def remove_sprite(sprite)
-    puts "remove_sprite(sprite)"
+    puts "unimplemented!!! remove_sprite(sprite)"
     # window.sprites.delete(sprite)
   end
 
   # ** Shared **
   #
   def set_scale(sprite, scale)
-    puts "set_scale(sprite, scale)"
+    puts "unimplemented!!! set_scale(sprite, scale)"
     # sprite.scale = 1.0 / scale
   end
 
   # ** Shared **
   #
   def screen_size
-    puts "screen_size"
-    # @screen_size ||= Size[window.width, window.height]
+    puts "unimplemented!!! screen_size"
+    @screen_size ||= Size[100, 100]
   end
 end
