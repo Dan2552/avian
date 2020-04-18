@@ -25,6 +25,7 @@ module ThetaStar
 
       BresenhamLine.iterate_line(lhs, rhs) do |x, y|
         vertex = graph[x, y]
+        return false if vertex.nil?
 
         rel_x = (x - lhs.x).abs
         rel_y = (y - lhs.y).abs
