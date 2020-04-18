@@ -25,14 +25,12 @@ class Platform
     def set_sprite_visible(*args); shared_instance.set_sprite_visible(*args); end
     def set_sprite_color_blend(*args); shared_instance.set_sprite_color_blend(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
-    def set_scale(*args); shared_instance.set_scale(*args); end
+    def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
   end
 
   attr_accessor :window
 
-  # ** Shared **
-  #
   # Create a sprite to be stored in the renderer's sprite pool.
   #
   def create_sprite(texture, anchor_point)
@@ -45,16 +43,12 @@ class Platform
     sprite.color_blend_factor = blend_factor
   end
 
-  # ** Shared **
-  #
   def create_texture(texture_name)
     ::Gosu::Image.new("resources/#{texture_name}.png", tileable: true)
   rescue
     raise "Failed to load texture: resources/#{texture_name}.png"
   end
 
-  # ** Shared **
-  #
   def set_sprite_texture(sprite, texture)
     sprite.image = texture
   end
@@ -84,14 +78,10 @@ class Platform
     node.y = y
   end
 
-  # ** Shared **
-  #
   def camera
     window.camera
   end
 
-  # ** Shared **
-  #
   def set_sprite_position(sprite, position, z_position)
     return if sprite == nil
 
@@ -108,8 +98,6 @@ class Platform
     end
   end
 
-  # ** Shared **
-  #
   def set_sprite_rotation(sprite, vector)
     return if sprite == nil
     sprite.angle = 180 - ::Gosu.angle(0, 0, vector.x, vector.y)
@@ -120,20 +108,19 @@ class Platform
     sprite.flipped_horizontally = horizontally
   end
 
-  # ** Shared **
-  #
   def remove_sprite(sprite)
     window.sprites.delete(sprite)
   end
 
-  # ** Shared **
-  #
-  def set_scale(sprite, scale)
-    sprite.scale = 1.0 / scale
+  def set_sprite_scale(sprite, x_scale, y_scale)
+    if sprite.is_a?(Avian::DesktopGosuPlatform::Camera)
+      sprite.scale = 1.0 / y_scale
+    else
+      sprite.x_scale = x_scale
+      sprite.y_scale = y_scale
+    end
   end
 
-  # ** Shared **
-  #
   def screen_size
     @screen_size ||= Size[window.width, window.height]
   end

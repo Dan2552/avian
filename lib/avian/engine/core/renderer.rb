@@ -12,7 +12,7 @@ class Renderer
   #
   def draw_frame
     Platform.set_sprite_position(camera_node, camera_game_object.position, nil)
-    Platform.set_scale(camera_node, camera_game_object.scale)
+    Platform.set_sprite_scale(camera_node, camera_game_object.scale, camera_game_object.scale)
     traverse
   end
 
@@ -39,6 +39,7 @@ class Renderer
       Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
       Platform.set_sprite_visible(sprite_node, renderable.visible)
       Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
+      Platform.set_sprite_scale(sprite_node, renderable.x_scale, renderable.y_scale)
     end
   end
 

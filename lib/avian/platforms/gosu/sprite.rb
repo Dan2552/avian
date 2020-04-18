@@ -12,6 +12,8 @@ module Avian
       attr_accessor :visible
       attr_accessor :color
       attr_accessor :color_blend_factor
+      attr_accessor :x_scale
+      attr_accessor :y_scale
 
       def initialize(attributes)
         @image = attributes[:image]
@@ -23,6 +25,8 @@ module Avian
         @flipped_horizontally = attributes[:flipped_horizontally] || false
         @anchor_point = attributes[:anchor_point]
         @visible = attributes[:visible] || true
+        @x_scale = 1
+        @y_scale = 1
       end
 
       def draw_using_camera(camera)
@@ -53,8 +57,8 @@ module Avian
           angle,
           center_x = 1.0 - anchor_point.x,
           center_y = 1.0 - anchor_point.y,
-          scale_x,
-          scale_y
+          scale_x * x_scale,
+          scale_y * y_scale
         )
 
         if color_blend_factor > 0
@@ -67,12 +71,11 @@ module Avian
             angle,
             center_x = 1.0 - anchor_point.x,
             center_y = 1.0 - anchor_point.y,
-            scale_x,
-            scale_y,
+            scale_x * x_scale,
+            scale_y * x_scale,
             alpha + color,
             :add
           )
-
         end
       end
     end

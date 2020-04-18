@@ -10,6 +10,8 @@ module GameObject::Internals::Renderable
   string :sprite_name
   number :color, default: 0x000000
   number :color_blend_factor, default: 0.0
+  number :x_scale, default: 1.0
+  number :y_scale, default: 1.0
 
   def sprite_name
     @sprite_name ||= self.class.to_s.demodulize.underscore.downcase

@@ -21,8 +21,9 @@ class Platform
     def set_sprite_rotation(*args); shared_instance.set_sprite_rotation(*args); end
     def set_sprite_flipped(*args); shared_instance.set_sprite_flipped(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
-    def set_scale(*args); shared_instance.set_scale(*args); end
+    def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def set_sprite_visible(*args); shared_instance.set_sprite_visible(*args); end
+    def set_sprite_color_blend(*args); shared_instance.set_sprite_color_blend(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
   end
 
@@ -30,8 +31,6 @@ class Platform
   #
   attr_accessor :scene
 
-  # ** Shared **
-  #
   # Create a sprite to be stored in the renderer's sprite pool.
   #
   def create_sprite(texture, anchor_point)
@@ -41,15 +40,8 @@ class Platform
     end
   end
 
-  def set_sprite_color_blend(sprite, color, blend_factor)
-    #   yellow = 0xffff00
-    # r = ((yellow & 0xff0000) >> 16) / 255
-    # g = ((yellow & 0x00ff00) >> 8) / 255
-    # b = (yellow & 0x0000ff) / 255
-  end
 
-  # ** Shared **
-  #
+
   def create_texture(texture_name)
     SKTexture.textureWithImageNamed("#{texture_name}.png")
   end
@@ -78,8 +70,6 @@ class Platform
     node.position = CGPoint.new(x, y)
   end
 
-  # ** Shared **
-  #
   def set_sprite_texture(sprite, texture)
     sprite.texture = texture
   end
@@ -91,39 +81,40 @@ class Platform
     sprite.yScale = -1.0 if flipped_horizontally
   end
 
-  # ** Shared **
-  #
   def camera
     scene.camera
   end
 
-  # ** Shared **
-  #
   def set_sprite_position(sprite, position, z_position)
     sprite.position = CGPoint.new(position.x, position.y)
     sprite.zPosition = z_position if z_position
   end
 
-  # ** Shared **
-  #
   def set_sprite_rotation(sprite, vector)
     sprite.zRotation = Math::Direction.positional_difference(Vector[0, 0], vector) - Math::Direction::UP
   end
 
-  # ** Shared **
-  #
   def remove_sprite(sprite)
     sprite.removeFromParent
   end
 
-  # ** Shared **
-  #
-  def set_scale(sprite, scale)
-    sprite.scale = scale
+  def set_sprite_scale(sprite, x_scale, y_scale)
+    if sprite.is_a?(SKCameraNode)
+      sprite.scale = y_scale
+    else
+      sprite.xScale = x_scale
+      sprite.yScale = y_scale
+    end
   end
 
-  # ** Shared **
-  #
+  def set_sprite_color_blend(sprite, color, blend_factor)
+    r = ((color & 0xff0000) >> 16) / 255
+    g = ((color & 0x00ff00) >> 8) / 255
+    b = (color & 0x0000ff) / 255
+    sprite.color = UIColor.alloc.initWithRed(r, green: g, blue: b, alpha: 1)
+    sprite.colorBlendFactor = blend_factor
+  end
+
   def screen_size
     @screen_size ||= Size[
       UIScreen.mainScreen.bounds.size.width,
