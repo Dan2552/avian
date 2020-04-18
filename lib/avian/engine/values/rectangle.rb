@@ -73,4 +73,20 @@ class Rectangle
   def bottom
     origin.y
   end
+
+  def top_left
+    Vector[left, top]
+  end
+
+  def top_right
+    Vector[right, top]
+  end
+
+  def bottom_left
+    Vector[left, bottom]
+  end
+
+  def bottom_right
+    Vector[right, bottom]
+  end
 end
