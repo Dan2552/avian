@@ -30,6 +30,8 @@ class Renderer
 
   def draw(renderable)
     return draw_text(renderable) if renderable.is_a?(GameObject::Text)
+    is_new = pool[renderable.id].nil?
+    return if renderable.static_renderable && !is_new
     sprite_node = find_or_create_sprite(renderable)
 
     if renderable.destroyed?
