@@ -8,7 +8,9 @@ class RenderList
   # Should be called at the start of the game loop.
   #
   def clear!
+    # Profiler.shared_instance.start_of("RenderList#clear")
     list.clear
+    # Profiler.shared_instance.end_of("RenderList#clear")
   end
 
   # Add an element to the render list.

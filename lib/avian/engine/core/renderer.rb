@@ -11,9 +11,11 @@ class Renderer
   # running through the logic.
   #
   def draw_frame
+    # Profiler.shared_instance.start_of("Renderer")
     Platform.set_sprite_position(camera_node, camera_game_object.position, nil)
     Platform.set_sprite_scale(camera_node, camera_game_object.scale, camera_game_object.scale)
     traverse
+    # Profiler.shared_instance.end_of("Renderer")
   end
 
   private

@@ -26,13 +26,15 @@ class GameObject::Base
 
     # Captures specified attributes' values defined by `.capture_previous`.
     capture_previous
+    # Profiler.shared_instance.start_of("RenderList#<<")
+    # Profiler.shared_instance.end_of("RenderList#<<")
 
-    Profiler.shared_instance.start_of(self.class.to_s)
+    # Profiler.shared_instance.start_of(self.class.to_s)
 
     # This specifically runs *before* the children game objects.
     update
 
-    Profiler.shared_instance.end_of(self.class.to_s)
+    # Profiler.shared_instance.end_of(self.class.to_s)
     children.each(&:perform_update)
   end
 
