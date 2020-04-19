@@ -9,21 +9,8 @@
 class GameObject::Base
   extend GameObject::Internals::Attributes
   extend GameObject::Internals::Relationships
-  extend GameObject::Internals::PreviousFrameClass
-  include GameObject::Internals::PreviousFrameInstance
   include GameObject::Internals::Positional
   include GameObject::Internals::Renderable
-
-  # Positional attributes are captured between frames.
-  #
-  # See `GameObject::Internals::PreviousFrame.capture_previous` for more
-  # information.
-  #
-  capture_previous :position,
-                   :rotation,
-                   :z_position,
-                   :size,
-                   :frame
 
   # Should be called to perform an update on the GameObject and it's children.
   #
