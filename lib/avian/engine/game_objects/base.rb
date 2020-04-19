@@ -21,11 +21,8 @@ class GameObject::Base
   #
   def perform_update
     raise "#perform_update called on destroyed GameObject" if destroyed
-    delta = delta.to_f
     RenderList.shared_instance << self if renderable?
 
-    # Captures specified attributes' values defined by `.capture_previous`.
-    capture_previous
     # Profiler.shared_instance.start_of("RenderList#<<")
     # Profiler.shared_instance.end_of("RenderList#<<")
 
