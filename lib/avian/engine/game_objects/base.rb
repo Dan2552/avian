@@ -21,9 +21,9 @@ class GameObject::Base
   #
   def perform_update
     raise "#perform_update called on destroyed GameObject" if destroyed
-    RenderList.shared_instance << self if renderable?
 
     # Profiler.shared_instance.start_of("RenderList#<<")
+    RenderList.shared_instance << self if renderable?
     # Profiler.shared_instance.end_of("RenderList#<<")
 
     # Profiler.shared_instance.start_of(self.class.to_s)
