@@ -27,6 +27,7 @@ module Avian
         @visible = attributes[:visible] || true
         @x_scale = 1
         @y_scale = 1
+        @color_blend_factor = 0
       end
 
       def draw_using_camera(camera)
