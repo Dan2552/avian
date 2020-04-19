@@ -4,8 +4,11 @@ class GameScene < SKScene
     Platform.shared_instance.scene = self
 
     view.showsFPS = true
+    view.showsDrawCount = true
+    # view.showsNodeCount = true
     view.multipleTouchEnabled = true
     view.ignoresSiblingOrder = true
+    view.shouldCullNonVisibleNodes = true
 
     self.backgroundColor = UIColor.alloc.initWithRed(0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 1)
     self.camera = @strong_camera_reference
