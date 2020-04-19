@@ -43,6 +43,18 @@ class Platform
 
 
   def create_texture(texture_name)
+    if texture_name.start_with?("dungeon/")
+      number = texture_name.split("dungeon/dungeon").last.to_i
+      @dungeon ||= SKTexture.textureWithImageNamed("dungeon.png")
+      row = number / 8
+      col = number % 8
+      width = 1.0 / 8
+      height = 1.0 / 8
+
+      rect = CGRectMake(width * col, 1 - (height * (row + 1)), 0.125, 0.125)
+      return SKTexture.textureWithRect(rect, inTexture: @dungeon);
+    end
+
     SKTexture.textureWithImageNamed("#{texture_name}.png")
   end
 
@@ -86,8 +98,9 @@ class Platform
   end
 
   def set_sprite_position(sprite, position, z_position)
-    sprite.position = CGPoint.new(position.x, position.y)
-    sprite.zPosition = z_position if z_position
+    new_position = CGPoint.new(position.x, position.y)
+    sprite.position = new_position if sprite.position != new_position
+    sprite.zPosition = z_position if z_position && z_position != sprite.zPosition
   end
 
   def set_sprite_rotation(sprite, vector)
@@ -102,8 +115,9 @@ class Platform
     if sprite.is_a?(SKCameraNode)
       sprite.scale = y_scale
     else
-      sprite.xScale = x_scale
-      sprite.yScale = y_scale
+
+      sprite.xScale = x_scale if sprite.xScale != x_scale
+      sprite.yScale = y_scale if sprite.yScale != y_scale
     end
   end
 
