@@ -22,7 +22,7 @@ require 'process_output_wrapper'
 include ProcessOutputWrapper::DSL
 
 Bundler.with_clean_env do
-  build_dir = File.join(project_root, "tmp", "build")
+  build_dir = File.join("/", "tmp", "avian", "build")
   platform_support = File.join(project_root, "platform_support", "ios")
 
   gemfile = File.join(platform_support, "Gemfile")
