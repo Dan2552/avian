@@ -18,6 +18,11 @@ module Avian
       def [](key)
         @hash[key]
       end
+
+      # TODO: spec
+      def property(name)
+        @hash["properties"].find { |hash| hash["name"] == name }["value"]
+      end
     end
   end
 end
