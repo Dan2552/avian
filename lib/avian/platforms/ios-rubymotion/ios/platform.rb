@@ -40,20 +40,18 @@ class Platform
     end
   end
 
-
-
   def create_texture(texture_name)
-    if texture_name.start_with?("dungeon/")
-      number = texture_name.split("dungeon/dungeon").last.to_i
-      @dungeon ||= SKTexture.textureWithImageNamed("dungeon.png")
-      row = number / 8
-      col = number % 8
-      width = 1.0 / 8
-      height = 1.0 / 8
+    # if texture_name.start_with?("dungeon/")
+    #   number = texture_name.split("dungeon/dungeon").last.to_i
+    #   @dungeon ||= SKTexture.textureWithImageNamed("dungeon.png")
+    #   row = number / 20
+    #   col = number % 20
+    #   width = 1.0 / 20
+    #   height = 1.0 / 20
 
-      rect = CGRectMake(width * col, 1 - (height * (row + 1)), 0.125, 0.125)
-      return SKTexture.textureWithRect(rect, inTexture: @dungeon);
-    end
+    #   rect = CGRectMake(width * col, 1 - (height * (row + 1)), width, height)
+    #   return SKTexture.textureWithRect(rect, inTexture: @dungeon);
+    # end
 
     SKTexture.textureWithImageNamed("#{texture_name}.png")
   end
