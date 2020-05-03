@@ -30,21 +30,25 @@ class Renderer
 
   def draw(renderable)
     return draw_text(renderable) if renderable.is_a?(GameObject::Text)
-    is_new = pool[renderable.id].nil?
-    return if renderable.static_renderable && !is_new
-    sprite_node = find_or_create_sprite(renderable)
 
     if renderable.destroyed?
+      sprite_node = find_or_create_sprite(renderable)
       Platform.remove_sprite(sprite_node)
-    else
-      Platform.set_sprite_texture(sprite_node, find_or_create_texture(renderable.sprite_name))
-      Platform.set_sprite_position(sprite_node, renderable.renderable_position, renderable.renderable_z_position)
-      Platform.set_sprite_rotation(sprite_node, renderable.rotation)
-      Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
-      Platform.set_sprite_visible(sprite_node, renderable.visible)
-      Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
-      Platform.set_sprite_scale(sprite_node, renderable.x_scale, renderable.y_scale)
+      pool.delete(renderable.id)
+      return
     end
+
+    is_new = pool[renderable.id].nil?
+    return if renderable.static_renderable && !is_new
+
+    sprite_node = find_or_create_sprite(renderable)
+    Platform.set_sprite_texture(sprite_node, find_or_create_texture(renderable.sprite_name))
+    Platform.set_sprite_position(sprite_node, renderable.renderable_position, renderable.renderable_z_position)
+    Platform.set_sprite_rotation(sprite_node, renderable.rotation)
+    Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
+    Platform.set_sprite_visible(sprite_node, renderable.visible)
+    Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
+    Platform.set_sprite_scale(sprite_node, renderable.x_scale, renderable.y_scale)
   end
 
   def draw_text(renderable)

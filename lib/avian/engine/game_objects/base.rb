@@ -20,7 +20,14 @@ class GameObject::Base
   # behaviour for updates.
   #
   def perform_update
-    raise "#perform_update called on destroyed GameObject" if destroyed
+    if destroyed
+      if @updated_once
+        puts "destroyed once"
+        raise "#perform_update called on destroyed GameObject"
+      end
+      @updated_once = true
+      return
+    end
 
     # Profiler.shared_instance.start_of("RenderList#<<")
     RenderList.shared_instance << self if renderable?
@@ -38,20 +45,13 @@ class GameObject::Base
   # Destroy the instance. This'll prevent the instance from behaving on any
   # more calls to `perform_update`.
   #
-  # This must be called in the update loop.
+  # The actual destroy will take place on the next `#update` the object
+  # receives.
   #
   def destroy
-    foreign_relationship_name = self.class.send(:foreign_relationship_name)
-
-    parents.each do |parent|
-      if parent.respond_to?(:"#{foreign_relationship_name}=")
-        parent.send("#{foreign_relationship_name}=", nil)
-      else
-        parent.send("#{foreign_relationship_name.pluralize}").delete(self)
-      end
-    end
-
-    self.destroyed = true
+    RenderList.shared_instance << self if renderable?
+    did_destroy
+    children.each(&:destroy)
   end
 
   # A GameObject is not renderable by default.
@@ -137,6 +137,7 @@ class GameObject::Base
 
   private
 
+  attr_accessor :will_destroy
   attr_accessor :destroyed
 
   # The parents to this GameObject.
@@ -145,6 +146,20 @@ class GameObject::Base
   #
   def parents
     self.class.parent_relationships.map { |r| self.send(r) }.compact.freeze
+  end
+
+  def did_destroy
+    foreign_relationship_name = self.class.send(:foreign_relationship_name)
+
+    parents.each do |parent|
+      if parent.respond_to?(:"#{foreign_relationship_name}=")
+        parent.send("#{foreign_relationship_name}=", nil)
+      else
+        parent.send("#{foreign_relationship_name.pluralize}").delete(self)
+      end
+    end
+
+    self.destroyed = true
   end
 end
 
