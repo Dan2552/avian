@@ -30,10 +30,6 @@ module ThetaStar
         rel_x = (x - lhs.x)
         rel_y = (y - lhs.y)
 
-        if rel_x == 0 && rel_y == 0
-          return true
-        end
-
         if rel_x == 2 && rel_y == 1
           check = graph[lhs.x + 1, lhs.y + 1]
 
