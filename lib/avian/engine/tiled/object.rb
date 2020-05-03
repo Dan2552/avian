@@ -21,7 +21,10 @@ module Avian
 
       # TODO: spec
       def property(name)
-        @hash["properties"].find { |hash| hash["name"] == name }["value"]
+        return nil unless @hash["properties"]
+        property = @hash["properties"].find { |hash| hash["name"] == name }
+        return nil unless property
+        property["value"]
       end
     end
   end
