@@ -13,7 +13,6 @@ class Platform
     end
 
     def create_sprite(*args); shared_instance.create_sprite(*args); end
-    def create_sprite(*args); shared_instance.create_sprite(*args); end
     def create_texture(*args); shared_instance.create_texture(*args); end
     def set_sprite_texture(*args); shared_instance.set_sprite_texture(*args); end
     def create_text(*args); shared_instance.create_text(*args); end
@@ -27,6 +26,7 @@ class Platform
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
     def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
+    def width_of_text(*args); shared_instance.width_of_text(*args); end
   end
 
   attr_accessor :window
@@ -64,18 +64,19 @@ class Platform
     end
   end
 
-  # TODO: make it support color hashes instead
-  FONT_COLORS = {
-    "black" => 0xff_000000,
-    "white" => 0xff_ffffff,
-  }
+  def width_of_text(renderable, text)
+    Gosu::Font
+      .new((renderable.font_size) + 8, { name: renderable.font_name })
+      .text_width(text)
+  end
 
-  def set_text_attributes(node, text, font_size, font_color, x, y)
+  def set_text_attributes(node, text, font_size, font_color, x, y, alignment)
     node.text = text
     node.font_size = font_size
-    node.font_color = FONT_COLORS[font_color]
+    node.font_color = 0xff_000000 + font_color #FONT_COLORS[font_color]
     node.x = x
     node.y = y
+    node.alignment = alignment
   end
 
   def camera

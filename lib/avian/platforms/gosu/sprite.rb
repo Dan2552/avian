@@ -12,6 +12,7 @@ module Avian
       attr_accessor :visible
       attr_accessor :color
       attr_accessor :color_blend_factor
+      attr_accessor :multiplication_color
       attr_accessor :x_scale
       attr_accessor :y_scale
 
@@ -25,9 +26,11 @@ module Avian
         @flipped_horizontally = attributes[:flipped_horizontally] || false
         @anchor_point = attributes[:anchor_point]
         @visible = attributes[:visible] || true
+        @color = attributes[:color]
+        @color_blend_factor = attributes[:color_blend_factor] || 0
+        @multiplication_color = attributes[:multiplication_color] || 0xff_ffffff
         @x_scale = 1
         @y_scale = 1
-        @color_blend_factor = 0
       end
 
       def draw_using_camera(camera)
@@ -51,6 +54,8 @@ module Avian
         scale_y = camera.scale * 0.5
         scale_y = 0 - scale_y if flipped_horizontally == true
 
+        alpha = ((0xff * color_blend_factor).to_i << 24)
+
         image.draw_rot(
           draw_x,
           camera.upside_down(draw_y),
@@ -59,25 +64,37 @@ module Avian
           center_x = 1.0 - anchor_point.x,
           center_y = 1.0 - anchor_point.y,
           scale_x * x_scale,
-          scale_y * y_scale
+          scale_y * y_scale,
+          multiplication_color
         )
 
-        if color_blend_factor > 0
-          alpha = ((0xff * color_blend_factor).to_i << 24)
+        # image.draw_rot(
+        #   draw_x,
+        #   camera.upside_down(draw_y),
+        #   z,
+        #   angle,
+        #   center_x = 1.0 - anchor_point.x,
+        #   center_y = 1.0 - anchor_point.y,
+        #   scale_x * x_scale,
+        #   scale_y * y_scale
+        # )
 
-          image.draw_rot(
-            draw_x,
-            camera.upside_down(draw_y),
-            z,
-            angle,
-            center_x = 1.0 - anchor_point.x,
-            center_y = 1.0 - anchor_point.y,
-            scale_x * x_scale,
-            scale_y * x_scale,
-            alpha + color,
-            :add
-          )
-        end
+        # if color_blend_factor > 0
+        #   alpha = ((0xff * color_blend_factor).to_i << 24)
+
+        #   image.draw_rot(
+        #     draw_x,
+        #     camera.upside_down(draw_y),
+        #     z,
+        #     angle,
+        #     center_x = 1.0 - anchor_point.x,
+        #     center_y = 1.0 - anchor_point.y,
+        #     scale_x * x_scale,
+        #     scale_y * x_scale,
+        #     alpha + color,
+        #     :add
+        #   )
+        # end
       end
     end
   end

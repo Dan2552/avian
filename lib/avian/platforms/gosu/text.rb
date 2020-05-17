@@ -9,7 +9,8 @@ module Avian
                   :font_size,
                   :font_color,
                   :x,
-                  :y
+                  :y,
+                  :alignment
 
       def text=(set)
         @sprite = nil
@@ -36,6 +37,11 @@ module Avian
         @y = set
       end
 
+      def alignment=(set)
+        @sprite = nil
+        @alignment = set
+      end
+
       def draw_using_camera(camera)
         @sprite ||= build_sprite
 
@@ -51,7 +57,7 @@ module Avian
           text,
           (font_size * 2) + 16, # magic numbers to normalize close to iOS
           font: font_name,
-          align: :center
+          align: alignment
         )
 
         sprite = Sprite.new(
@@ -62,7 +68,8 @@ module Avian
           angle: 0,
           flipped_vertically: false,
           flipped_horizontally: false,
-          anchor_point: Vector[0.5, 0.5]
+          anchor_point: Vector[1, 0.0],
+          multiplication_color: font_color
         )
       end
     end
