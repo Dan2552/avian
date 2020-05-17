@@ -1,0 +1,107 @@
+#!/usr/bin/env ruby
+
+project_root = ENV['GAME_ROOT']
+avian_root = ENV['AVIAN_ROOT']
+build_dir = File.join("/", "tmp", "avian", "build")
+platform_support = File.join(project_root, "platform_support", "mruby")
+
+FileUtils.mkdir_p(build_dir)
+FileUtils.mkdir_p(File.join(build_dir, "app", "_avian"))
+FileUtils.mkdir_p(File.join(build_dir, "app", "_game"))
+
+# Copy files from the actual game project into tmp/build/app/_game
+["app", "config", "lib"].each do |game_files|
+  source = File.join(project_root, game_files, ".")
+  destination = File.join(build_dir, "app", "_game", game_files)
+  FileUtils.cp_r(source, destination)
+end
+
+# Copy the resources from the game project into tmp/build/resources/
+source = File.join(project_root, "resources", ".")
+destination = File.join(build_dir, "resources")
+FileUtils.cp_r(source, destination)
+
+puts "--- Compiling mruby ---"
+FileUtils.cd(platform_support)
+system("bundle exec mundle install") || raise("Compiling failed")
+mruby_path = `bundle exec mundle path`.chomp
+
+# Copy the platform specific resources into tmp/build/resources/
+source = File.join(platform_support, ".")
+destination = File.join(build_dir)
+FileUtils.cp_r(source, destination)
+
+# Copy ios specific avian files to tmp/build/app/_avian/ios
+avian_files = File.join(avian_root, "lib", "avian", "platforms", "ios-rubymotion", "ios")
+FileUtils.cp_r(avian_files.to_s + "/.", "#{build_dir}/app/_avian/ios/")
+
+# Copy avian engine files to tmp/build/app/_avian/engine
+engine_files = File.join(avian_root, "lib", "avian", "engine")
+FileUtils.cp_r(engine_files.to_s + "/.", "#{build_dir}/app/_avian/engine/")
+
+# Set the current working directory to the build
+FileUtils.cd(build_dir)
+
+require 'avian'
+
+app_load_order = [
+  'lib/**/*.rb',
+  'app/values/**/*.rb',
+  'app/**/concerns/*.rb',
+  'app/**/*.rb',
+  'config/**/*.rb'
+]
+
+
+
+avian_files = AVIAN_LOAD_ORDER.map { |glob| Dir.glob(File.join(build_dir, "app", "_avian", glob)) }.flatten
+app_files = app_load_order.map { |glob| Dir.glob(File.join(build_dir, "app", "_game", glob)) }.flatten
+prefix_files = Dir.glob(File.expand_path(File.join(__dir__, "prefix", "*.rb")))
+suffix_files = Dir.glob(File.expand_path(File.join(__dir__, "suffix", "*.rb")))
+
+all_files =
+  prefix_files +
+  avian_files +
+  app_files +
+  suffix_files
+
+File.open(File.join(build_dir, "all_files.rb"), 'w') do |write_file|
+  all_files.each do |filepath|
+    puts filepath
+    write_file.puts File.readlines(filepath).join
+  end
+end
+
+mrbc = %W(
+  mrbc
+    -g
+    -Bapp
+    -o./app.c
+    ./all_files.rb
+)
+
+puts "\n--- Compiling ruby game files ---"
+system(*mrbc) || raise("Compiling failed")
+puts "Compiling complete."
+
+File.open(File.join(build_dir, "output.c"), 'w') do |write_file|
+  ["app.c", File.join(__dir__, "main.c")].each do |filepath|
+    write_file.puts File.readlines(filepath).join
+  end
+end
+
+puts "\n--- Compiling c files ---"
+clang = %W(
+  clang
+    output.c
+    -ooutput
+    -I#{mruby_path}/include
+    -lmruby
+    -L#{mruby_path}/build/host/lib/
+)
+
+system(*clang) || raise("Compiling failed")
+puts "Compiling complete."
+
+system(*%W(chmod +x ./output))
+system("./output")

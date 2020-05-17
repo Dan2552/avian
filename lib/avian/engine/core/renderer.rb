@@ -63,7 +63,8 @@ class Renderer
         renderable.font_size,
         renderable.font_color,
         renderable.position.x,
-        renderable.position.y
+        renderable.position.y,
+        renderable.alignment
       )
     end
   end

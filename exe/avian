@@ -25,8 +25,8 @@ class AvianCLI < Thor
     end
   end
 
-  desc "start PLATFORM TYPE", "Start your game. Defaults to macos"
-  def start(platform = "macos", type = "simulator")
+  desc "start PLATFORM TYPE", "Start your game. Defaults to desktop-mruby"
+  def start(platform = "desktop-mruby", type = "simulator")
     unless defined?(Bundler)
       exit 0 if system("bundle exec avian start #{platform} #{type}")
       exit 1
@@ -36,6 +36,9 @@ class AvianCLI < Thor
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
 
     case platform.to_s
+    when "desktop-mruby"
+      boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "desktop-mruby", "boot"))
+      system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
     when "macos"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "gosu", "boot"))
       system(
@@ -121,10 +124,10 @@ class AvianCLI < Thor
     end
 
     project_root = Bundler.root.to_s
-    build_dir = File.join(project_root, "tmp", "build")
+    build_dir = File.join("/", "tmp", "avian")
     rm_dir = File.join(ENV["HOME"], "Library", "RubyMotion", "build")
-    FileUtils.rm_r(build_dir) if File.exists?(build_dir)
-    FileUtils.rm_r(rm_dir) if File.exists?(rm_dir)
+    FileUtils.rm_rf(build_dir) if File.exists?(build_dir)
+    FileUtils.rm_rf(rm_dir) if File.exists?(rm_dir)
   end
 end
 

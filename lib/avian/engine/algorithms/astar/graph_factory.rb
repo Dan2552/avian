@@ -1,7 +1,5 @@
 module AStar
   module GraphFactory
-    module_function
-
     # Creates a graph representing a 2D grid. Sets `x` and `y` values as the
     # position for the vertex within the 2D grid.
     #
@@ -9,7 +7,7 @@ module AStar
     # - parameter height: Int
     # - returns: Graph
     #
-    def two_dimensional_graph(width, height)
+    def self.two_dimensional_graph(width, height)
       graph = Graph.new
       width.times do |x|
         height.times do |y|

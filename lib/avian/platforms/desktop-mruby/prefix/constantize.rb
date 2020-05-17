@@ -1,4 +1,3 @@
-puts "loading constantize"
 # Copyright (c) 2005-2015 David Heinemeier Hansson
 
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -39,9 +38,7 @@ puts "loading constantize"
 # NameError is raised when the name is not in CamelCase or the constant is
 # unknown.
 class String
-  puts "checking if defined"
   unless method_defined?(:constantize)
-    puts "defining"
     def constantize
       names = self.split('::')
 

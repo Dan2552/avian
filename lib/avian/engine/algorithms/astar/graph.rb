@@ -67,7 +67,11 @@ module AStar
     end
 
     def inspect
-      "#<#{self.class.name}>"
+      "#<#{self.class.name}: #{@vertices.count} Verteces>"
+    end
+
+    def to_s
+      inspect
     end
 
     private

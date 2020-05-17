@@ -1,25 +1,16 @@
-puts "loading start"
+puts "THIS IS REALLY RUBY"
+
 begin
   config = Avian::Application.main.config
   primary_scene = config.primary_scene
   puts "primary_scene: #{primary_scene}"
   scenario = primary_scene.new
   game_loop ||= Loop.new(scenario.root)
-
-  update do
-    current_time = Time.now.to_f
-    @loop.perform_update(current_time * 1000)
+  current_time = Time.now.to_f
+  10.times do
+    game_loop.perform_update(current_time * 1000)
   end
-
-  # Triangle.new(
-  #   x1: 320, y1:  50,
-  #   x2: 540, y2: 430,
-  #   x3: 100, y3: 430,
-  #   color: ['red', 'green', 'blue']
-  # )
-
-  show
-
+  puts "SUCCESS"
 rescue Exception => e
   puts "========="
   puts e.inspect

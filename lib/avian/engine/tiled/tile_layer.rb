@@ -20,7 +20,7 @@ module Avian
 
         @hash["data"].each.with_index do |tile, index|
           x = index % width
-          y = index / width
+          y = (index / width).to_i
 
           blk.call(x, y, tile)
         end
@@ -39,6 +39,14 @@ module Avian
       #
       def [](key)
         @hash[key]
+      end
+
+      def inspect
+        to_s
+      end
+
+      def to_s
+        @hash
       end
     end
   end
