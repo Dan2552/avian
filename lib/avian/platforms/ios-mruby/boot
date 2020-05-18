@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+project_root = ENV['GAME_ROOT']
+avian_root = ENV['AVIAN_ROOT']
+build_dir = File.join("/", "tmp", "avian", "build")
+platform_support = File.join(project_root, "platform_support", "mruby")
+script_dir = __dir__
+
+shared_boot =
+  File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
+
+load(shared_boot)
+
+unless File.directory?(File.join(build_dir, "sdl-ios"))
+  puts "\n--- Cloning SDL ---"
+  system("git clone https://github.com/spurious/SDL-mirror.git sdl-ios") ||
+    raise("Failed to clone SDL")
+end
+
+xcode_project_dir = File.join(build_dir, "xcode_project")
+
+FileUtils.rm_rf(xcode_project_dir)
+source = File.join(build_dir, "sdl-ios", "Xcode-iOS", "Template", "SDL iOS Application")
+FileUtils.cp_r(source, xcode_project_dir)
+
+# ruby = `which ruby`.chomp
+# require 'pry'
+# binding.pry
+# Bundler.with_clean_env do
+  puts "\n--- Preparing Xcode project ---"
+  system(
+    { "BUNDLE_GEMFILE" => "", "XCODE_PROJECT_ROOT" => xcode_project_dir },
+    File.join(script_dir, "setup_xcode_project.rb")
+  ) || raise("Failed to setup Xcode project")
+# end
+
+mruby_path = `bundle exec mundle path`.chomp
+
+FileUtils.rm_rf(File.join(build_dir, "frameworks"))
+FileUtils.mkdir_p(File.join(xcode_project_dir, "MRuby.framework", "Headers"))
+
+ios_lib = File.join(mruby_path, "build", "ios", "lib", "libmruby.a")
+ios_simulator_lib = File.join(mruby_path, "build", "ios-simulator", "lib", "libmruby.a")
+
+lipo = %W(
+  lipo
+    #{ios_lib}
+    #{ios_simulator_lib}
+    -create
+    -output #{File.join(xcode_project_dir, "MRuby.framework", "MRuby")}
+)
+system(*lipo) || raise("Failed creating mruby universal iOS framework")
+
+FileUtils.cp_r(File.join(mruby_path, "include", "."), File.join(xcode_project_dir, "MRuby.framework", "Headers"))
+FileUtils.cp(File.join(script_dir, "framework", "Info.plist"), File.join(xcode_project_dir, "MRuby.framework"))
+
+# rm $script_dir/output/project/main.c
+# cat output/app.c c_bridge/suffix.c > $script_dir/output/project/main.c
+
+puts 'run the following to open the xcodeproj:'
+puts "\`\`\`"
+puts "open #{xcode_project_dir}/___PROJECTNAME___.xcodeproj/"
+puts "\`\`\`"
+

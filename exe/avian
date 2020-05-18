@@ -48,7 +48,10 @@ class AvianCLI < Thor
         },
         "ruby #{boot_file}"
       )
-    when "ios"
+    when "ios-mruby", "ios"
+      boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "ios-mruby", "boot"))
+      system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
+    when "ios-rubymotion"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "ios-rubymotion", "boot"))
       system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
     when "ios-gosu"

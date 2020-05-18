@@ -5,76 +5,32 @@ avian_root = ENV['AVIAN_ROOT']
 build_dir = File.join("/", "tmp", "avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 
-FileUtils.mkdir_p(build_dir)
+shared_boot =
+  File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
 
-puts "--- Compiling mruby ---"
-FileUtils.cd(platform_support)
-system("bundle exec mundle install") || raise("Compiling failed")
-mruby_path = `bundle exec mundle path`.chomp
+load(shared_boot)
 
-# Copy the platform support files into tmp/build
-source = File.join(platform_support, ".")
-destination = File.join(build_dir)
-FileUtils.cp_r(source, destination)
+unless File.directory?(File.join(build_dir, "sdl-desktop"))
+  puts "\n--- Cloning SDL ---"
+  system("git clone https://github.com/spurious/SDL-mirror.git sdl-desktop") ||
+    raise("Failed to clone SDL")
 
-# Copy the resources from the game project into tmp/build/resources/
-source = File.join(project_root, "resources", ".")
-destination = File.join(build_dir, "resources")
-FileUtils.cp_r(source, destination)
+  puts "\n--- Compiling SDL ---"
+  FileUtils.cd(File.join(build_dir, "sdl-desktop"))
+  system("./configure && make") || begin
+    FileUtils.remove_dir(File.join(build_dir, "sdl-desktop"))
+    raise("Failed to compile SDL")
+  end
+end
 
-require 'avian'
-
-app_load_order = [
-  'lib/**/*.rb',
-  'app/values/**/*.rb',
-  'app/**/concerns/*.rb',
-  'app/**/*.rb',
-  'config/**/*.rb'
-]
-
-avian_files = AVIAN_LOAD_ORDER.map { |glob| Dir.glob(File.join(avian_root, "lib", "avian", glob)) }.flatten
-app_files = app_load_order.map { |glob| Dir.glob(File.join(project_root, glob)) }.flatten
-prefix_files = Dir.glob(File.expand_path(File.join(__dir__, "prefix", "*.rb")))
-suffix_files = Dir.glob(File.expand_path(File.join(__dir__, "suffix", "*.rb")))
-
-all_files =
-  prefix_files +
-  avian_files +
-  app_files +
-  suffix_files
-
-# Set the current working directory to the build
-FileUtils.cd(build_dir)
-
-mrbc = %W(
-  mrbc
-    -g
-    -Bapp
-    -o./app.c
-) + all_files
-
-puts "\n--- Compiling ruby game files ---"
-system(*mrbc) || raise("Compiling failed")
-puts "Compiling complete."
-
+puts "\n--- Preparing c files ---"
 File.open(File.join(build_dir, "output.c"), 'w') do |write_file|
   ["app.c", File.join(__dir__, "main.c")].each do |filepath|
     write_file.puts File.readlines(filepath).join
   end
 end
 
-unless File.directory?(File.join(build_dir, "sdl"))
-  system("git clone https://github.com/spurious/SDL-mirror.git sdl") ||
-    raise("Failed to clone SDL")
-
-  FileUtils.cd(File.join(build_dir, "sdl"))
-  system("./configure && make") || begin
-    FileUtils.remove_dir(File.join(build_dir, "sdl"))
-    raise("Failed to compile SDL")
-  end
-
-  FileUtils.cd(build_dir)
-end
+mruby_path = `bundle exec mundle path`.chomp
 
 puts "\n--- Compiling c files ---"
 clang = %W(
@@ -84,7 +40,7 @@ clang = %W(
     -I#{mruby_path}/include
     -lmruby
     -L#{mruby_path}/build/host/lib/
-    -I./SDL/include
+    -I./sdl-desktop/include
     -lSDL2
 )
 
