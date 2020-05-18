@@ -63,6 +63,19 @@ File.open(File.join(build_dir, "output.c"), 'w') do |write_file|
   end
 end
 
+unless File.directory?(File.join(build_dir, "sdl"))
+  system("git clone https://github.com/spurious/SDL-mirror.git sdl") ||
+    raise("Failed to clone SDL")
+
+  FileUtils.cd(File.join(build_dir, "sdl"))
+  system("./configure && make") || begin
+    FileUtils.remove_dir(File.join(build_dir, "sdl"))
+    raise("Failed to compile SDL")
+  end
+
+  FileUtils.cd(build_dir)
+end
+
 puts "\n--- Compiling c files ---"
 clang = %W(
   clang
@@ -71,6 +84,8 @@ clang = %W(
     -I#{mruby_path}/include
     -lmruby
     -L#{mruby_path}/build/host/lib/
+    -I./SDL/include
+    -lSDL2
 )
 
 system(*clang) || raise("Compiling failed")

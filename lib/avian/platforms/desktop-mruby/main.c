@@ -1,19 +1,106 @@
-#include "mruby.h"
-#include "mruby/irep.h"
+/*
+ *  rectangles.c
+ *  written by Holmes Futrell
+ *  use however you want
+ */
 
-static mrb_value this_is_c(mrb_state* mrb, mrb_value self) {
-    printf("hello from C\n");
-    return mrb_true_value();
+#include "SDL.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 480
+
+int screen_draw_width = 0;
+int screen_draw_height = 0;
+
+int
+randomInt(int min, int max)
+{
+    return min + rand() % (max - min + 1);
 }
 
-int main(int argc, char *argv[]) {
-    mrb_state *mrb = mrb_open();
+void
+render(SDL_Renderer *renderer)
+{
 
-    struct RClass *ruby2d_module = mrb_define_module(mrb, "Avian");
-    struct RClass *ruby2d_triangle_class = mrb_define_class_under(mrb, ruby2d_module, "CBridge", mrb->object_class);
-    mrb_define_method(mrb, ruby2d_triangle_class, "this_is_c", this_is_c, MRB_ARGS_NONE());
+    SDL_Rect rect;
+    Uint8 r, g, b;
 
-    mrb_load_irep(mrb, app);
+    /* Clear the screen */
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
 
-    mrb_close(mrb);
+    /*  Come up with a random rectangle */
+    rect.w = randomInt(64, 128);
+    rect.h = randomInt(64, 128);
+    rect.x = randomInt(0, screen_draw_width);
+    rect.y = randomInt(0, screen_draw_height);
+
+    /* Come up with a random color */
+    r = randomInt(50, 255);
+    g = randomInt(50, 255);
+    b = randomInt(50, 255);
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+
+    /*  Fill the rectangle in the color */
+    SDL_RenderFillRect(renderer, &rect);
+
+    /* update screen */
+    SDL_RenderPresent(renderer);
+}
+
+int
+main(int argc, char *argv[])
+{
+
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    int done;
+    SDL_Event event;
+
+    /* initialize SDL */
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("Could not initialize SDL\n");
+        return 1;
+    }
+
+    /* seed random number generator */
+    srand(time(NULL));
+
+    /* create window and renderer */
+    window =
+        SDL_CreateWindow(NULL, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+                         SDL_WINDOW_OPENGL);
+    if (!window) {
+        printf("Could not initialize Window\n");
+        return 1;
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!renderer) {
+        printf("Could not create renderer\n");
+        return 1;
+    }
+
+
+    SDL_GL_GetDrawableSize(window, &screen_draw_width, &screen_draw_height);
+
+    /* Enter render loop, waiting for user to quit */
+    done = 0;
+    while (!done) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                done = 1;
+            }
+        }
+        render(renderer);
+        SDL_Delay(1);
+    }
+
+    /* shutdown SDL */
+    SDL_Quit();
+
+    return 0;
 }
