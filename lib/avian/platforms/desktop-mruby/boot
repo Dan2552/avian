@@ -24,9 +24,10 @@ unless File.directory?(File.join(build_dir, "sdl-desktop"))
 end
 
 puts "\n--- Preparing c files ---"
+FileUtils.cd(build_dir)
 File.open(File.join(build_dir, "output.c"), 'w') do |write_file|
   ["app.c", File.join(__dir__, "main.c")].each do |filepath|
-    write_file.puts File.readlines(filepath).join
+    write_file.puts(File.readlines(filepath).join)
   end
 end
 
