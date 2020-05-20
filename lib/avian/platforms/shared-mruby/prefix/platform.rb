@@ -29,27 +29,26 @@ class Platform
     def width_of_text(*args); shared_instance.width_of_text(*args); end
   end
 
-  # ** Shared **
-  #
+  def initialize
+    @bridge = Avian::CBridge.new
+  end
+
   # Create a sprite to be stored in the renderer's sprite pool.
   #
   def create_sprite(texture, anchor_point)
     puts "unimplemented!!! create_sprite(texture, anchor_point)"
+    # TODO: unused anchor_point
+    @bridge.create_sprite(texture)
     # sprite = window.add_sprite(texture)
     # sprite.tap { |s| s.anchor_point = anchor_point }
   end
 
-  # ** Shared **
-  #
   def create_texture(texture_name)
-    puts "unimplemented!!! create_texture(texture_name)"
-    # ::Gosu::Image.new("resources/#{texture_name}.png", tileable: true)
+    @bridge.create_texture("#{texture_name}.png")
   rescue
     raise "Failed to load texture: resources/#{texture_name}.png"
   end
 
-  # ** Shared **
-  #
   def set_sprite_texture(sprite, texture)
     puts "unimplemented!!! set_sprite_texture(sprite, texture)"
     # sprite.image = texture
@@ -73,15 +72,11 @@ class Platform
     # node.alignment = alignment
   end
 
-  # ** Shared **
-  #
   def camera
     puts "unimplemented!!! camera"
     # window.camera
   end
 
-  # ** Shared **
-  #
   def set_sprite_position(sprite, position, z_position)
     puts "unimplemented!!! set_sprite_position(sprite, position, z_position)"
     # return if sprite == nil
@@ -99,8 +94,6 @@ class Platform
     # end
   end
 
-  # ** Shared **
-  #
   def set_sprite_rotation(sprite, vector)
     puts "unimplemented!!! set_sprite_rotation(sprite, vector)"
     # return if sprite == nil
@@ -113,8 +106,6 @@ class Platform
     # sprite.flipped_horizontally = horizontally
   end
 
-  # ** Shared **
-  #
   def remove_sprite(sprite)
     puts "unimplemented!!! remove_sprite(sprite)"
     # window.sprites.delete(sprite)
@@ -141,8 +132,6 @@ class Platform
     # sprite.color_blend_factor = blend_factor
   end
 
-  # ** Shared **
-  #
   def screen_size
     puts "unimplemented!!! screen_size"
     @screen_size ||= Size[340, 480]

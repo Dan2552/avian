@@ -61,6 +61,11 @@ system(*lipo) || raise("Failed creating mruby universal iOS framework")
 FileUtils.cp_r(File.join(mruby_path, "include", "."), File.join(xcode_project_dir, "MRuby.framework", "Headers"))
 FileUtils.cp(File.join(script_dir, "framework", "Info.plist"), File.join(xcode_project_dir, "MRuby.framework"))
 
+
+FileUtils.cp(File.join(build_dir, "app.c"), File.join(xcode_project_dir, "app.h"))
+FileUtils.rm(File.join(xcode_project_dir, "main.c"))
+FileUtils.cp(File.join(script_dir, "main.c"), File.join(xcode_project_dir, "main.c"))
+
 # rm $script_dir/output/project/main.c
 # cat output/app.c c_bridge/suffix.c > $script_dir/output/project/main.c
 

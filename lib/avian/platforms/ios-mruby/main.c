@@ -1,19 +1,20 @@
-#include "ruby_app.h"
+#include "app.h"
 #include "mruby.h"
 #include "mruby/irep.h"
 #include "mruby/string.h"
 #include "SDL.h"
+#include "SDL_image.h"
 #include <stdio.h>
 #include <stdlib.h>
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 480
 
-
-
-
 SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Event event;
+
+SDL_Texture *textures[100];
+int textures_count = 0;
 
 static mrb_value provision_sdl(mrb_state* mrb, mrb_value self) {
     printf("provision_sdl\n");
@@ -69,42 +70,41 @@ static mrb_value create_texture(mrb_state* mrb, mrb_value self) {
     const char *texture_name;
     mrb_get_args(mrb, "z", &texture_name);
 
-    printf(texture_name);
+    SDL_Texture *new_texture;
+    SDL_Surface *loaded_surface = IMG_Load(texture_name);
 
-//    SDL_Texture *new_texture;
 
-//    SDL_Surface *loaded_surface = IMG_LOAD(texture_name);
+    if (loaded_surface == NULL) {
+        printf("Unable to load image %s! SDL_image Error: %s\n", texture_name, IMG_GetError());
+    } else {
+        //Create texture from surface pixels
+        new_texture = SDL_CreateTextureFromSurface(renderer, loaded_surface);
+        if (new_texture == NULL) {
+            printf("Unable to create texture from %s! SDL Error: %s\n", texture_name, SDL_GetError());
+        }
 
+        textures[textures_count] = new_texture;
+        textures_count++;
+
+        //Get rid of old loaded surface
+        SDL_FreeSurface(loaded_surface);
+    }
+
+    return mrb_fixnum_value(textures_count - 1);
+}
+
+static mrb_value create_sprite(mrb_state* mrb, mrb_value self) {
+    int texture_index;
+    mrb_get_args(mrb, "i", &texture_index);
+    printf("texture index: %i", texture_index);
+    SDL_Texture *texture = textures[texture_index];
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+    // TODO: probably shouldn't call this here
+    SDL_RenderPresent(renderer);
 
     return mrb_nil_value();
 }
-
-//SDL_Texture* loadTexture(  path )
-//{
-//    //The final texture
-//    SDL_Texture* newTexture = NULL;
-//
-//    //Load image at specified path
-//    SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
-//    if( loadedSurface == NULL )
-//    {
-//        printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
-//    }
-//    else
-//    {
-//        //Create texture from surface pixels
-//        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
-//        if( newTexture == NULL )
-//        {
-//            printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
-//        }
-//
-//        //Get rid of old loaded surface
-//        SDL_FreeSurface( loadedSurface );
-//    }
-//
-//    return newTexture;
-//}
 
 
 int main(int argc, char *argv[]) {
@@ -120,6 +120,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_test_rect", draw_test_rect, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "create_sprite", create_sprite, MRB_ARGS_ANY());
 
     mrb_load_irep(mrb, app);
     mrb_close(mrb);

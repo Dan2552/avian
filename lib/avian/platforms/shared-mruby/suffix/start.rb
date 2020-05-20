@@ -11,23 +11,20 @@ def run
   scenario = primary_scene.new
   game_loop ||= Loop.new(scenario.root)
 
-  bridge.create_texture("hello rstringpointer")
+  loop do
+    # call to C to update inputs - i.e. calls SDL_PollEvent
+    bridge.update_inputs
 
-  # loop do
-  #   # call to C to update inputs - i.e. calls SDL_PollEvent
-  #   bridge.update_inputs
+    # run the game loop
+    game_loop.perform_update(Time.now.to_f * 1000)
 
-  #   # run the game loop
-  #   game_loop.perform_update(Time.now.to_f * 1000)
+    # call to C to clear screen
+    bridge.clear_screen
+    bridge.draw_test_rect
 
-  #   # call to C to clear screen
-  #   bridge.clear_screen
-  #   bridge.draw_test_rect
-  #   # run the game renderer
-
-
-  #   # TODO
-  # end
+    # run the game renderer
+    # TODO
+  end
 end
 
 begin
