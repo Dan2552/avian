@@ -4,6 +4,7 @@ project_root = ENV['GAME_ROOT']
 avian_root = ENV['AVIAN_ROOT']
 build_dir = File.join("/", "tmp", "avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
+script_dir = __dir__
 
 shared_boot =
   File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
@@ -24,19 +25,15 @@ unless File.directory?(File.join(build_dir, "sdl-desktop"))
 end
 
 puts "\n--- Preparing c files ---"
-FileUtils.cd(build_dir)
-File.open(File.join(build_dir, "output.c"), 'w') do |write_file|
-  ["app.c", File.join(__dir__, "main.c")].each do |filepath|
-    write_file.puts(File.readlines(filepath).join)
-  end
-end
+FileUtils.cp(File.join(build_dir, "app.c"), File.join(build_dir, "app.h"))
+FileUtils.cp(File.join(script_dir, "main.c"), File.join(build_dir, "main.c"))
 
 mruby_path = `bundle exec mundle path`.chomp
 
 puts "\n--- Compiling c files ---"
 clang = %W(
   clang
-    output.c
+    main.c
     -ooutput
     -I#{mruby_path}/include
     -lmruby

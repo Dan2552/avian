@@ -38,7 +38,12 @@ class AvianCLI < Thor
     case platform.to_s
     when "desktop-mruby"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "desktop-mruby", "boot"))
-      system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
+
+      system({
+        "GAME_ROOT" => project_root,
+        "AVIAN_ROOT" => avian_path,
+        "AVIAN_BUILD" => "run_#{type}"
+      }, boot_file)
     when "macos"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "gosu", "boot"))
       system(
@@ -50,7 +55,12 @@ class AvianCLI < Thor
       )
     when "ios-mruby", "ios"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "ios-mruby", "boot"))
-      system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)
+      system({
+        "GAME_ROOT" => project_root,
+        "AVIAN_ROOT" => avian_path,
+        "AVIAN_BUILD" =>
+        "run_#{type}"
+      }, boot_file)
     when "ios-rubymotion"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "ios-rubymotion", "boot"))
       system({ "GAME_ROOT" => project_root, "AVIAN_ROOT" => avian_path, "AVIAN_BUILD" => "run_#{type}" }, boot_file)

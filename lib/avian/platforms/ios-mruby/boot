@@ -5,11 +5,17 @@ avian_root = ENV['AVIAN_ROOT']
 build_dir = File.join("/", "tmp", "avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 script_dir = __dir__
+xcode_project_dir = File.join(build_dir, "ios", "xcode_project")
 
 shared_boot =
   File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
 
 load(shared_boot)
+
+if ENV['RUBY_ONLY'].length > 0
+  FileUtils.cp(File.join(build_dir, "app.c"), File.join(xcode_project_dir, "app.h"))
+  exit(0)
+end
 
 unless File.directory?(File.join(build_dir, "ios", "sdl"))
   FileUtils.mkdir_p(File.join(build_dir, "ios"))
@@ -28,8 +34,6 @@ unless File.directory?(File.join(build_dir, "ios", "sdl_image"))
 end
 
 FileUtils.cd(build_dir)
-
-xcode_project_dir = File.join(build_dir, "ios", "xcode_project")
 
 FileUtils.rm_rf(xcode_project_dir)
 source = File.join(build_dir, "ios", "sdl", "Xcode-iOS", "Template", "SDL iOS Application")

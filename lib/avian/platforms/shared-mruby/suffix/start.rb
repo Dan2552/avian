@@ -1,7 +1,33 @@
 puts "THIS IS RUBY"
 
+class PlatformRenderStore
+  def sprites
+    @sprites ||= []
+  end
+end
+
+def draw(bridge, sprite)
+  # TODO: camera
+  # TODO: if the object isn't in the camera's view, don't draw it
+
+  puts "(ruby) draw (#{sprite.x.class},#{sprite.y.class})"
+
+  bridge.draw_image(
+    sprite.texture,
+    sprite.x,
+    sprite.y
+    # sprite.z,
+    # sprite.angle,
+    # sprite.center_x,
+    # sprite.center_y,
+    # sprite.scale_x,
+    # sprite.scale_y
+  )
+end
+
 def run
   bridge = Avian::CBridge.new
+  render_store = Platform.render_store = PlatformRenderStore.new
 
   bridge.provision_sdl
 
@@ -20,8 +46,8 @@ def run
 
     # call to C to clear screen
     bridge.clear_screen
-    bridge.draw_test_rect
-
+    # bridge.draw_test_rect
+    render_store.sprites.each { |sprite| draw(bridge, sprite) }
     # run the game renderer
     # TODO
   end

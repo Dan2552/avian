@@ -27,6 +27,8 @@ class Platform
     def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
     def width_of_text(*args); shared_instance.width_of_text(*args); end
+
+    attr_accessor :render_store
   end
 
   def initialize
@@ -36,11 +38,10 @@ class Platform
   # Create a sprite to be stored in the renderer's sprite pool.
   #
   def create_sprite(texture, anchor_point)
-    puts "unimplemented!!! create_sprite(texture, anchor_point)"
-    # TODO: unused anchor_point
-    @bridge.create_sprite(texture)
-    # sprite = window.add_sprite(texture)
-    # sprite.tap { |s| s.anchor_point = anchor_point }
+    sprite = PlatformSprite.new(texture, anchor_point)
+    Platform.render_store.sprites << sprite
+
+    sprite
   end
 
   def create_texture(texture_name)
@@ -78,8 +79,12 @@ class Platform
   end
 
   def set_sprite_position(sprite, position, z_position)
+    return if sprite == nil
+
+    sprite.x = position.x
+    sprite.y = position.y
+    sprite.z = z_position if z_position
     puts "unimplemented!!! set_sprite_position(sprite, position, z_position)"
-    # return if sprite == nil
 
     # # I'm not sure why the Avian::Platforms::Gosu::Camera position needs
     # # to be scaled, but it caused all kinds of inconsistencies with iOS in

@@ -6,8 +6,6 @@
 #include "SDL_image.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 480
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -16,11 +14,19 @@ SDL_Event event;
 SDL_Texture *textures[100];
 int textures_count = 0;
 
+int screen_width;
+int screen_height;
+
 static mrb_value provision_sdl(mrb_state* mrb, mrb_value self) {
     printf("provision_sdl\n");
 
-    window = SDL_CreateWindow(NULL, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
     renderer = SDL_CreateRenderer(window, -1, 0);
+
+    SDL_DisplayMode display_mode;
+    SDL_GetCurrentDisplayMode(0, &display_mode);
+    screen_width = display_mode.w;
+    screen_height = display_mode.h;
 
     return mrb_nil_value();
 }
@@ -73,7 +79,6 @@ static mrb_value create_texture(mrb_state* mrb, mrb_value self) {
     SDL_Texture *new_texture;
     SDL_Surface *loaded_surface = IMG_Load(texture_name);
 
-
     if (loaded_surface == NULL) {
         printf("Unable to load image %s! SDL_image Error: %s\n", texture_name, IMG_GetError());
     } else {
@@ -93,18 +98,57 @@ static mrb_value create_texture(mrb_state* mrb, mrb_value self) {
     return mrb_fixnum_value(textures_count - 1);
 }
 
-static mrb_value create_sprite(mrb_state* mrb, mrb_value self) {
+static mrb_value draw_image(mrb_state* mrb, mrb_value self) {
     int texture_index;
-    mrb_get_args(mrb, "i", &texture_index);
-    printf("texture index: %i", texture_index);
-    SDL_Texture *texture = textures[texture_index];
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    int x;
+    int y;
+//    int z;
+//    double angle;
+//    int center_x;
+//    int center_y;
 
-    // TODO: probably shouldn't call this here
+    mrb_get_args(mrb, "iii", &texture_index, &x, &y);
+
+    SDL_Texture *texture = textures[texture_index];
+
+    int width = 100;
+    int height = 100;
+
+    x = x + screen_width / 2;
+    y = y + screen_height / 2;
+
+    x = x - width / 2;
+    y = y - height / 2;
+
+    SDL_Rect destination = { .x = x, .y = y, .w = width, .h = height };
+
+    SDL_RenderCopy(renderer, texture, NULL, &destination);
     SDL_RenderPresent(renderer);
+//    mrb_get_args(mrb,
+//                 "iiifii",
+//                &x,
+//                 &y,
+//                 &z,
+//                 &angle,
+//                 &center_x,
+//                 &center_y);
 
     return mrb_nil_value();
 }
+
+//static mrb_value create_sprite(mrb_state* mrb, mrb_value self) {
+//    int texture_index;
+//    mrb_get_args(mrb, "i", &texture_index);
+//    printf("texture index: %i", texture_index);
+//    SDL_Texture *texture = textures[texture_index];
+//
+////    SDL_Rect destination = { .x = 100, .y = 0, .w = 100, .h = 100 };
+////    SDL_RenderCopy(renderer, texture, NULL, &destination);
+//
+////    SDL_RenderPresent(renderer);
+//
+//    return mrb_nil_value();
+//}
 
 
 int main(int argc, char *argv[]) {
@@ -120,7 +164,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_test_rect", draw_test_rect, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
-    mrb_define_method(mrb, ruby_class_c_bridge, "create_sprite", create_sprite, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());
 
     mrb_load_irep(mrb, app);
     mrb_close(mrb);
