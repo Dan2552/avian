@@ -5,30 +5,53 @@ avian_root = ENV['AVIAN_ROOT']
 build_dir = File.join("/", "tmp", "avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 script_dir = __dir__
+shared_dir = File.join(avian_root, "lib", "avian", "platforms", "shared-mruby")
 
 shared_boot =
   File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
 
 load(shared_boot)
 
-unless File.directory?(File.join(build_dir, "sdl-desktop"))
+FileUtils.mkdir_p(File.join(build_dir, "desktop"))
+sdl_install = File.join(build_dir, "desktop", "install")
+FileUtils.mkdir_p(sdl_install)
+
+unless File.directory?(File.join(build_dir, "desktop", "sdl"))
+  FileUtils.cd(File.join(build_dir, "desktop"))
   puts "\n--- Cloning SDL ---"
-  system("git clone https://github.com/spurious/SDL-mirror.git sdl-desktop") ||
+  system("git clone https://github.com/SDL-mirror/SDL.git sdl") ||
     raise("Failed to clone SDL")
 
   puts "\n--- Compiling SDL ---"
-  FileUtils.cd(File.join(build_dir, "sdl-desktop"))
-  system("./configure && make") || begin
-    FileUtils.remove_dir(File.join(build_dir, "sdl-desktop"))
+  FileUtils.cd(File.join(build_dir, "desktop", "sdl"))
+  system("./configure --prefix=#{sdl_install} && make -j4 && make install") || begin
+    FileUtils.remove_dir(File.join(build_dir, "desktop", "sdl"))
     raise("Failed to compile SDL")
+  end
+end
+
+unless File.directory?(File.join(build_dir, "desktop", "sdl_image"))
+  FileUtils.cd(File.join(build_dir, "desktop"))
+  puts "\n--- Cloning SDL image ---"
+  system("git clone https://github.com/SDL-mirror/SDL_image.git sdl_image") ||
+    raise("Failed to clone SDL")
+
+  puts "\n--- Compiling SDL image ---"
+  FileUtils.cd(File.join(build_dir, "desktop", "sdl_image"))
+  system("./configure --prefix=#{sdl_install} && make -j4 && make install") || begin
+    FileUtils.remove_dir(File.join(build_dir, "desktop", "sdl_image"))
+    raise("Failed to compile SDL image")
   end
 end
 
 puts "\n--- Preparing c files ---"
 FileUtils.cp(File.join(build_dir, "app.c"), File.join(build_dir, "app.h"))
-FileUtils.cp(File.join(script_dir, "main.c"), File.join(build_dir, "main.c"))
+FileUtils.cp(File.join(shared_dir, "main.c"), File.join(build_dir, "main.c"))
+FileUtils.cp(File.join(script_dir, "options.h"), File.join(build_dir, "options.h"))
 
+FileUtils.cd(platform_support)
 mruby_path = `bundle exec mundle path`.chomp
+FileUtils.cd(build_dir)
 
 puts "\n--- Compiling c files ---"
 clang = %W(
@@ -38,8 +61,10 @@ clang = %W(
     -I#{mruby_path}/include
     -lmruby
     -L#{mruby_path}/build/host/lib/
-    -I./sdl-desktop/include
+    -I#{sdl_install}/include/SDL2
     -lSDL2
+    -lSDL2_image
+    -L#{sdl_install}/lib
 )
 
 system(*clang) || raise("Compiling failed")

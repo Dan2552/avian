@@ -45,6 +45,7 @@ sdl_image_path = Bundler.root.join("ios", "sdl_image", "Xcode-iOS", "SDL_image.x
 sources = project.main_group.find_subpath("Sources")
 sources.new_reference(sdl_image_path)
 rb_app = sources.new_reference("app.h")
+options = sources.new_reference("options.h")
 
 #
 # Add the SDL include headers to the main project
@@ -62,7 +63,7 @@ target.add_system_framework("AVFoundation")
 target.add_system_framework("ImageIO")
 target.add_system_framework("MobileCoreServices")
 
-target.add_file_references([rb_app])
+target.add_file_references([rb_app, options])
 
 #
 # Add MRuby framework build flags

@@ -1,3 +1,4 @@
+#include "options.h"
 #include "app.h"
 #include "mruby.h"
 #include "mruby/irep.h"
@@ -20,7 +21,11 @@ int screen_height;
 static mrb_value provision_sdl(mrb_state* mrb, mrb_value self) {
     printf("provision_sdl\n");
 
+#if MOBILE
     window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
+#else
+    window = SDL_CreateWindow(NULL, 0, 0, 1125 / 3, 2436 / 3, SDL_WINDOW_OPENGL);
+#endif
     renderer = SDL_CreateRenderer(window, -1, 0);
 
     SDL_DisplayMode display_mode;
@@ -135,21 +140,6 @@ static mrb_value draw_image(mrb_state* mrb, mrb_value self) {
 
     return mrb_nil_value();
 }
-
-//static mrb_value create_sprite(mrb_state* mrb, mrb_value self) {
-//    int texture_index;
-//    mrb_get_args(mrb, "i", &texture_index);
-//    printf("texture index: %i", texture_index);
-//    SDL_Texture *texture = textures[texture_index];
-//
-////    SDL_Rect destination = { .x = 100, .y = 0, .w = 100, .h = 100 };
-////    SDL_RenderCopy(renderer, texture, NULL, &destination);
-//
-////    SDL_RenderPresent(renderer);
-//
-//    return mrb_nil_value();
-//}
-
 
 int main(int argc, char *argv[]) {
     printf("started\n");
