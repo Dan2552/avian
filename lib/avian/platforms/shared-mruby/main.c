@@ -23,16 +23,18 @@ static mrb_value provision_sdl(mrb_state* mrb, mrb_value self) {
 
 #if MOBILE
     window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
-#else
-    window = SDL_CreateWindow(NULL, 0, 0, 1125 / 3, 2436 / 3, SDL_WINDOW_OPENGL);
-#endif
-    renderer = SDL_CreateRenderer(window, -1, 0);
-
     SDL_DisplayMode display_mode;
     SDL_GetCurrentDisplayMode(0, &display_mode);
     screen_width = display_mode.w;
     screen_height = display_mode.h;
+#else
+    screen_width = 1125 / 3;
+    screen_height = 2436 / 3;
+    window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL);
+#endif
+    renderer = SDL_CreateRenderer(window, -1, 0);
 
+    printf("screen size: %i, %i\n", screen_width, screen_height);
     return mrb_nil_value();
 }
 
@@ -52,27 +54,6 @@ static mrb_value clear_screen(mrb_state* mrb, mrb_value self) {
     printf("clear_screen\n");
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-
-    return mrb_nil_value();
-}
-
-static mrb_value draw_test_rect(mrb_state* mrb, mrb_value self) {
-    printf("draw_test_rect\n");
-    SDL_Rect rect;
-
-    /*  Come up with a random rectangle */
-    rect.w = 128;
-    rect.h = 128;
-    rect.x = 0;
-    rect.y = 0;
-
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-    /*  Fill the rectangle in the color */
-    SDL_RenderFillRect(renderer, &rect);
-
-    /* update screen */
-    SDL_RenderPresent(renderer);
 
     return mrb_nil_value();
 }
@@ -100,6 +81,7 @@ static mrb_value create_texture(mrb_state* mrb, mrb_value self) {
         SDL_FreeSurface(loaded_surface);
     }
 
+    printf("texture created: %i\n", textures_count - 1);
     return mrb_fixnum_value(textures_count - 1);
 }
 
