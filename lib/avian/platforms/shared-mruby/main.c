@@ -17,29 +17,40 @@ int textures_count = 0;
 
 int screen_width;
 int screen_height;
+double device_scale;
 
-static mrb_value provision_sdl(mrb_state* mrb, mrb_value self) {
+static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     printf("provision_sdl\n");
 
 #if MOBILE
-    window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
+    window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN|SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_DisplayMode display_mode;
     SDL_GetCurrentDisplayMode(0, &display_mode);
-    screen_width = display_mode.w;
-    screen_height = display_mode.h;
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+    SDL_GetRendererOutputSize(renderer, &screen_width, &screen_height);
+    device_scale = 1;
 #else
+    device_scale = 0.6666666;
     screen_width = 1125 / 3;
     screen_height = 2436 / 3;
-    window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL);
-#endif
+    window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI);
     renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_GetRendererOutputSize(renderer, &screen_width, &screen_height);
+#endif
 
     printf("screen size: %i, %i\n", screen_width, screen_height);
     return mrb_nil_value();
 }
 
-static mrb_value update_inputs(mrb_state* mrb, mrb_value self) {
-    printf("update_inputs\n");
+static mrb_value get_screen_width(mrb_state *mrb, mrb_value self) {
+    return mrb_fixnum_value(screen_width);
+}
+
+static mrb_value get_screen_height(mrb_state *mrb, mrb_value self) {
+    return mrb_fixnum_value(screen_height);
+}
+
+static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             printf("SDL_QUIT");
@@ -50,15 +61,14 @@ static mrb_value update_inputs(mrb_state* mrb, mrb_value self) {
     return mrb_nil_value();
 }
 
-static mrb_value clear_screen(mrb_state* mrb, mrb_value self) {
-    printf("clear_screen\n");
+static mrb_value clear_screen(mrb_state *mrb, mrb_value self) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     return mrb_nil_value();
 }
 
-static mrb_value create_texture(mrb_state* mrb, mrb_value self) {
+static mrb_value create_texture(mrb_state *mrb, mrb_value self) {
     const char *texture_name;
     mrb_get_args(mrb, "z", &texture_name);
 
@@ -85,42 +95,90 @@ static mrb_value create_texture(mrb_state* mrb, mrb_value self) {
     return mrb_fixnum_value(textures_count - 1);
 }
 
-static mrb_value draw_image(mrb_state* mrb, mrb_value self) {
-    int texture_index;
-    int x;
-    int y;
-//    int z;
-//    double angle;
-//    int center_x;
-//    int center_y;
+static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
+    mrb_int texture_index;
+    mrb_int x;
+    mrb_int y;
+    mrb_int z;
+    mrb_float angle;
+    mrb_int center_x;
+    mrb_int center_y;
+    mrb_float x_scale;
+    mrb_float y_scale;
+    mrb_int camera_x;
+    mrb_int camera_y;
+    mrb_float camera_x_scale;
+    mrb_float camera_y_scale;
 
-    mrb_get_args(mrb, "iii", &texture_index, &x, &y);
+    mrb_get_args(
+      mrb,
+      "iiiifiiffiiff",
+      &texture_index,
+      &x,
+      &y,
+      &z,
+      &angle,
+      &center_x,
+      &center_y,
+      &x_scale,
+      &y_scale,
+      &camera_x,
+      &camera_y,
+      &camera_x_scale,
+      &camera_y_scale
+    );
+
+    // printf("(c---) texture_index: %lld, x: %lld, y: %lld, z: %lld, angle: %f, center_x: %lld, center_y: %lld, x_scale: %f, y_scale: %f, camera_x: %lld, camera_y: %lld, camera_x_scale: %f, camera_y_scale: %f\n", texture_index, x, y, z, angle, center_x, center_y, x_scale, y_scale, camera_x, camera_y, camera_x_scale, camera_y_scale);
 
     SDL_Texture *texture = textures[texture_index];
 
-    int width = 100;
-    int height = 100;
+    int width;
+    int height;
+    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 
+    x_scale = x_scale * (camera_x_scale) * device_scale;
+    y_scale = y_scale * (camera_y_scale) * device_scale;
+
+    width = width * x_scale;
+    height = height * y_scale;
+
+    // Scale position in general by camera scale
+    x = x * camera_x_scale;
+    y = y * camera_y_scale;
+
+    // Normalize 0,0 to center of screen and center of sprite
     x = x + screen_width / 2;
     y = y + screen_height / 2;
-
     x = x - width / 2;
     y = y - height / 2;
 
-    SDL_Rect destination = { .x = x, .y = y, .w = width, .h = height };
+    // Adjust for camera position
+    x = x - camera_x;
+    y = y - camera_y;
+
+    SDL_Rect destination = {
+      .x = x,
+      .y = y,
+      .w = width,
+      .h = height
+    };
 
     SDL_RenderCopy(renderer, texture, NULL, &destination);
-    SDL_RenderPresent(renderer);
-//    mrb_get_args(mrb,
-//                 "iiifii",
-//                &x,
-//                 &y,
-//                 &z,
-//                 &angle,
-//                 &center_x,
-//                 &center_y);
 
     return mrb_nil_value();
+}
+
+static mrb_value render(mrb_state *mrb, mrb_value self) {
+  SDL_RenderPresent(renderer);
+  return mrb_nil_value();
+}
+
+static mrb_value sleep(mrb_state *mrb, mrb_value self) {
+  mrb_float seconds;
+  mrb_get_args(mrb, "f", &seconds);
+  SDL_Delay(seconds * 1000);
+
+  return mrb_nil_value();
 }
 
 int main(int argc, char *argv[]) {
@@ -134,11 +192,15 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "provision_sdl", provision_sdl, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "update_inputs", update_inputs, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
-    mrb_define_method(mrb, ruby_class_c_bridge, "draw_test_rect", draw_test_rect, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_width", get_screen_width, MRB_ARGS_NONE());
+    mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_height", get_screen_height, MRB_ARGS_NONE());
+    mrb_define_method(mrb, ruby_class_c_bridge, "render", render, MRB_ARGS_NONE());
+    mrb_define_method(mrb, ruby_class_c_bridge, "sleep", sleep, MRB_ARGS_ANY());
 
     mrb_load_irep(mrb, app);
+    if (mrb->exc) mrb_print_error(mrb);
     mrb_close(mrb);
     SDL_Quit();
 

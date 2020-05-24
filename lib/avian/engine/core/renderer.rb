@@ -12,8 +12,8 @@ class Renderer
   #
   def draw_frame
     # Profiler.shared_instance.start_of("Renderer")
-    Platform.set_sprite_position(camera_node, camera_game_object.position, nil)
-    Platform.set_sprite_scale(camera_node, camera_game_object.scale, camera_game_object.scale)
+    Platform.set_camera_position(camera_game_object.position)
+    Platform.set_camera_scale(camera_game_object.scale, camera_game_object.scale)
     traverse
     # Profiler.shared_instance.end_of("Renderer")
   end
@@ -44,10 +44,10 @@ class Renderer
     sprite_node = find_or_create_sprite(renderable)
     Platform.set_sprite_texture(sprite_node, find_or_create_texture(renderable.sprite_name))
     Platform.set_sprite_position(sprite_node, renderable.renderable_position, renderable.renderable_z_position)
-    Platform.set_sprite_rotation(sprite_node, renderable.rotation)
-    Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
+    # Platform.set_sprite_rotation(sprite_node, renderable.rotation)
+    # Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
     Platform.set_sprite_visible(sprite_node, renderable.visible)
-    Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
+    # Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
     Platform.set_sprite_scale(sprite_node, renderable.x_scale, renderable.y_scale)
   end
 
@@ -97,10 +97,6 @@ class Renderer
     text_pool[renderable.id] = (
       text_pool[renderable.id] || Platform.create_text(renderable.font_name)
     )
-  end
-
-  def camera_node
-    @camera_node ||= Platform.camera
   end
 
   def camera_game_object

@@ -27,9 +27,16 @@ class Platform
     def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
     def width_of_text(*args); shared_instance.width_of_text(*args); end
+    def set_camera_position(*args); shared_instance.set_camera_position(*args); end
+    def set_camera_scale(*args); shared_instance.set_camera_scale(*args); end
+    def sleep(*args); shared_instance.sleep(*args); end
   end
 
   attr_accessor :window
+
+  def sleep(time)
+    Kernel.sleep(time)
+  end
 
   # Create a sprite to be stored in the renderer's sprite pool.
   #
@@ -89,14 +96,14 @@ class Platform
     # I'm not sure why the Avian::Platforms::Gosu::Camera position needs
     # to be scaled, but it caused all kinds of inconsistencies with iOS in
     # regards to touch locations relative to the camera scale.
-    if sprite.is_a? Avian::DesktopGosuPlatform::Camera
-      sprite.x = position.x * sprite.scale
-      sprite.y = position.y * sprite.scale
-    else
+    # if sprite.is_a? Avian::DesktopGosuPlatform::Camera
+    #   sprite.x = position.x * sprite.scale
+    #   sprite.y = position.y * sprite.scale
+    # else
       sprite.x = position.x
       sprite.y = position.y
       sprite.z = z_position if z_position
-    end
+    # end
   end
 
   def set_sprite_rotation(sprite, vector)
@@ -124,5 +131,14 @@ class Platform
 
   def screen_size
     @screen_size ||= Size[window.width, window.height]
+  end
+
+  def set_camera_position(position)
+    camera.x = position.x * camera.scale
+    camera.y = position.y * camera.scale
+  end
+
+  def set_camera_scale(x_scale, y_scale)
+    camera.scale = y_scale
   end
 end

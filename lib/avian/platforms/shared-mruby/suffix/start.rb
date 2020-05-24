@@ -7,27 +7,35 @@ class PlatformRenderStore
 end
 
 def draw(bridge, sprite)
-  # TODO: camera
   # TODO: if the object isn't in the camera's view, don't draw it
 
-  puts "(ruby) draw (#{sprite.x.class},#{sprite.y.class})"
+  return unless sprite.visible
 
   bridge.draw_image(
     sprite.texture,
-    sprite.x,
-    sprite.y
-    # sprite.z,
-    # sprite.angle,
-    # sprite.center_x,
-    # sprite.center_y,
-    # sprite.scale_x,
-    # sprite.scale_y
+    sprite.x.to_i,
+    sprite.y.to_i,
+    sprite.z.to_i,
+    sprite.angle.to_f,
+    sprite.center_x.to_i,
+    sprite.center_y.to_i,
+    sprite.x_scale.to_f,
+    sprite.y_scale.to_f,
+    Platform.camera.x.to_i,
+    Platform.camera.y.to_i,
+    Platform.camera.x_scale.to_f,
+    Platform.camera.y_scale.to_f
   )
 end
 
 def run
   bridge = Avian::CBridge.new
+
   render_store = Platform.render_store = PlatformRenderStore.new
+  Platform.camera = PlatformCamera.new(
+    bridge.get_screen_width,
+    bridge.get_screen_height
+  )
 
   bridge.provision_sdl
 
@@ -48,6 +56,7 @@ def run
     bridge.clear_screen
     # bridge.draw_test_rect
     render_store.sprites.each { |sprite| draw(bridge, sprite) }
+    bridge.render
     # run the game renderer
     # TODO
   end

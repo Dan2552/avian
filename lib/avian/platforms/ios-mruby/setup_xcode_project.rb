@@ -46,6 +46,7 @@ sources = project.main_group.find_subpath("Sources")
 sources.new_reference(sdl_image_path)
 rb_app = sources.new_reference("app.h")
 options = sources.new_reference("options.h")
+sources.new_reference("LaunchScreen.storyboard")
 
 #
 # Add the SDL include headers to the main project
@@ -101,11 +102,8 @@ target.frameworks_build_phase.add_file_reference(ref, true)
 #
 project.save
 
-#
-# Set CFBundleShortVersionString on the Info.plist as for some reason it's
-# missing in the template
-#
 plist_path = Bundler.root.join(project_path, "Info.plist")
 plist = Plist::parse_xml(plist_path)
 plist["CFBundleShortVersionString"] = "1.0"
+plist["UILaunchStoryboardName"] = "LaunchScreen"
 File.open(plist_path, 'w') { |file| file.write(plist.to_plist) }

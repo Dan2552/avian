@@ -69,6 +69,7 @@ FileUtils.cp(File.join(script_dir, "framework", "Info.plist"), File.join(xcode_p
 FileUtils.cp(File.join(build_dir, "app.c"), File.join(xcode_project_dir, "app.h"))
 FileUtils.cp(File.join(shared_dir, "main.c"), File.join(xcode_project_dir, "main.c"))
 FileUtils.cp(File.join(script_dir, "options.h"), File.join(xcode_project_dir, "options.h"))
+FileUtils.cp(File.join(script_dir, "LaunchScreen.storyboard"), File.join(xcode_project_dir, "LaunchScreen.storyboard"))
 
 puts 'run the following to open the xcodeproj:'
 puts "\`\`\`"

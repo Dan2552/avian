@@ -27,12 +27,20 @@ class Platform
     def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
     def width_of_text(*args); shared_instance.width_of_text(*args); end
+    def set_camera_position(*args); shared_instance.set_camera_position(*args); end
+    def set_camera_scale(*args); shared_instance.set_camera_scale(*args); end
+    def sleep(*args); shared_instance.sleep(*args); end
 
     attr_accessor :render_store
+    attr_accessor :camera
   end
 
   def initialize
     @bridge = Avian::CBridge.new
+  end
+
+  def sleep(time)
+    @bridge.sleep(time)
   end
 
   # Create a sprite to be stored in the renderer's sprite pool.
@@ -45,14 +53,11 @@ class Platform
   end
 
   def create_texture(texture_name)
-    @bridge.create_texture("#{texture_name}.png")
-  rescue
-    raise "Failed to load texture: resources/#{texture_name}.png"
+    @bridge.create_texture("resources/#{texture_name}.png")
   end
 
   def set_sprite_texture(sprite, texture)
-    puts "unimplemented!!! set_sprite_texture(sprite, texture)"
-    # sprite.image = texture
+    sprite.texture = texture
   end
 
   def create_text(font_name)
@@ -73,19 +78,11 @@ class Platform
     # node.alignment = alignment
   end
 
-  def camera
-    puts "unimplemented!!! camera"
-    # window.camera
-  end
+  def set_camera_position(position)
+    Platform.camera.x = position.x
+    Platform.camera.y = position.y
 
-  def set_sprite_position(sprite, position, z_position)
-    return if sprite == nil
-
-    sprite.x = position.x
-    sprite.y = position.y
-    sprite.z = z_position if z_position
-    puts "unimplemented!!! set_sprite_position(sprite, position, z_position)"
-
+# TODO:
     # # I'm not sure why the Avian::Platforms::Gosu::Camera position needs
     # # to be scaled, but it caused all kinds of inconsistencies with iOS in
     # # regards to touch locations relative to the camera scale.
@@ -97,6 +94,22 @@ class Platform
     #   sprite.y = position.y
     #   sprite.z = z_position if z_position
     # end
+  end
+
+  def set_camera_scale(x_scale, y_scale)
+    # if sprite.is_a?(Avian::DesktopGosuPlatform::Camera)
+    #   sprite.scale = 1.0 / y_scale
+    # else
+    Platform.camera.x_scale = x_scale
+    Platform.camera.y_scale = y_scale
+  end
+
+  def set_sprite_position(sprite, position, z_position)
+    # return if sprite == nil
+
+    sprite.x = position.x
+    sprite.y = position.y
+    sprite.z = z_position if z_position
   end
 
   def set_sprite_rotation(sprite, vector)
@@ -117,18 +130,12 @@ class Platform
   end
 
   def set_sprite_visible(sprite, visible)
-    puts "unimplemented!!! set_sprite_visible(sprite, visible)"
-    # sprite.visible = visible
+    sprite.visible = visible
   end
 
   def set_sprite_scale(sprite, x_scale, y_scale)
-    puts "unimplemented!!! set_sprite_scale(sprite, x_scale, y_scale)"
-    # if sprite.is_a?(Avian::DesktopGosuPlatform::Camera)
-    #   sprite.scale = 1.0 / y_scale
-    # else
-    #   sprite.x_scale = x_scale
-    #   sprite.y_scale = y_scale
-    # end
+    sprite.x_scale = x_scale
+    sprite.y_scale = y_scale
   end
 
   def set_sprite_color_blend(sprite, color, blend_factor)
