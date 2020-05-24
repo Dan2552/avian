@@ -136,8 +136,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     int height;
     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 
-    x_scale = x_scale * (camera_x_scale) * device_scale;
-    y_scale = y_scale * (camera_y_scale) * device_scale;
+    x_scale = x_scale * camera_x_scale * device_scale;
+    y_scale = y_scale * camera_y_scale * device_scale;
 
     width = width * x_scale;
     height = height * y_scale;
