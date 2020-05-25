@@ -18,7 +18,7 @@ FileUtils.cp_r(source, destination)
 
 # Copy the resources from the game project into tmp/build/resources/
 source = File.join(project_root, "resources", ".")
-destination = File.join(build_dir, "resources")
+destination = File.join(build_dir, "game_resources")
 FileUtils.cp_r(source, destination)
 
 require 'avian'

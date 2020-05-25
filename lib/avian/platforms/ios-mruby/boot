@@ -46,6 +46,10 @@ system(
   File.join(script_dir, "setup_xcode_project.rb")
 ) || raise("Failed to setup Xcode project")
 
+source = File.join(project_root, "resources", ".")
+destination = File.join(xcode_project_dir, "game_resources")
+FileUtils.cp_r(source, destination)
+
 mruby_path = `bundle exec mundle path`.chomp
 
 FileUtils.rm_rf(File.join(build_dir, "frameworks"))
@@ -71,8 +75,61 @@ FileUtils.cp(File.join(shared_dir, "main.c"), File.join(xcode_project_dir, "main
 FileUtils.cp(File.join(script_dir, "options.h"), File.join(xcode_project_dir, "options.h"))
 FileUtils.cp(File.join(script_dir, "LaunchScreen.storyboard"), File.join(xcode_project_dir, "LaunchScreen.storyboard"))
 
-puts 'run the following to open the xcodeproj:'
-puts "\`\`\`"
-puts "open #{xcode_project_dir}/___PROJECTNAME___.xcodeproj/"
-puts "\`\`\`"
+xcode_project = File.join(xcode_project_dir, "___PROJECTNAME___.xcodeproj")
+
+if (ENV['XCODE_PROJECT_ONLY'] || "").length > 0
+  puts 'run the following to open the xcodeproj:'
+  puts "\`\`\`"
+  puts "open #{xcode_project}"
+  puts "\`\`\`"
+else
+  xcode_build_dir = File.join(build_dir, "ios", "xcode_build")
+  xcode_build = %W(
+    xcodebuild
+      -project #{xcode_project}
+      -sdk iphonesimulator
+      -scheme ___PROJECTNAME___
+      -configuration "Debug"
+      OBJROOT=#{xcode_build_dir}
+      SYMROOT=#{xcode_build_dir}
+  )
+
+  system(*xcode_build) || raise("XCode build failed")
+
+  simulators = `xcrun simctl list | grep "Phone: iPhone 11 Pro (" | grep -v "unavailable"`.chomp.split("\n")
+  device = simulators.first.match(/\((\w+-\w+-\w+-\w+-\w+)\)/)[1]
+
+  system("open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/") || raise("Failed to start simulator")
+
+  system("xcrun simctl shutdown all")
+
+  start = system("xcrun simctl boot #{device}") || raise("Failed to boot simulator")
+
+  simulator_install = %W(
+    xcrun
+      simctl
+      install
+      #{device}
+      #{File.join(xcode_build_dir, "Release-iphonesimulator", "___PROJECTNAME___.app")}
+  )
+
+  system(*simulator_install) || raise("Failed to install app on simulator")
+
+  simulator_launch = %W(
+    xcrun
+      simctl
+      launch
+      #{device}
+      com.yourcompany.___PROJECTNAME___
+  )
+
+  system(*simulator_launch) || raise("Failed to launch app on simulator")
+  begin
+    puts "Press enter to quit"
+    gets
+  ensure
+    puts "Exiting..."
+    system("xcrun simctl shutdown all")
+  end
+end
 

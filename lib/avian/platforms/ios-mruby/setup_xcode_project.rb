@@ -46,6 +46,8 @@ sources = project.main_group.find_subpath("Sources")
 sources.new_reference(sdl_image_path)
 rb_app = sources.new_reference("app.h")
 options = sources.new_reference("options.h")
+resources = sources.new_reference("game_resources")
+
 sources.new_reference("LaunchScreen.storyboard")
 
 #
@@ -65,6 +67,7 @@ target.add_system_framework("ImageIO")
 target.add_system_framework("MobileCoreServices")
 
 target.add_file_references([rb_app, options])
+target.add_resources([resources])
 
 #
 # Add MRuby framework build flags

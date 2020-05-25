@@ -30,6 +30,7 @@ class Platform
     def set_camera_position(*args); shared_instance.set_camera_position(*args); end
     def set_camera_scale(*args); shared_instance.set_camera_scale(*args); end
     def sleep(*args); shared_instance.sleep(*args); end
+    def resources_dir(*args); shared_instance.resources_dir(*args); end
 
     attr_accessor :render_store
     attr_accessor :camera
@@ -43,6 +44,10 @@ class Platform
     @bridge.sleep(time)
   end
 
+  def resources_dir
+    "game_resources"
+  end
+
   # Create a sprite to be stored in the renderer's sprite pool.
   #
   def create_sprite(texture, anchor_point)
@@ -53,7 +58,7 @@ class Platform
   end
 
   def create_texture(texture_name)
-    @bridge.create_texture("resources/#{texture_name}.png")
+    @bridge.create_texture(Avian::PathHelper.resource_path("#{texture_name}.png"))
   end
 
   def set_sprite_texture(sprite, texture)

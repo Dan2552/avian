@@ -14,7 +14,7 @@ def draw(bridge, sprite)
   bridge.draw_image(
     sprite.texture,
     sprite.x.to_i,
-    sprite.y.to_i,
+    Platform.camera.height - sprite.y.to_i,
     sprite.z.to_i,
     sprite.angle.to_f,
     sprite.center_x.to_i,
@@ -22,7 +22,7 @@ def draw(bridge, sprite)
     sprite.x_scale.to_f,
     sprite.y_scale.to_f,
     Platform.camera.x.to_i,
-    Platform.camera.y.to_i,
+    -Platform.camera.y.to_i,
     Platform.camera.x_scale.to_f,
     Platform.camera.y_scale.to_f
   )
@@ -55,7 +55,9 @@ def run
     # call to C to clear screen
     bridge.clear_screen
     # bridge.draw_test_rect
-    render_store.sprites.each { |sprite| draw(bridge, sprite) }
+    render_store.sprites
+      .sort_by(&:z)
+      .each { |sprite| draw(bridge, sprite) }
     bridge.render
     # run the game renderer
     # TODO
