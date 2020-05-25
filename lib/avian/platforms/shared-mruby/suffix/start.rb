@@ -52,15 +52,14 @@ def run
     # run the game loop
     game_loop.perform_update(Time.now.to_f * 1000)
 
-    # call to C to clear screen
+    # render
     bridge.clear_screen
-    # bridge.draw_test_rect
+
     render_store.sprites
       .sort_by(&:z)
       .each { |sprite| draw(bridge, sprite) }
+
     bridge.render
-    # run the game renderer
-    # TODO
   end
 end
 

@@ -136,6 +136,9 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     int height;
     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 
+    width = width * 0.5;
+    height = height * 0.5;
+
     camera_x_scale = camera_x_scale * device_scale;
     camera_y_scale = camera_y_scale * device_scale;
 
@@ -150,8 +153,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     y = y * camera_y_scale;
 
     // Normalize 0,0 to center of screen and center of sprite
-    x = x + (screen_width) * 0.5;
-    y = y + (screen_height) * 0.5;
+    x = x + screen_width * 0.5;
+    y = y + screen_height * 0.5;
     x = x - width * 0.5;
     y = y - height * 0.5;
 
@@ -162,8 +165,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     SDL_Rect destination = {
       .x = x,
       .y = y,
-      .w = (width * 0.5) + 1, // TODO: instead of +1 try rounding
-      .h = (height * 0.5) + 1
+      .w = (width) + 1, // TODO: instead of +1 try rounding
+      .h = (height) + 1
     };
 
     SDL_RenderCopy(renderer, texture, NULL, &destination);
