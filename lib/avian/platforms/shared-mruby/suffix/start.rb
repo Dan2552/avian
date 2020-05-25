@@ -1,9 +1,17 @@
 puts "THIS IS RUBY"
-
+class ExitError < StandardError; end
 class PlatformRenderStore
   def sprites
     @sprites ||= []
   end
+end
+
+class PlatformInput
+  def initialize
+    @x = 1
+  end
+
+  attr_reader :x
 end
 
 def draw(bridge, sprite)
@@ -28,6 +36,21 @@ def draw(bridge, sprite)
   )
 end
 
+def handle_inputs(state, id, x, y)
+  return if state == :empty
+  puts "#{state} #{id} : #{x},#{y}"
+  case state
+  when :touch_down
+    Input.shared_instance.touch_did_begin(id, Vector[x, y])
+  when :touch_up
+    Input.shared_instance.touch_did_end(id, Vector[x, y])
+  when :touch_move
+    Input.shared_instance.touch_did_move(id, Vector[x, y])
+  when :quit
+    raise ExitError
+  end
+end
+
 def run
   bridge = Avian::CBridge.new
 
@@ -36,6 +59,8 @@ def run
     bridge.get_screen_width,
     bridge.get_screen_height
   )
+
+  platform_input = PlatformInput.new
 
   bridge.provision_sdl
 
@@ -47,7 +72,7 @@ def run
 
   loop do
     # call to C to update inputs - i.e. calls SDL_PollEvent
-    bridge.update_inputs
+    handle_inputs(*bridge.update_inputs)
 
     # run the game loop
     game_loop.perform_update(Time.now.to_f * 1000)
@@ -65,6 +90,8 @@ end
 
 begin
   run
+rescue ExitError
+  # Do nothing
 rescue Exception => e
   puts "========="
   puts e.inspect

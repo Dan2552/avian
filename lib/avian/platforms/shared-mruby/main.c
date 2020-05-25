@@ -3,6 +3,7 @@
 #include "mruby.h"
 #include "mruby/irep.h"
 #include "mruby/string.h"
+#include "mruby/array.h"
 #include "SDL.h"
 #include "SDL_image.h"
 #include <stdio.h>
@@ -18,6 +19,7 @@ int textures_count = 0;
 int screen_width;
 int screen_height;
 double device_scale;
+int mouse_down = 0;
 
 static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     printf("provision_sdl\n");
@@ -51,14 +53,79 @@ static mrb_value get_screen_height(mrb_state *mrb, mrb_value self) {
 }
 
 static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
+    int x = 0;
+    int y = 0;
+    long id = 0;
+    char *state = "empty";
+
+#if MOBILE
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            printf("SDL_QUIT");
-            // let's hope we don't need this
+        switch(event.type){
+            case SDL_QUIT:
+                state = "quit";
+                break;
+            case SDL_FINGERMOTION:
+                state = "touch_move";
+                id = event.tfinger.fingerId;
+                x = event.motion.x;
+                y = event.motion.y;
+            case SDL_FINGERDOWN:
+                state = "touch_down";
+                id = event.tfinger.fingerId;
+                x = event.motion.x;
+                y = event.motion.y;
+                break;
+            case SDL_FINGERUP:
+                state = "touch_up";
+                id = event.tfinger.fingerId;
+                x = event.motion.x;
+                y = event.motion.y;
+                break;
         }
     }
+#else
+    // TODO: 2 events in the same frame e.g. motion and down
+    while (SDL_PollEvent(&event)) {
+        switch(event.type){
+            case SDL_QUIT:
+                state = "quit";
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if (!mouse_down) {
+                  mouse_down = 1;
+                  state = "touch_down";
+                  id = 1;
+                  x = event.motion.x;
+                  y = event.motion.y;
+                }
+                break;
+            case SDL_MOUSEMOTION:
+                if (mouse_down) {
+                  state = "touch_move";
+                  id = 1;
+                  x = event.motion.x;
+                  y = event.motion.y;
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (mouse_down) {
+                  mouse_down = 0;
+                  state = "touch_up";
+                  id = 1;
+                  x = event.motion.x;
+                  y = event.motion.y;
+                }
+                break;
+        }
+    }
+#endif
 
-    return mrb_nil_value();
+    mrb_value values[4];
+    values[0] = mrb_symbol_value(mrb_intern_cstr(mrb, state));
+    values[1] = mrb_fixnum_value(id);
+    values[2] = mrb_fixnum_value(x);
+    values[3] = mrb_fixnum_value(y);
+    return mrb_ary_new_from_values(mrb, 4, values);
 }
 
 static mrb_value clear_screen(mrb_state *mrb, mrb_value self) {

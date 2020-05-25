@@ -150,7 +150,6 @@ class Platform
   end
 
   def screen_size
-    puts "unimplemented!!! screen_size"
-    @screen_size ||= Size[340, 480]
+    @screen_size ||= Size[@bridge.get_screen_width, @bridge.get_screen_height]
   end
 end
