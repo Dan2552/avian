@@ -32,7 +32,8 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     SDL_GetRendererOutputSize(renderer, &screen_width, &screen_height);
     device_scale = 1;
 #else
-    device_scale = 0.6666666;
+    // device_scale = 0.6666666;
+    device_scale = 1;
     screen_width = 1125 / 3;
     screen_height = 2436 / 3;
     window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI);
@@ -59,39 +60,48 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
     char *state = "empty";
 
 #if MOBILE
-    while (SDL_PollEvent(&event)) {
+    if (SDL_PollEvent(&event)) {
         switch(event.type){
             case SDL_QUIT:
                 state = "quit";
                 break;
-            case SDL_FINGERMOTION:
-                state = "touch_move";
-                id = event.tfinger.fingerId;
-                x = event.motion.x;
-                y = event.motion.y;
             case SDL_FINGERDOWN:
-                state = "touch_down";
-                id = event.tfinger.fingerId;
-                x = event.motion.x;
-                y = event.motion.y;
+                if (mouse_down == 0) {
+                    mouse_down = 1;
+                    state = "touch_down";
+                    id = event.tfinger.fingerId;
+                    x = event.tfinger.x * screen_width;
+                    y = event.tfinger.y * screen_height;
+                }
+                break;
+            case SDL_FINGERMOTION:
+                if (mouse_down == 1) {
+                  state = "touch_move";
+                  id = event.tfinger.fingerId;
+                  x = event.tfinger.x * screen_width;
+                  y = event.tfinger.y * screen_height;
+                    printf("(C) %i %i\n", x, y);
+                }
                 break;
             case SDL_FINGERUP:
-                state = "touch_up";
-                id = event.tfinger.fingerId;
-                x = event.motion.x;
-                y = event.motion.y;
+                if (mouse_down == 1) {
+                  mouse_down = 0;
+                  state = "touch_up";
+                  id = event.tfinger.fingerId;
+                  x = event.tfinger.x * screen_width;
+                  y = event.tfinger.y * screen_height;
+                }
                 break;
         }
     }
 #else
-    // TODO: 2 events in the same frame e.g. motion and down
-    while (SDL_PollEvent(&event)) {
+    if (SDL_PollEvent(&event)) {
         switch(event.type){
             case SDL_QUIT:
                 state = "quit";
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if (!mouse_down) {
+                if (mouse_down == 0) {
                   mouse_down = 1;
                   state = "touch_down";
                   id = 1;
@@ -100,7 +110,7 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 }
                 break;
             case SDL_MOUSEMOTION:
-                if (mouse_down) {
+                if (mouse_down == 1) {
                   state = "touch_move";
                   id = 1;
                   x = event.motion.x;
@@ -108,7 +118,7 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
-                if (mouse_down) {
+                if (mouse_down == 1) {
                   mouse_down = 0;
                   state = "touch_up";
                   id = 1;
@@ -118,14 +128,19 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 break;
         }
     }
+
+    x = x * 2;
+    y = y * 2;
 #endif
 
-    mrb_value values[4];
-    values[0] = mrb_symbol_value(mrb_intern_cstr(mrb, state));
-    values[1] = mrb_fixnum_value(id);
-    values[2] = mrb_fixnum_value(x);
-    values[3] = mrb_fixnum_value(y);
-    return mrb_ary_new_from_values(mrb, 4, values);
+    int more = SDL_PollEvent(NULL);
+    mrb_value values[5];
+    values[0] = mrb_fixnum_value(more);
+    values[1] = mrb_symbol_value(mrb_intern_cstr(mrb, state));
+    values[2] = mrb_fixnum_value(id);
+    values[3] = mrb_fixnum_value(x);
+    values[4] = mrb_fixnum_value(y);
+    return mrb_ary_new_from_values(mrb, 5, values);
 }
 
 static mrb_value clear_screen(mrb_state *mrb, mrb_value self) {
