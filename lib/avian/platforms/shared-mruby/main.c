@@ -32,13 +32,19 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     SDL_GetRendererOutputSize(renderer, &screen_width, &screen_height);
     device_scale = 1;
 #else
+    // (1 - 1/3)
     // device_scale = 0.6666666;
     device_scale = 1;
     screen_width = 1125 / 3;
     screen_height = 2436 / 3;
+
+    printf("SCREEN %i %i\n", screen_width, screen_height);
+
     window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI);
     renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_RenderSetScale(renderer, 0.6666666, 0.6666666);
     SDL_GetRendererOutputSize(renderer, &screen_width, &screen_height);
+    printf("SCREEN %i %i\n", screen_width, screen_height);
 #endif
 
     printf("screen size: %i, %i\n", screen_width, screen_height);
@@ -129,8 +135,8 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
         }
     }
 
-    x = x * 2;
-    y = y * 2;
+    x = x * 3;
+    y = y * 3;
 #endif
 
     int more = SDL_PollEvent(NULL);
@@ -241,8 +247,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     y = y - height * 0.5;
 
     // Adjust for camera position
-    x = x - camera_x * camera_x_scale;
-    y = y - camera_y * camera_y_scale;
+    // x = x - camera_x * camera_x_scale;
+    // y = y - camera_y * camera_y_scale;
 
     SDL_Rect destination = {
       .x = x,
