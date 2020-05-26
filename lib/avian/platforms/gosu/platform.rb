@@ -126,12 +126,8 @@ class Platform
   end
 
   def set_sprite_scale(sprite, x_scale, y_scale)
-    if sprite.is_a?(Avian::DesktopGosuPlatform::Camera)
-      sprite.scale = 1.0 / y_scale
-    else
-      sprite.x_scale = x_scale
-      sprite.y_scale = y_scale
-    end
+    sprite.x_scale = x_scale
+    sprite.y_scale = y_scale
   end
 
   def screen_size
@@ -144,6 +140,6 @@ class Platform
   end
 
   def set_camera_scale(x_scale, y_scale)
-    camera.scale = y_scale
+    camera.scale = 1.0 / y_scale
   end
 end
