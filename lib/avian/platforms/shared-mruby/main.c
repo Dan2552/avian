@@ -140,9 +140,6 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 break;
         }
     }
-
-    // x = x * device_scale;
-    // y = y * device_scale;
 #endif
 
     int more = SDL_PollEvent(NULL);
@@ -254,8 +251,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     y = y - height * 0.5;
 
     // Adjust for camera position
-    // x = x - camera_x * camera_x_scale;
-    // y = y - camera_y * camera_y_scale;
+    x = x - camera_x * camera_x_scale;
+    y = y - camera_y * camera_y_scale;
 
     SDL_Rect destination = {
       .x = x,
