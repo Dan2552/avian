@@ -141,8 +141,8 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
         }
     }
 
-    x = x * device_scale;
-    y = y * device_scale;
+    // x = x * device_scale;
+    // y = y * device_scale;
 #endif
 
     int more = SDL_PollEvent(NULL);
