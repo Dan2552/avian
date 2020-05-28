@@ -105,8 +105,10 @@ class Platform
     # if sprite.is_a?(Avian::DesktopGosuPlatform::Camera)
     #   sprite.scale = 1.0 / y_scale
     # else
-    Platform.camera.x_scale = x_scale
-    Platform.camera.y_scale = y_scale
+    # Platform.camera.x_scale = x_scale
+    # Platform.camera.y_scale = y_scale
+    Platform.camera.x_scale = 1.0 / x_scale
+    Platform.camera.y_scale = 1.0 / x_scale
   end
 
   def set_sprite_position(sprite, position, z_position)

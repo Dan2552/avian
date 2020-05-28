@@ -40,18 +40,23 @@ def handle_inputs(state, id, x, y)
   return if state == :empty
   # puts "#{state} #{id} : #{x},#{y}"
 
-  puts "#{Platform.screen_size.width}x#{Platform.screen_size.height}"
-  x = x - Platform.screen_size.width * 0.5
-  y = y - Platform.screen_size.height * 0.5
+  puts "ruby: #{Platform.screen_size.width}x#{Platform.screen_size.height}"
+  # x = x - Platform.screen_size.width * 0.5
+  # y = y - Platform.screen_size.height * 0.5
+
+  y = Platform.screen_size.height - y
+
+  x = x * 0.5
+  y = y * 0.5
 
   case state
   when :touch_down
-    Input.shared_instance.touch_did_begin(id, Vector[x, -y])
+    Input.shared_instance.touch_did_begin(id, Vector[x, y])
   when :touch_up
-    Input.shared_instance.touch_did_end(id, Vector[x, -y])
+    Input.shared_instance.touch_did_end(id, Vector[x, y])
   when :touch_move
     puts "#{state} #{id} : #{x},#{y}"
-    Input.shared_instance.touch_did_move(id, Vector[x, -y])
+    Input.shared_instance.touch_did_move(id, Vector[x, y])
   when :quit
     raise ExitError
   end
