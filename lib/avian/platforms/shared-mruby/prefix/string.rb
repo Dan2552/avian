@@ -6,4 +6,8 @@ class String
   def singularize
     sub(/s$/, '')
   end
+
+  def pluralize
+    sub(/$/, 's')
+  end
 end

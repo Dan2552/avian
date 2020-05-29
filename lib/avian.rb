@@ -13,7 +13,6 @@ AVIAN_LOAD_ORDER = [
   "engine/rendering/**/*.rb",
   "engine/core/**/*.rb",
   "engine/application.rb",
-  "engine/path_helper.rb",
   "engine/tiled/object.rb",
   "engine/tiled/tile_layer.rb",
   "engine/tiled/object_layer.rb",

@@ -30,7 +30,7 @@ class Platform
     def set_camera_position(*args); shared_instance.set_camera_position(*args); end
     def set_camera_scale(*args); shared_instance.set_camera_scale(*args); end
     def sleep(*args); shared_instance.sleep(*args); end
-    def resources_dir(*args); shared_instance.resources_dir(*args); end
+    def resource_path(*args); shared_instance.resource_path(*args); end
   end
 
   attr_accessor :window
@@ -39,8 +39,8 @@ class Platform
     Kernel.sleep(time)
   end
 
-  def resources_dir
-    "resources"
+  def resource_path(resource = "")
+    File.join("resources", resource)
   end
 
   # Create a sprite to be stored in the renderer's sprite pool.

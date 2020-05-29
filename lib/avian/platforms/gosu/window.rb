@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'yaml'
 
 module Avian
   module DesktopGosuPlatform

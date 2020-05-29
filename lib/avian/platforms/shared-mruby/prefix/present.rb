@@ -6,7 +6,7 @@ end
 
 class String
   def present?
-    strip.length == 0
+    strip.length > 0
   end
 end
 

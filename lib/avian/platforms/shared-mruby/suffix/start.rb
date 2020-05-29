@@ -1,4 +1,3 @@
-puts "THIS IS RUBY"
 class ExitError < StandardError; end
 class PlatformRenderStore
   def sprites
@@ -39,8 +38,6 @@ end
 def handle_inputs(state, id, x, y)
   return if state == :empty
 
-  puts "ruby: #{Platform.screen_size.width}x#{Platform.screen_size.height}"
-
   y = Platform.screen_size.height - y
 
   case state
@@ -70,7 +67,6 @@ def run
 
   config = Avian::Application.main.config
   primary_scene = config.primary_scene
-  puts "primary_scene: #{primary_scene}"
   scenario = primary_scene.new
   game_loop ||= Loop.new(scenario.root)
 
@@ -101,10 +97,9 @@ begin
 rescue ExitError
   # Do nothing
 rescue Exception => e
-  puts "========="
-  puts e.inspect
+  puts ""
+  puts e.inspect.split("_EXCLUDE_FILE_AND_LINE_").last
   e.backtrace.each do |line|
-    puts line unless line.end_with?(":in method_missing")
+    puts line.split("_EXCLUDE_FILE_AND_LINE_").last unless line.end_with?(":in method_missing")
   end
-  puts "========="
 end

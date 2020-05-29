@@ -26,8 +26,6 @@ int render_screen_width;
 int render_screen_height;
 
 static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
-    printf("provision_sdl\n");
-
 #if MOBILE
     window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN|SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_DisplayMode display_mode;
@@ -53,7 +51,7 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     // printf("SCREEN %i %i\n", screen_width, screen_height);
 #endif
 
-    printf("screen size: %i, %i\n", screen_width, screen_height);
+    // printf("screen size: %i, %i\n", screen_width, screen_height);
     return mrb_nil_value();
 }
 
@@ -182,7 +180,6 @@ static mrb_value create_texture(mrb_state *mrb, mrb_value self) {
         SDL_FreeSurface(loaded_surface);
     }
 
-    printf("texture created: %i\n", textures_count - 1);
     return mrb_fixnum_value(textures_count - 1);
 }
 
@@ -280,8 +277,6 @@ static mrb_value sleep(mrb_state *mrb, mrb_value self) {
 }
 
 int main(int argc, char *argv[]) {
-    printf("started\n");
-
     mrb_state *mrb = mrb_open();
     struct RClass *ruby_module_avian = mrb_define_module(mrb, "Avian");
     struct RClass *ruby_class_c_bridge = mrb_define_class_under(mrb, ruby_module_avian, "CBridge", mrb->object_class);
