@@ -29,14 +29,14 @@ class Platform
     def width_of_text(*args); shared_instance.width_of_text(*args); end
     def set_camera_position(*args); shared_instance.set_camera_position(*args); end
     def set_camera_scale(*args); shared_instance.set_camera_scale(*args); end
-    def sleep(*args); shared_instance.sleep(*args); end
+    def delay(*args); shared_instance.delay(*args); end
     def resource_path(*args); shared_instance.resource_path(*args); end
   end
 
   attr_accessor :window
 
-  def sleep(time)
-    Kernel.sleep(time)
+  def delay(time)
+    sleep(time)
   end
 
   def resource_path(resource = "")

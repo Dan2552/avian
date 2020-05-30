@@ -98,7 +98,7 @@ lib_sdl_ref_clone = target.frameworks_build_phase.files_references.find { |ref| 
 ref = group.new_file("libSDL2_image.a", :group)
 ref.explicit_file_type = "archive.ar"
 target.frameworks_build_phase.add_file_reference(ref, true)
-# binding.pry
+
 
 #
 # Save the xcodeproj

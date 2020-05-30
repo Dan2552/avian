@@ -268,7 +268,7 @@ static mrb_value render(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value sleep(mrb_state *mrb, mrb_value self) {
+static mrb_value delay(mrb_state *mrb, mrb_value self) {
   mrb_float seconds;
   mrb_get_args(mrb, "f", &seconds);
   SDL_Delay(seconds * 1000);
@@ -290,7 +290,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_width", get_screen_width, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_height", get_screen_height, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "render", render, MRB_ARGS_NONE());
-    mrb_define_method(mrb, ruby_class_c_bridge, "sleep", sleep, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "delay", delay, MRB_ARGS_ANY());
 
     mrb_load_irep(mrb, app);
     if (mrb->exc) mrb_print_error(mrb);

@@ -22,7 +22,6 @@ class GameObject::Base
   def perform_update
     if destroyed
       if @updated_once
-        puts "destroyed once"
         raise "#perform_update called on destroyed GameObject"
       end
       @updated_once = true
@@ -52,6 +51,7 @@ class GameObject::Base
     RenderList.shared_instance << self if renderable?
     did_destroy
     children.each(&:destroy)
+    true
   end
 
   # A GameObject is not renderable by default.

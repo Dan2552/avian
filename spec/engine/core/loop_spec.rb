@@ -34,7 +34,7 @@ describe Loop do
       it "calls the sets the lowest delta" do
         subject
 
-        expect(Time.delta).to eq(0.016)
+        expect(Time.delta).to eq(0.008)
       end
     end
 
@@ -52,13 +52,13 @@ describe Loop do
         expect(Time.delta).to eq(0.06666666799993254)
       end
 
-      context "when the difference is less than 16ms" do
-        let(:current_time) { first_time + 10 }
+      context "when the difference is less than 8ms" do
+        let(:current_time) { first_time + 6 }
 
         it "calls the sets the lowest delta" do
           subject
 
-          expect(Time.delta).to eq(0.016)
+          expect(Time.delta).to eq(0.008)
         end
       end
     end

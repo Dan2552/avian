@@ -130,8 +130,19 @@ shared_examples_for("a game object") do
     context "when the GameObject is destroyed" do
       before { described_instance.destroy }
 
-      it "raises an exception" do
-        expect { subject }.to raise_error("#perform_update called on destroyed GameObject")
+      context "first time" do
+        it "does nothing special" do
+          expect { subject }.to_not raise_error
+        end
+      end
+      context "second time" do
+        before do
+          described_instance.perform_update
+        end
+
+        it "raises an exception" do
+          expect { subject }.to raise_error("#perform_update called on destroyed GameObject")
+        end
       end
     end
 

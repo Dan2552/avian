@@ -29,7 +29,7 @@ class Platform
     def width_of_text(*args); shared_instance.width_of_text(*args); end
     def set_camera_position(*args); shared_instance.set_camera_position(*args); end
     def set_camera_scale(*args); shared_instance.set_camera_scale(*args); end
-    def sleep(*args); shared_instance.sleep(*args); end
+    def delay(*args); shared_instance.delay(*args); end
     def resource_path(*args); shared_instance.resource_path(*args); end
 
     attr_accessor :render_store
@@ -40,8 +40,8 @@ class Platform
     @bridge = Avian::CBridge.new
   end
 
-  def sleep(time)
-    @bridge.sleep(time)
+  def delay(time)
+    @bridge.delay(time)
   end
 
   def resource_path(resource = "")
@@ -132,8 +132,7 @@ class Platform
   end
 
   def remove_sprite(sprite)
-    puts "unimplemented!!! remove_sprite(sprite)"
-    # window.sprites.delete(sprite)
+    Platform.render_store.sprites.delete(sprite)
   end
 
   def set_sprite_visible(sprite, visible)

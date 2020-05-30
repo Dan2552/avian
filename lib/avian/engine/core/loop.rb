@@ -23,7 +23,7 @@ class Loop
     # processing.
     if milliseconds_delta < 8
       sleep_time = 8 - milliseconds_delta
-      Platform.sleep(sleep_time * 0.001)
+      Platform.delay(sleep_time * 0.001)
       milliseconds_delta += sleep_time
     end
 
