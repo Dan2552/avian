@@ -24,7 +24,7 @@ module Collision
     def initialize(current_position, increment)
       @original_position = current_position
       @current_position = current_position
-      @increment = increment.abs
+      @increment = increment.abs.to_f
       @decimal_places = increment.to_s.split(".").last.length
     end
 
@@ -54,8 +54,8 @@ module Collision
       @vector = vector
       @collision_check = collision_check
 
-      @remaining_x = vector.x.abs
-      @remaining_y = vector.y.abs
+      @remaining_x = vector.x.abs.to_f
+      @remaining_y = vector.y.abs.to_f
 
       @x_operator = :+ if vector.x > 0
       @x_operator = :- if vector.x < 0
@@ -112,7 +112,7 @@ module Collision
 
       if @collision_check.call(current_position) != true # there is a collision
         @current_position = previous_position
-        @remaining_x = 0
+        @remaining_x = 0.0
       end
     end
 
