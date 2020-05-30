@@ -146,7 +146,7 @@ module Collision
       if @collision_check.call(current_position) != true # there is a collision
         # puts "there's a collision"
         @current_position = previous_position
-        @remaining_y = 0
+        @remaining_y = 0.0
       end
     end
   end
