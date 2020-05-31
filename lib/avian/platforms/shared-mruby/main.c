@@ -197,10 +197,14 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     mrb_int camera_y;
     mrb_float camera_x_scale;
     mrb_float camera_y_scale;
+    mrb_int color_red;
+    mrb_int color_green;
+    mrb_int color_blue;
+    mrb_float blend_factor;
 
     mrb_get_args(
       mrb,
-      "iiiifiiffiiff",
+      "iiiifiiffiiffiiif",
       &texture_index,
       &x,
       &y,
@@ -213,12 +217,27 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
       &camera_x,
       &camera_y,
       &camera_x_scale,
-      &camera_y_scale
+      &camera_y_scale,
+      &color_red,
+      &color_green,
+      &color_blue,
+      &blend_factor
     );
 
     // printf("(c---) texture_index: %lld, x: %lld, y: %lld, z: %lld, angle: %f, center_x: %lld, center_y: %lld, x_scale: %f, y_scale: %f, camera_x: %lld, camera_y: %lld, camera_x_scale: %f, camera_y_scale: %f\n", texture_index, x, y, z, angle, center_x, center_y, x_scale, y_scale, camera_x, camera_y, camera_x_scale, camera_y_scale);
 
     SDL_Texture *texture = textures[texture_index];
+
+    if (blend_factor > 0) {
+      int red;
+      int green;
+      int blue;
+      red = ((255-color_red)*(1-blend_factor))+color_red;
+      green = ((255-color_green)*(1-blend_factor))+color_green;
+      blue = ((255-color_blue)*(1-blend_factor))+color_blue;
+
+      SDL_SetTextureColorMod(texture, red, green, blue);
+    }
 
     int width;
     int height;
@@ -259,6 +278,10 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     };
 
     SDL_RenderCopy(renderer, texture, NULL, &destination);
+
+    if (blend_factor > 0) {
+      SDL_SetTextureColorMod(texture, 255, 255, 255);
+    }
 
     return mrb_nil_value();
 }

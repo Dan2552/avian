@@ -145,9 +145,8 @@ class Platform
   end
 
   def set_sprite_color_blend(sprite, color, blend_factor)
-    puts "unimplemented!!! set_sprite_color_blend(sprite, color, blend_factor)"
-    # sprite.color = color
-    # sprite.color_blend_factor = blend_factor
+    sprite.color = color
+    sprite.color_blend_factor = blend_factor
   end
 
   def screen_size

@@ -18,6 +18,18 @@ def draw(bridge, sprite)
 
   return unless sprite.visible
 
+  red = 0
+  green = 0
+  blue = 0
+
+  if sprite.color_blend_factor > 0
+    red = (sprite.color >> 16) & 255
+    green = (sprite.color >> 8) & 255
+    blue = sprite.color & 255
+
+    puts "#{sprite.color_blend_factor} : #{red}, #{green}, #{blue}"
+  end
+
   bridge.draw_image(
     sprite.texture,
     sprite.x.to_i,
@@ -31,7 +43,11 @@ def draw(bridge, sprite)
     Platform.camera.x.to_i,
     -Platform.camera.y.to_i,
     Platform.camera.x_scale.to_f,
-    Platform.camera.y_scale.to_f
+    Platform.camera.y_scale.to_f,
+    red,
+    green,
+    blue,
+    sprite.color_blend_factor
   )
 end
 
