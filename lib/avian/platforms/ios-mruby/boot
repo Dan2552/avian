@@ -18,118 +18,109 @@ if (ENV['RUBY_ONLY'] || "").length > 0
   exit(0)
 end
 
-unless File.directory?(File.join(build_dir, "ios", "sdl"))
-  FileUtils.mkdir_p(File.join(build_dir, "ios"))
-  FileUtils.cd(File.join(build_dir, "ios"))
-  puts "\n--- Cloning SDL ---"
-  system("git clone https://github.com/SDL-mirror/SDL.git sdl") ||
-    raise("Failed to clone SDL")
-end
+load(File.join(script_dir, "build_steps", "download_dependencies.rb"))
+load(File.join(script_dir, "build_steps", "sdl.rb"))
+load(File.join(script_dir, "build_steps", "sdl_image.rb"))
+load(File.join(script_dir, "build_steps", "sdl_gpu.rb"))
+load(File.join(script_dir, "build_steps", "prepare_mruby.rb"))
+load(File.join(script_dir, "build_steps", "assemble_project.rb"))
 
-unless File.directory?(File.join(build_dir, "ios", "sdl_image"))
-  FileUtils.mkdir_p(File.join(build_dir, "ios"))
-  FileUtils.cd(File.join(build_dir, "ios"))
-  puts "\n--- Cloning SDL_image ---"
-  system("git clone https://github.com/SDL-mirror/SDL_image.git sdl_image") ||
-    raise("Failed to clone SDL_image")
-end
+# FileUtils.cd(build_dir)
 
-FileUtils.cd(build_dir)
+# FileUtils.rm_rf(xcode_project_dir)
+# source = File.join(build_dir, "ios", "sdl", "Xcode-iOS", "Template", "SDL iOS Application")
+# FileUtils.cp_r(source, xcode_project_dir)
 
-FileUtils.rm_rf(xcode_project_dir)
-source = File.join(build_dir, "ios", "sdl", "Xcode-iOS", "Template", "SDL iOS Application")
-FileUtils.cp_r(source, xcode_project_dir)
+# puts "\n--- Preparing Xcode project ---"
+# system(
+#   { "BUNDLE_GEMFILE" => "", "XCODE_PROJECT_ROOT" => xcode_project_dir },
+#   File.join(script_dir, "setup_xcode_project.rb")
+# ) || raise("Failed to setup Xcode project")
 
-puts "\n--- Preparing Xcode project ---"
-system(
-  { "BUNDLE_GEMFILE" => "", "XCODE_PROJECT_ROOT" => xcode_project_dir },
-  File.join(script_dir, "setup_xcode_project.rb")
-) || raise("Failed to setup Xcode project")
+# source = File.join(build_dir, "game_resources", ".")
+# destination = File.join(xcode_project_dir, "game_resources")
+# FileUtils.cp_r(source, destination)
 
-source = File.join(project_root, "resources", ".")
-destination = File.join(xcode_project_dir, "game_resources")
-FileUtils.cp_r(source, destination)
+# mruby_path = `bundle exec mundle path`.chomp
 
-mruby_path = `bundle exec mundle path`.chomp
+# FileUtils.rm_rf(File.join(build_dir, "frameworks"))
+# FileUtils.mkdir_p(File.join(xcode_project_dir, "MRuby.framework", "Headers"))
 
-FileUtils.rm_rf(File.join(build_dir, "frameworks"))
-FileUtils.mkdir_p(File.join(xcode_project_dir, "MRuby.framework", "Headers"))
+# ios_lib = File.join(mruby_path, "build", "ios", "lib", "libmruby.a")
+# ios_simulator_lib = File.join(mruby_path, "build", "ios-simulator", "lib", "libmruby.a")
 
-ios_lib = File.join(mruby_path, "build", "ios", "lib", "libmruby.a")
-ios_simulator_lib = File.join(mruby_path, "build", "ios-simulator", "lib", "libmruby.a")
+# lipo = %W(
+#   lipo
+#     #{ios_lib}
+#     #{ios_simulator_lib}
+#     -create
+#     -output #{File.join(xcode_project_dir, "MRuby.framework", "MRuby")}
+# )
+# system(*lipo) || raise("Failed creating mruby universal iOS framework")
 
-lipo = %W(
-  lipo
-    #{ios_lib}
-    #{ios_simulator_lib}
-    -create
-    -output #{File.join(xcode_project_dir, "MRuby.framework", "MRuby")}
-)
-system(*lipo) || raise("Failed creating mruby universal iOS framework")
+# FileUtils.cp_r(File.join(mruby_path, "include", "."), File.join(xcode_project_dir, "MRuby.framework", "Headers"))
+# FileUtils.cp(File.join(script_dir, "framework", "Info.plist"), File.join(xcode_project_dir, "MRuby.framework"))
 
-FileUtils.cp_r(File.join(mruby_path, "include", "."), File.join(xcode_project_dir, "MRuby.framework", "Headers"))
-FileUtils.cp(File.join(script_dir, "framework", "Info.plist"), File.join(xcode_project_dir, "MRuby.framework"))
+# FileUtils.cp(File.join(build_dir, "app.c"), File.join(xcode_project_dir, "app.h"))
+# FileUtils.cp(File.join(shared_dir, "main.c"), File.join(xcode_project_dir, "main.c"))
+# FileUtils.cp(File.join(script_dir, "options.h"), File.join(xcode_project_dir, "options.h"))
+# FileUtils.cp(File.join(script_dir, "LaunchScreen.storyboard"), File.join(xcode_project_dir, "LaunchScreen.storyboard"))
 
-FileUtils.cp(File.join(build_dir, "app.c"), File.join(xcode_project_dir, "app.h"))
-FileUtils.cp(File.join(shared_dir, "main.c"), File.join(xcode_project_dir, "main.c"))
-FileUtils.cp(File.join(script_dir, "options.h"), File.join(xcode_project_dir, "options.h"))
-FileUtils.cp(File.join(script_dir, "LaunchScreen.storyboard"), File.join(xcode_project_dir, "LaunchScreen.storyboard"))
+# xcode_project = File.join(xcode_project_dir, "___PROJECTNAME___.xcodeproj")
 
-xcode_project = File.join(xcode_project_dir, "___PROJECTNAME___.xcodeproj")
+# if (ENV['XCODE_PROJECT_ONLY'] || "").length > 0
+#   puts 'run the following to open the xcodeproj:'
+#   puts "\`\`\`"
+#   puts "open #{xcode_project}"
+#   puts "\`\`\`"
+# else
+#   xcode_build_dir = File.join(build_dir, "ios", "xcode_build")
+#   xcode_build = %W(
+#     xcodebuild
+#       -project #{xcode_project}
+#       -sdk iphonesimulator
+#       -scheme ___PROJECTNAME___
+#       -configuration "Debug"
+#       OBJROOT=#{xcode_build_dir}
+#       SYMROOT=#{xcode_build_dir}
+#   )
 
-if (ENV['XCODE_PROJECT_ONLY'] || "").length > 0
-  puts 'run the following to open the xcodeproj:'
-  puts "\`\`\`"
-  puts "open #{xcode_project}"
-  puts "\`\`\`"
-else
-  xcode_build_dir = File.join(build_dir, "ios", "xcode_build")
-  xcode_build = %W(
-    xcodebuild
-      -project #{xcode_project}
-      -sdk iphonesimulator
-      -scheme ___PROJECTNAME___
-      -configuration "Debug"
-      OBJROOT=#{xcode_build_dir}
-      SYMROOT=#{xcode_build_dir}
-  )
+#   system(*xcode_build) || raise("XCode build failed")
 
-  system(*xcode_build) || raise("XCode build failed")
+#   simulators = `xcrun simctl list | grep "Phone: iPhone 11 Pro (" | grep -v "unavailable"`.chomp.split("\n")
+#   device = simulators.first.match(/\((\w+-\w+-\w+-\w+-\w+)\)/)[1]
 
-  simulators = `xcrun simctl list | grep "Phone: iPhone 11 Pro (" | grep -v "unavailable"`.chomp.split("\n")
-  device = simulators.first.match(/\((\w+-\w+-\w+-\w+-\w+)\)/)[1]
+#   system("open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/") || raise("Failed to start simulator")
 
-  system("open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/") || raise("Failed to start simulator")
+#   system("xcrun simctl shutdown all")
 
-  system("xcrun simctl shutdown all")
+#   start = system("xcrun simctl boot #{device}") || raise("Failed to boot simulator")
 
-  start = system("xcrun simctl boot #{device}") || raise("Failed to boot simulator")
+#   simulator_install = %W(
+#     xcrun
+#       simctl
+#       install
+#       #{device}
+#       #{File.join(xcode_build_dir, "Release-iphonesimulator", "___PROJECTNAME___.app")}
+#   )
 
-  simulator_install = %W(
-    xcrun
-      simctl
-      install
-      #{device}
-      #{File.join(xcode_build_dir, "Release-iphonesimulator", "___PROJECTNAME___.app")}
-  )
+#   system(*simulator_install) || raise("Failed to install app on simulator")
 
-  system(*simulator_install) || raise("Failed to install app on simulator")
+#   simulator_launch = %W(
+#     xcrun
+#       simctl
+#       launch
+#       #{device}
+#       com.yourcompany.___PROJECTNAME___
+#   )
 
-  simulator_launch = %W(
-    xcrun
-      simctl
-      launch
-      #{device}
-      com.yourcompany.___PROJECTNAME___
-  )
-
-  system(*simulator_launch) || raise("Failed to launch app on simulator")
-  begin
-    puts "Press enter to quit"
-    gets
-  ensure
-    puts "Exiting..."
-    system("xcrun simctl shutdown all")
-  end
-end
+#   system(*simulator_launch) || raise("Failed to launch app on simulator")
+#   begin
+#     puts "Press enter to quit"
+#     gets
+#   ensure
+#     puts "Exiting..."
+#     system("xcrun simctl shutdown all")
+#   end
+# end
 

@@ -10,6 +10,10 @@ gemfile do
   gem "pry"
 end
 
+# TODO
+PROJECT_NAME = "Midnight"
+BUNDLE_IDENTIFIER_PREFIX = "com.example"
+
 def project_path
   @project_path ||= Pathname.new(ENV['XCODE_PROJECT_ROOT'])
 end
@@ -32,6 +36,29 @@ def add_include_headers(include_path, group_name)
     group.new_file(file)
   end
 end
+
+def find_and_replace(path, old, new)
+  text = File.read(path)
+  replace = text.gsub(old, new)
+  if text != replace
+    File.open(path, 'w') { |file| file.puts replace }
+  end
+end
+
+def find_profile(name)
+  filepath = File.join(ENV["HOME"], "Library", "MobileDevice", "Provisioning Profiles", "*")
+  Dir.glob(filepath).each do |profile|
+    return profile if system("cat \"#{profile}\" | grep \"#{name}\" >/dev/null 2>&1")
+  end
+  nil
+end
+
+#
+# Rename the app
+#
+pbx_proj_path = File.join(project_path, "___PROJECTNAME___.xcodeproj", "project.pbxproj")
+find_and_replace(pbx_proj_path, "___PROJECTNAME___", PROJECT_NAME)
+find_and_replace(pbx_proj_path, "___PROJECTNAME___", PROJECT_NAME)
 
 #
 # Set the reference to the SDL xcodeproj
@@ -61,10 +88,11 @@ add_include_headers(Bundler.root.join("ios", "sdl_image"), "sdl_image")
 #
 target = project.targets.first
 
-raise "Target not found" unless target.name == "___PROJECTNAME___"
+raise "Target not found" unless target.name == PROJECT_NAME
 target.add_system_framework("AVFoundation")
 target.add_system_framework("ImageIO")
 target.add_system_framework("MobileCoreServices")
+target.add_system_framework("Metal")
 
 target.add_file_references([rb_app, options])
 target.add_resources([resources])
@@ -75,7 +103,10 @@ target.add_resources([resources])
 ["Debug", "Release"].each do |config|
   target.build_settings(config).merge!(
     "HEADER_SEARCH_PATHS" => ["$(SRCROOT)/MRuby.framework/Headers"],
-    "FRAMEWORK_SEARCH_PATHS" => ["$(PROJECT_DIR)"]
+    "FRAMEWORK_SEARCH_PATHS" => ["$(PROJECT_DIR)"],
+    "IPHONEOS_DEPLOYMENT_TARGET" => "10.3",
+    "DEVELOPMENT_TEAM" => "3K2TUP9VBZ",
+    "ENABLE_BITCODE" => false
   )
 end
 
@@ -99,7 +130,6 @@ ref = group.new_file("libSDL2_image.a", :group)
 ref.explicit_file_type = "archive.ar"
 target.frameworks_build_phase.add_file_reference(ref, true)
 
-
 #
 # Save the xcodeproj
 #
@@ -109,4 +139,8 @@ plist_path = Bundler.root.join(project_path, "Info.plist")
 plist = Plist::parse_xml(plist_path)
 plist["CFBundleShortVersionString"] = "1.0"
 plist["UILaunchStoryboardName"] = "LaunchScreen"
+
+plist["CFBundleIdentifier"] = "#{BUNDLE_IDENTIFIER_PREFIX}.${PRODUCT_NAME:identifier}"
 File.open(plist_path, 'w') { |file| file.write(plist.to_plist) }
+
+
