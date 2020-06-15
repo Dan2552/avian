@@ -1,4 +1,4 @@
-build_dir = File.join("/", "tmp", "avian", "build")
+build_dir = File.join(ENV["HOME"], ".avian", "build")
 project_root = ENV['GAME_ROOT']
 platform_support = File.join(project_root, "platform_support", "mruby")
 mruby_build = File.join(build_dir, "ios", "mruby")

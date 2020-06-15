@@ -1,6 +1,15 @@
-build_dir = File.join("/", "tmp", "avian", "build")
+build_dir = File.join(ENV["HOME"], ".avian", "build")
 configuration = "Release"
 fat_build = File.join(build_dir, "ios", "sdl-gpu", "libSDL2_gpu.a")
+
+if File.directory?(File.join(build_dir, "ios", "sdl-gpu"))
+  puts "Using predownloaded sdl-gpu"
+else
+  FileUtils.mkdir_p(File.join(build_dir, "ios"))
+  FileUtils.cd(File.join(build_dir, "ios"))
+  system("git clone https://github.com/grimfang4/sdl-gpu.git sdl-gpu") ||
+    raise("Failed to clone sdl-gpu")
+end
 
 require 'fileutils'
 

@@ -12,9 +12,10 @@ class Loop
   # - parameter current_time: current time in milliseconds.
   #
   def perform_update(current_time)
+    # Profiler.shared_instance.end_of("OUTSIDE OF LOOP")
     RenderList.shared_instance.clear!
     # Profiler.shared_instance.flush
-    # Profiler.shared_instance.start_of("TOTAL")
+    # Profiler.shared_instance.start_of("ALL_LOGIC")
     last_time = @last_time || current_time
     milliseconds_delta = current_time - last_time
 
@@ -39,11 +40,17 @@ class Loop
     else
       @frame_count = @frame_count + 1
     end
+    # Profiler.shared_instance.start_of("internal input update")
     Input.shared_instance.update
+    # Profiler.shared_instance.end_of("internal input update")
+    # Profiler.shared_instance.start_of("perform_update")
     root.perform_update
+    # Profiler.shared_instance.end_of("perform_update")
     renderer.draw_frame
 
-    # time = Profiler.shared_instance.end_of("TOTAL")
+    # time = # Profiler.shared_instance.end_of("ALL_LOGIC")
+
+    # Profiler.shared_instance.start_of("OUTSIDE OF LOOP")
   end
 
   private

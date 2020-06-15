@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB1E1C762492F540002E2D91 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB1E1C752492F540002E2D91 /* libSDL2_ttf.a */; };
 		AB3F7EFD248B06B7008B441F /* libSDL2_image.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB3F7EF9248B06B7008B441F /* libSDL2_image.a */; };
 		AB3F7EFE248B06B7008B441F /* libSDL2_gpu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB3F7EFA248B06B7008B441F /* libSDL2_gpu.a */; };
 		AB3F7EFF248B06B7008B441F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB3F7EFB248B06B7008B441F /* libSDL2.a */; };
@@ -27,9 +28,27 @@
 		AB50F08724884914008EE0F1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB50F08624884914008EE0F1 /* AVFoundation.framework */; };
 		AB50F08C24885B29008EE0F1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB50F08B24885B29008EE0F1 /* ImageIO.framework */; };
 		AB50F08E24885B76008EE0F1 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB50F08D24885B76008EE0F1 /* MobileCoreServices.framework */; };
+		AB83C13A2498069700D1C86B /* path.m in Sources */ = {isa = PBXBuildFile; fileRef = AB83C1392498069600D1C86B /* path.m */; };
+		AB83C13D2498083400D1C86B /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB83C13B2498082700D1C86B /* FreeType.framework */; };
+		AB83C13E2498083500D1C86B /* FreeType.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AB83C13B2498082700D1C86B /* FreeType.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		AB83C13F2498083500D1C86B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AB83C13E2498083500D1C86B /* FreeType.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		AB1E1C752492F540002E2D91 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = PROJECTNAME/Libraries/files/libSDL2_ttf.a; sourceTree = "<group>"; };
 		AB3F7E40248B00F1008B441F /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 		AB3F7E41248B0100008B441F /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
 		AB3F7EF9248B06B7008B441F /* libSDL2_image.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_image.a; path = PROJECTNAME/Libraries/files/libSDL2_image.a; sourceTree = "<group>"; };
@@ -55,6 +74,9 @@
 		AB50F08624884914008EE0F1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		AB50F08B24885B29008EE0F1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		AB50F08D24885B76008EE0F1 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		AB83C1382498069600D1C86B /* path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = path.h; sourceTree = "<group>"; };
+		AB83C1392498069600D1C86B /* path.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = path.m; sourceTree = "<group>"; };
+		AB83C13B2498082700D1C86B /* FreeType.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FreeType.framework; path = PROJECTNAME/FreeType.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB1E1C762492F540002E2D91 /* libSDL2_ttf.a in Frameworks */,
 				AB3F7EFD248B06B7008B441F /* libSDL2_image.a in Frameworks */,
 				AB3F7EFE248B06B7008B441F /* libSDL2_gpu.a in Frameworks */,
 				AB3F7EFF248B06B7008B441F /* libSDL2.a in Frameworks */,
@@ -73,6 +96,7 @@
 				AB50F02224884838008EE0F1 /* CoreGraphics.framework in Frameworks */,
 				AB50F02024884830008EE0F1 /* AudioToolbox.framework in Frameworks */,
 				AB50F01E2488482B008EE0F1 /* CoreAudio.framework in Frameworks */,
+				AB83C13D2498083400D1C86B /* FreeType.framework in Frameworks */,
 				AB50F01C24884824008EE0F1 /* QuartzCore.framework in Frameworks */,
 				AB50F01A2488481E008EE0F1 /* OpenGLES.framework in Frameworks */,
 				AB50F018248847EC008EE0F1 /* UIKit.framework in Frameworks */,
@@ -110,6 +134,8 @@
 				AB3F7E40248B00F1008B441F /* app.h */,
 				AB3F7E41248B0100008B441F /* options.h */,
 				AB50F00E24884706008EE0F1 /* main.c */,
+				AB83C1382498069600D1C86B /* path.h */,
+				AB83C1392498069600D1C86B /* path.m */,
 				AB3F803C248B0CC3008B441F /* game_resources */,
 			);
 			path = PROJECTNAME;
@@ -118,6 +144,8 @@
 		AB50F010248847C5008EE0F1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AB83C13B2498082700D1C86B /* FreeType.framework */,
+				AB1E1C752492F540002E2D91 /* libSDL2_ttf.a */,
 				AB3F7EFC248B06B7008B441F /* libmruby.a */,
 				AB3F7EFA248B06B7008B441F /* libSDL2_gpu.a */,
 				AB3F7EF9248B06B7008B441F /* libSDL2_image.a */,
@@ -149,6 +177,7 @@
 				AB50EFED248845CA008EE0F1 /* Sources */,
 				AB50EFEE248845CA008EE0F1 /* Frameworks */,
 				AB50EFEF248845CA008EE0F1 /* Resources */,
+				AB83C13F2498083500D1C86B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -209,6 +238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB83C13A2498069700D1C86B /* path.m in Sources */,
 				AB50F00F24884706008EE0F1 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,11 +373,16 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/PROJECTNAME",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2_gpu",
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2",
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libmruby",
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2_image",
+					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2_ttf",
 				);
 				INFOPLIST_FILE = PROJECTNAME/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -372,11 +407,16 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/PROJECTNAME",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2_gpu",
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2",
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libmruby",
 					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2_image",
+					"$(SRCROOT)/PROJECTNAME/Libraries/include/libSDL2_ttf",
 				);
 				INFOPLIST_FILE = PROJECTNAME/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

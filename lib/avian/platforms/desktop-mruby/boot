@@ -15,7 +15,7 @@ end
 
 project_root = ENV['GAME_ROOT']
 avian_root = ENV['AVIAN_ROOT']
-build_dir = File.join("/", "tmp", "avian", "build")
+build_dir = File.join(ENV["HOME"], ".avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 script_dir = __dir__
 shared_dir = File.join(avian_root, "lib", "avian", "platforms", "shared-mruby")
@@ -57,10 +57,26 @@ unless File.directory?(File.join(build_dir, "desktop", "sdl_image"))
   end
 end
 
+unless File.directory?(File.join(build_dir, "desktop", "sdl_ttf"))
+  FileUtils.cd(File.join(build_dir, "desktop"))
+  log "\n--- Cloning SDL ttf ---"
+  system("git clone https://github.com/SDL-mirror/SDL_ttf.git sdl_ttf") ||
+    error("Failed to clone SDL")
+
+  log "\n--- Compiling SDL ttf ---"
+  FileUtils.cd(File.join(build_dir, "desktop", "sdl_ttf"))
+  system("./configure --prefix=#{sdl_install} && make -j4 && make install") || begin
+    FileUtils.remove_dir(File.join(build_dir, "desktop", "sdl_ttf"))
+    error("Failed to compile SDL ttf")
+  end
+end
+
 log "\n--- Preparing c files ---"
 FileUtils.cp(File.join(build_dir, "app.c"), File.join(build_dir, "app.h"))
 FileUtils.cp(File.join(shared_dir, "main.c"), File.join(build_dir, "main.c"))
 FileUtils.cp(File.join(script_dir, "options.h"), File.join(build_dir, "options.h"))
+FileUtils.cp(File.join(script_dir, "path.h"), File.join(build_dir, "path.h"))
+FileUtils.cp(File.join(script_dir, "path.c"), File.join(build_dir, "path.c"))
 
 FileUtils.cd(platform_support)
 mruby_path = `bundle exec mundle path`.chomp
@@ -69,7 +85,7 @@ FileUtils.cd(build_dir)
 log "\n--- Compiling c files ---"
 clang = %W(
   clang
-    main.c
+    main.c path.c
     -ooutput
     -I#{mruby_path}/include
     -lmruby
@@ -77,6 +93,7 @@ clang = %W(
     -I#{sdl_install}/include/SDL2
     -lSDL2
     -lSDL2_image
+    -lSDL2_ttf
     -L#{sdl_install}/lib
 )
 

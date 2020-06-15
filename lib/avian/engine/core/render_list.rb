@@ -9,7 +9,7 @@ class RenderList
   #
   def clear!
     # Profiler.shared_instance.start_of("RenderList#clear")
-    list.clear
+    # list.clear
     # Profiler.shared_instance.end_of("RenderList#clear")
   end
 

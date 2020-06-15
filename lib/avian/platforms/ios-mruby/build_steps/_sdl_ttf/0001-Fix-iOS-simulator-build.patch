@@ -1,0 +1,56 @@
+From d070d479ef42e4d3e5542bb09347f1941bad518a Mon Sep 17 00:00:00 2001
+From: Daniel Inkpen <dan2552@gmail.com>
+Date: Fri, 12 Jun 2020 00:04:28 +0100
+Subject: [PATCH] Fix iOS simulator build
+
+---
+ Xcode/SDL_ttf.xcodeproj/project.pbxproj | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
+
+diff --git a/Xcode/SDL_ttf.xcodeproj/project.pbxproj b/Xcode/SDL_ttf.xcodeproj/project.pbxproj
+index 22b9759..1fd7672 100644
+--- a/Xcode/SDL_ttf.xcodeproj/project.pbxproj
++++ b/Xcode/SDL_ttf.xcodeproj/project.pbxproj
+@@ -784,18 +784,10 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				"HEADER_SEARCH_PATHS[sdk=appletvos*]" = (
+-					"\"$(SRCROOT)/tvOS/SDL2.framework/Headers\"",
+-					"\"$(SRCROOT)/tvOS/FreeType.framework/Headers\"",
+-				);
+-				"HEADER_SEARCH_PATHS[sdk=iphoneos*]" = (
++				HEADER_SEARCH_PATHS = (
+ 					"\"$(SRCROOT)/iOS/SDL2.framework/Headers\"",
+ 					"\"$(SRCROOT)/iOS/FreeType.framework/Headers\"",
+ 				);
+-				"HEADER_SEARCH_PATHS[sdk=macosx*]" = (
+-					"\"$(SRCROOT)/macOS/SDL2.framework/Headers\"",
+-					"\"$(SRCROOT)/macOS/FreeType.framework/Headers\"",
+-				);
+ 				INFOPLIST_FILE = "Info-Framework.plist";
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+@@ -845,18 +837,10 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				"HEADER_SEARCH_PATHS[sdk=appletvos*]" = (
+-					"\"$(SRCROOT)/tvOS/SDL2.framework/Headers\"",
+-					"\"$(SRCROOT)/tvOS/FreeType.framework/Headers\"",
+-				);
+-				"HEADER_SEARCH_PATHS[sdk=iphoneos*]" = (
++				HEADER_SEARCH_PATHS = (
+ 					"\"$(SRCROOT)/iOS/SDL2.framework/Headers\"",
+ 					"\"$(SRCROOT)/iOS/FreeType.framework/Headers\"",
+ 				);
+-				"HEADER_SEARCH_PATHS[sdk=macosx*]" = (
+-					"\"$(SRCROOT)/macOS/SDL2.framework/Headers\"",
+-					"\"$(SRCROOT)/macOS/FreeType.framework/Headers\"",
+-				);
+ 				INFOPLIST_FILE = "Info-Framework.plist";
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+ 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+-- 
+2.25.0
+

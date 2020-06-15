@@ -3,6 +3,10 @@ class PlatformRenderStore
   def sprites
     @sprites ||= []
   end
+
+  def texts
+    @texts ||= []
+  end
 end
 
 class PlatformInput
@@ -26,8 +30,6 @@ def draw(bridge, sprite)
     red = (sprite.color >> 16) & 255
     green = (sprite.color >> 8) & 255
     blue = sprite.color & 255
-
-    puts "#{sprite.color_blend_factor} : #{red}, #{green}, #{blue}"
   end
 
   bridge.draw_image(
@@ -36,8 +38,8 @@ def draw(bridge, sprite)
     Platform.camera.height - sprite.y.to_i,
     sprite.z.to_i,
     sprite.angle.to_f,
-    sprite.center_x.to_i,
-    sprite.center_y.to_i,
+    sprite.anchor_point.x,
+    sprite.anchor_point.y,
     sprite.x_scale.to_f,
     sprite.y_scale.to_f,
     Platform.camera.x.to_i,
@@ -49,6 +51,25 @@ def draw(bridge, sprite)
     blue,
     sprite.color_blend_factor
   )
+end
+
+def draw_text(bridge, text)
+  return unless text.text.length > 0
+
+  texture = bridge.create_texture_for_text(
+    text.text,
+    text.font_size
+  )
+
+  sprite = PlatformSprite.new(texture, Vector[1, 0.0])
+  sprite.x = text.x
+  sprite.y = text.y
+  sprite.color = text.font_color
+  sprite.color_blend_factor = 1.0
+
+  draw(bridge, sprite)
+
+  bridge.pop_texture
 end
 
 def handle_inputs(state, id, x, y)
@@ -87,24 +108,34 @@ def run
   game_loop ||= Loop.new(scenario.root)
 
   loop do
+    # Profiler.shared_instance.start_of("C-inputs")
     # call to C to update inputs - i.e. calls SDL_PollEvent
     loop do
       more, state, id, x, y = bridge.update_inputs
       handle_inputs(state, id, x, y)
       break unless more == 1
     end
-
+    # Profiler.shared_instance.end_of("C-inputs")
     # run the game loop
     game_loop.perform_update(Time.now.to_f * 1000)
 
+    # Profiler.shared_instance.start_of("C-render-clear")
     # render
     bridge.clear_screen
+    # Profiler.shared_instance.end_of("C-render-clear")
 
+    # Profiler.shared_instance.start_of("C-render-draw")
     render_store.sprites
       .sort_by(&:z)
       .each { |sprite| draw(bridge, sprite) }
+    # Profiler.shared_instance.end_of("C-render-draw")
 
+    render_store.texts
+      .each { |text| draw_text(bridge, text) }
+
+    # Profiler.shared_instance.end_of("C-render-render")
     bridge.render
+    # Profiler.shared_instance.end_of("C-render-render")
   end
 end
 

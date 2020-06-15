@@ -1,4 +1,5 @@
 #include "options.h"
+#include "path.h"
 #include "app.h"
 #include "mruby.h"
 #include "mruby/irep.h"
@@ -6,6 +7,7 @@
 #include "mruby/array.h"
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +17,8 @@ SDL_Event event;
 
 SDL_Texture *textures[100];
 int textures_count = 0;
+
+TTF_Font *font;
 
 int screen_width;
 int screen_height;
@@ -50,6 +54,14 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     SDL_GetRendererOutputSize(renderer, &render_screen_width, &render_screen_height);
     // printf("SCREEN %i %i\n", screen_width, screen_height);
 #endif
+
+    TTF_Init();
+
+    font = TTF_OpenFont(game_resource_path("font", "ttf"), 64);
+    if (font == NULL) {
+        printf("No :( %s\n", TTF_GetError());
+        SDL_Delay(9999999);
+    }
 
     // printf("screen size: %i, %i\n", screen_width, screen_height);
     return mrb_nil_value();
@@ -112,28 +124,28 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (mouse_down == 0) {
-                  mouse_down = 1;
-                  state = "touch_down";
-                  id = 1;
-                  x = event.motion.x;
-                  y = event.motion.y;
+                    mouse_down = 1;
+                    state = "touch_down";
+                    id = 1;
+                    x = event.motion.x;
+                    y = event.motion.y;
                 }
                 break;
             case SDL_MOUSEMOTION:
                 if (mouse_down == 1) {
-                  state = "touch_move";
-                  id = 1;
-                  x = event.motion.x;
-                  y = event.motion.y;
+                    state = "touch_move";
+                    id = 1;
+                    x = event.motion.x;
+                    y = event.motion.y;
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (mouse_down == 1) {
-                  mouse_down = 0;
-                  state = "touch_up";
-                  id = 1;
-                  x = event.motion.x;
-                  y = event.motion.y;
+                    mouse_down = 0;
+                    state = "touch_up";
+                    id = 1;
+                    x = event.motion.x;
+                    y = event.motion.y;
                 }
                 break;
         }
@@ -183,14 +195,19 @@ static mrb_value create_texture(mrb_state *mrb, mrb_value self) {
     return mrb_fixnum_value(textures_count - 1);
 }
 
+static mrb_value pop_texture(mrb_state *mrb, mrb_value self) {
+    textures_count--;
+    return mrb_nil_value();
+}
+
 static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     mrb_int texture_index;
     mrb_int x;
     mrb_int y;
     mrb_int z;
     mrb_float angle;
-    mrb_int center_x;
-    mrb_int center_y;
+    mrb_float anchor_x;
+    mrb_float anchor_y;
     mrb_float x_scale;
     mrb_float y_scale;
     mrb_int camera_x;
@@ -203,40 +220,38 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     mrb_float blend_factor;
 
     mrb_get_args(
-      mrb,
-      "iiiifiiffiiffiiif",
-      &texture_index,
-      &x,
-      &y,
-      &z,
-      &angle,
-      &center_x,
-      &center_y,
-      &x_scale,
-      &y_scale,
-      &camera_x,
-      &camera_y,
-      &camera_x_scale,
-      &camera_y_scale,
-      &color_red,
-      &color_green,
-      &color_blue,
-      &blend_factor
+        mrb,
+        "iiiifffffiiffiiif",
+        &texture_index,
+        &x,
+        &y,
+        &z,
+        &angle,
+        &anchor_x,
+        &anchor_y,
+        &x_scale,
+        &y_scale,
+        &camera_x,
+        &camera_y,
+        &camera_x_scale,
+        &camera_y_scale,
+        &color_red,
+        &color_green,
+        &color_blue,
+        &blend_factor
     );
-
-    // printf("(c---) texture_index: %lld, x: %lld, y: %lld, z: %lld, angle: %f, center_x: %lld, center_y: %lld, x_scale: %f, y_scale: %f, camera_x: %lld, camera_y: %lld, camera_x_scale: %f, camera_y_scale: %f\n", texture_index, x, y, z, angle, center_x, center_y, x_scale, y_scale, camera_x, camera_y, camera_x_scale, camera_y_scale);
 
     SDL_Texture *texture = textures[texture_index];
 
     if (blend_factor > 0) {
-      int red;
-      int green;
-      int blue;
-      red = ((255-color_red)*(1-blend_factor))+color_red;
-      green = ((255-color_green)*(1-blend_factor))+color_green;
-      blue = ((255-color_blue)*(1-blend_factor))+color_blue;
+        int red;
+        int green;
+        int blue;
+        red = ((255-color_red)*(1-blend_factor))+color_red;
+        green = ((255-color_green)*(1-blend_factor))+color_green;
+        blue = ((255-color_blue)*(1-blend_factor))+color_blue;
 
-      SDL_SetTextureColorMod(texture, red, green, blue);
+        SDL_SetTextureColorMod(texture, red, green, blue);
     }
 
     int width;
@@ -263,32 +278,109 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     // Normalize 0,0 to center of screen and center of sprite
     x = x + render_screen_width * 0.5;
     y = y + render_screen_height * 0.5;
-    x = x - width * 0.5;
-    y = y - height * 0.5;
+    x = x - (width * (1 - anchor_x));
+    y = y - (height * (1 - anchor_y));
 
     // Adjust for camera position
     x = x - camera_x * camera_x_scale;
     y = y - camera_y * camera_y_scale;
 
     SDL_Rect destination = {
-      .x = x,
-      .y = y,
-      .w = (width) + 1, // TODO: instead of +1 try rounding
-      .h = (height) + 1
+        .x = x,
+        .y = y,
+        .w = (width) + 1, // TODO: instead of +1 try rounding
+        .h = (height) + 1
     };
 
     SDL_RenderCopy(renderer, texture, NULL, &destination);
 
     if (blend_factor > 0) {
-      SDL_SetTextureColorMod(texture, 255, 255, 255);
+        SDL_SetTextureColorMod(texture, 255, 255, 255);
     }
 
     return mrb_nil_value();
 }
 
+static mrb_value create_texture_for_text(mrb_state *mrb, mrb_value self) {
+    const char *text;
+    mrb_int font_size;
+
+    mrb_get_args(
+        mrb,
+        "zi",
+        &text,
+        &font_size
+    );
+
+    SDL_Color textColor = { 255, 255, 255 };
+    SDL_Surface *message = TTF_RenderText_Blended(font, text, textColor);
+    if (message == NULL) {
+        printf("blargh %s, %s! \n", text, TTF_GetError());
+    }
+    SDL_Texture *new_texture = SDL_CreateTextureFromSurface(renderer, message);
+    textures[textures_count] = new_texture;
+    textures_count++;
+    return mrb_fixnum_value(textures_count - 1);
+}
+
+// static mrb_value draw_text(mrb_state *mrb, mrb_value self) {
+//     const char *text;
+//     mrb_int font_size;
+//     mrb_int x;
+//     mrb_int y;
+
+//     mrb_get_args(
+//         mrb,
+//         "ziii",
+//         &text,
+//         &font_size,
+//         &x,
+//         &y
+//     );
+
+//     printf("drawing text %s, %i, %i\n", text, x, y);
+
+//     SDL_Color textColor = { 255, 255, 255 };
+//     SDL_Surface *message = TTF_RenderText_Blended(font, text, textColor);
+//     if (message == NULL) {
+//         printf("blargh  %s! \n", TTF_GetError());
+//     }
+//     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, message);
+//     int width;
+//     int height;
+//     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+//     SDL_Rect destination = {
+//         .x = 100,
+//         .y = 100,
+//         .w = width,
+//         .h = height,
+//     };
+//     SDL_RenderCopy(renderer, texture, NULL, &destination);
+
+//     return mrb_nil_value();
+// }
+
+static mrb_value width_of_text(mrb_state *mrb, mrb_value self) {
+    const char *text;
+    mrb_int font_size;
+
+    mrb_get_args(
+        mrb,
+        "zi",
+        &text,
+        &font_size
+    );
+
+    int width;
+    int height;
+    TTF_SizeText(font, text, &width, &height);
+
+    return mrb_fixnum_value(width);
+}
+
 static mrb_value render(mrb_state *mrb, mrb_value self) {
-  SDL_RenderPresent(renderer);
-  return mrb_nil_value();
+    SDL_RenderPresent(renderer);
+    return mrb_nil_value();
 }
 
 static mrb_value delay(mrb_state *mrb, mrb_value self) {
@@ -310,8 +402,12 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());
+    // mrb_define_method(mrb, ruby_class_c_bridge, "draw_text", draw_text, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "create_texture_for_text", create_texture_for_text, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "pop_texture", pop_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_width", get_screen_width, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_height", get_screen_height, MRB_ARGS_NONE());
+    mrb_define_method(mrb, ruby_class_c_bridge, "width_of_text", width_of_text, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "render", render, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "delay", delay, MRB_ARGS_ANY());
 
@@ -319,6 +415,8 @@ int main(int argc, char *argv[]) {
     if (mrb->exc) mrb_print_error(mrb);
     mrb_close(mrb);
     SDL_Quit();
+    TTF_CloseFont(font);
+    TTF_Quit();
 
     return 0;
 }

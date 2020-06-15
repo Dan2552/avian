@@ -4,6 +4,12 @@ class PlatformSprite
     @anchor_point = anchor_point
     @visible = true
     @color_blend_factor = 0
+
+    @z = 0
+    @angle = 0
+    @x_scale = 1
+    @y_scale = 1
+    @visible = true
   end
 
   attr_accessor :anchor_point
@@ -12,8 +18,6 @@ class PlatformSprite
   attr_accessor :y
   attr_accessor :z
   attr_accessor :angle
-  attr_accessor :center_x
-  attr_accessor :center_y
   attr_accessor :x_scale
   attr_accessor :y_scale
   attr_accessor :visible

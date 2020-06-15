@@ -2,7 +2,7 @@
 
 project_root = ENV['GAME_ROOT']
 avian_root = ENV['AVIAN_ROOT']
-build_dir = File.join("/", "tmp", "avian", "build")
+build_dir = File.join(ENV["HOME"], ".avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 script_dir = __dir__
 shared_dir = File.join(avian_root, "lib", "avian", "platforms", "shared-mruby")
@@ -18,9 +18,9 @@ if (ENV['RUBY_ONLY'] || "").length > 0
   exit(0)
 end
 
-load(File.join(script_dir, "build_steps", "download_dependencies.rb"))
 load(File.join(script_dir, "build_steps", "sdl.rb"))
 load(File.join(script_dir, "build_steps", "sdl_image.rb"))
+load(File.join(script_dir, "build_steps", "sdl_ttf.rb"))
 load(File.join(script_dir, "build_steps", "sdl_gpu.rb"))
 load(File.join(script_dir, "build_steps", "prepare_mruby.rb"))
 load(File.join(script_dir, "build_steps", "assemble_project.rb"))

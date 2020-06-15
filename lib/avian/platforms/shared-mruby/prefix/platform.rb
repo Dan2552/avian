@@ -3,9 +3,6 @@
 #
 # This class should be specifically written for each platform.
 #
-# All methods that should be defined on each platform are labelled
-# ** Shared **.
-#
 class Platform
   class << self
     def shared_instance
@@ -63,24 +60,6 @@ class Platform
 
   def set_sprite_texture(sprite, texture)
     sprite.texture = texture
-  end
-
-  def create_text(font_name)
-    puts "unimplemented!!! create_text(font_name)"
-    # text = Avian::DesktopGosuPlatform::Text.new(font_name)
-    # text.tap do |t|
-    #   window.texts << text
-    # end
-  end
-
-  def set_text_attributes(node, text, font_size, font_color, x, y, alignment)
-    puts "unimplemented!!! set_text_attributes(node, text, font_size, font_color, x, y, alignment)"
-    # node.text = text
-    # node.font_size = font_size
-    # node.font_color = 0xff_000000 + font_color #FONT_COLORS[font_color]
-    # node.x = x
-    # node.y = y
-    # node.alignment = alignment
   end
 
   def set_camera_position(position)
@@ -151,5 +130,25 @@ class Platform
 
   def screen_size
     @screen_size ||= Size[@bridge.get_screen_width, @bridge.get_screen_height]
+  end
+
+  def create_text(font_name)
+    text = PlatformText.new(font_name)
+    Platform.render_store.texts << text
+    text
+  end
+
+  def set_text_attributes(node, text, font_size, font_color, x, y, alignment)
+    node.text = text
+    node.font_size = font_size
+    node.font_color = 0xff_000000 + font_color
+    node.x = x
+    node.y = y
+    node.alignment = alignment
+  end
+
+  def width_of_text(renderable, text)
+    w = @bridge.width_of_text(text, renderable.font_size)
+    w * 0.5
   end
 end

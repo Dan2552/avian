@@ -8,6 +8,7 @@ class Profiler
   end
 
   def end_of(name)
+    return unless profiles[name]
     totals[name] ||= 0
     time = totals[name] += (Time.now.to_f * 1000).to_f - profiles[name]
     times[name] ||= 0
@@ -21,7 +22,7 @@ class Profiler
   #
   def flush
     puts "Totals (time it took): #{totals}"
-    puts "Times (times it was called): #{times}"
+    # puts "Times (times it was called): #{times}"
     @profiles = nil
     @totals = nil
     @times = nil

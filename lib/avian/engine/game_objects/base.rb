@@ -29,7 +29,10 @@ class GameObject::Base
     end
 
     # Profiler.shared_instance.start_of("RenderList#<<")
-    RenderList.shared_instance << self if renderable?
+    if renderable? && !@rendered
+      RenderList.shared_instance << self
+      @rendered = true
+    end
     # Profiler.shared_instance.end_of("RenderList#<<")
 
     # Profiler.shared_instance.start_of(self.class.to_s)
@@ -98,7 +101,7 @@ class GameObject::Base
   # - returns: Array of children
   #
   def children
-    self.class.child_relationships.map do |r|
+    @children ||= self.class.child_relationships.map do |r|
       relation = self.send(r)
       relation.respond_to?(:to_a) ? relation.to_a : relation
     end.flatten.compact.freeze

@@ -18,7 +18,7 @@ end
 
 project_root = ENV['GAME_ROOT']
 avian_root = ENV['AVIAN_ROOT']
-build_dir = File.join("/", "tmp", "avian", "build")
+build_dir = File.join(ENV["HOME"], ".avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 
 FileUtils.mkdir_p(build_dir)

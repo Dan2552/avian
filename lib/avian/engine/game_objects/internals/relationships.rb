@@ -59,7 +59,7 @@ module GameObject
       # For belongs_to to define the correct instance variable
       #
       def foreign_relationship_name
-        self.to_s
+        @foreign_relationship_name ||= self.to_s
             .split("::")[-1]
             .gsub(/::/, '/')
             .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
@@ -69,11 +69,14 @@ module GameObject
       end
 
       def class_for(relationship_name, plural)
-        relationship_name = relationship_name.to_s
-        relationship_name = relationship_name.singularize if plural
-        module_name = self.to_s.split("::")[0...-1].join("::")
-        expected_class_name = relationship_name.titlecase.gsub(" ", "")
-        "#{module_name}::#{expected_class_name}".constantize
+        @class_for ||= {}
+        @class_for[relationship_name] ||= begin
+          relationship_name = relationship_name.to_s
+          relationship_name = relationship_name.singularize if plural
+          module_name = self.to_s.split("::")[0...-1].join("::")
+          expected_class_name = relationship_name.titlecase.gsub(" ", "")
+          "#{module_name}::#{expected_class_name}".constantize
+        end
       end
     end
   end
