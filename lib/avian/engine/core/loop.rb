@@ -34,7 +34,7 @@ class Loop
     Time.delta = seconds_delta
     @time_count = @time_count + seconds_delta
     if @time_count >= 1
-      puts "#{@frame_count} FPS"
+      # puts "#{@frame_count} FPS"
       @time_count = 0
       @frame_count = 0
     else

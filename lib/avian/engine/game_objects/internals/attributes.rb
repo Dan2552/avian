@@ -45,7 +45,7 @@ module GameObject
           end
 
           if type && new_value && !new_value.is_a?(type)
-            raise "#{attr_name} (#{type}) cannot be assigned #{new_value} (#{new_value.class})"
+            raise "The :#{attr_name} attribute expects the type of #{type} and therefore cannot be assigned the value: #{new_value} of type #{new_value.class}"
           end
 
           instance_variable_set(:"@#{attr_name}", new_value)

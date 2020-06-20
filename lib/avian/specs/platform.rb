@@ -16,6 +16,7 @@ class Platform
     def set_scale(*args); shared_instance.set_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
     def delay(*args); shared_instance.delay(*args); end
+    def width_of_text(*args); shared_instance.width_of_text(*args); end
   end
 
   def create_sprite(texture, anchor_point)
@@ -50,5 +51,9 @@ class Platform
   end
 
   def delay(time)
+  end
+
+  def width_of_text(font_name, font_size, text)
+    1
   end
 end

@@ -101,7 +101,7 @@ class GameObject::Base
   # - returns: Array of children
   #
   def children
-    @children ||= self.class.child_relationships.map do |r|
+    self.class.child_relationships.map do |r|
       relation = self.send(r)
       relation.respond_to?(:to_a) ? relation.to_a : relation
     end.flatten.compact.freeze

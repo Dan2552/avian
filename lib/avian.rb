@@ -10,6 +10,7 @@ AVIAN_LOAD_ORDER = [
   "engine/behaviors/**/*.rb",
   "engine/collision/**/*.rb",
   "engine/math/**/*.rb",
+  "engine/text/**/*.rb",
   "engine/rendering/**/*.rb",
   "engine/core/**/*.rb",
   "engine/application.rb",

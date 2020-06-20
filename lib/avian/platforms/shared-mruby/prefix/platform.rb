@@ -147,8 +147,8 @@ class Platform
     node.alignment = alignment
   end
 
-  def width_of_text(renderable, text)
-    w = @bridge.width_of_text(text, renderable.font_size)
+  def width_of_text(font_name, font_size, text)
+    w = @bridge.width_of_text(text, font_size)
     w * 0.5
   end
 end

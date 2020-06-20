@@ -76,9 +76,9 @@ class Platform
     end
   end
 
-  def width_of_text(renderable, text)
+  def width_of_text(font_name, font_size, text)
     Gosu::Font
-      .new((renderable.font_size) + 8, { name: renderable.font_name })
+      .new((font_size) + 8, { name: font_name })
       .text_width(text)
   end
 
