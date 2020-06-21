@@ -16,25 +16,25 @@ def _debugger_input(input)
 end
 
 DEBUGGER = '
-parts = caller[0].split(":", 3)
-file = parts[0]
-line_str = parts[1]
-line = line_str.to_i
-output = File.read(file).split("\n")
+_parts = caller[0].split(":", 3)
+_file = _parts[0]
+_line_str = _parts[1]
+_line = _line_str.to_i
+output = File.read(_file).split("\n")
 puts ""
-puts "From: #{file} @ line #{line} :"
+puts "From: #{_file} @ line #{_line} :"
 puts ""
-puts "   : #{output[line - 6]}" rescue nil
-puts "   : #{output[line - 5]}" rescue nil
-puts "   : #{output[line - 4]}" rescue nil
-puts "   : #{output[line - 3]}" rescue nil
-puts "   : #{output[line - 2]}" rescue nil
-puts "=> : #{output[line - 1]}"
-puts "   : #{output[line - 0]}" rescue nil
-puts "   : #{output[line + 1]}" rescue nil
-puts "   : #{output[line + 2]}" rescue nil
-puts "   : #{output[line + 3]}" rescue nil
-puts "   : #{output[line + 4]}" rescue nil
+puts "   : #{output[_line - 6]}" rescue nil
+puts "   : #{output[_line - 5]}" rescue nil
+puts "   : #{output[_line - 4]}" rescue nil
+puts "   : #{output[_line - 3]}" rescue nil
+puts "   : #{output[_line - 2]}" rescue nil
+puts "=> : #{output[_line - 1]}"
+puts "   : #{output[_line - 0]}" rescue nil
+puts "   : #{output[_line + 1]}" rescue nil
+puts "   : #{output[_line + 2]}" rescue nil
+puts "   : #{output[_line + 3]}" rescue nil
+puts "   : #{output[_line + 4]}" rescue nil
 puts ""
 
 loop do
