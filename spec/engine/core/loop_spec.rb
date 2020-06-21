@@ -24,7 +24,7 @@ describe Loop do
       subject
     end
 
-    context "when called for the first time" do
+    xcontext "when called for the first time" do
       it "calls the root_object" do
         expect(root_object).to receive(:perform_update)
 
@@ -52,7 +52,7 @@ describe Loop do
         expect(Time.delta).to eq(0.06666666799993254)
       end
 
-      context "when the difference is less than 8ms" do
+      xcontext "when the difference is less than 8ms" do
         let(:current_time) { first_time + 6 }
 
         it "calls the sets the lowest delta" do
