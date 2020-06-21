@@ -1,5 +1,5 @@
-fdescribe Avian::Text::DialogParser do
-  let(:text) { "Listen carefully to what I, the [red]Deku Tree[reset], am about to tell thee[slow]..." }
+describe Avian::Text::DialogParser do
+  let(:text) { "Listen carefully to what I, the [red]Deku Tree[white], am about to tell thee[slow]..." }
   let(:size) { Size[100, 10] }
   let(:font_name) { "font" }
   let(:font_size) { 16 }
@@ -37,7 +37,7 @@ fdescribe Avian::Text::DialogParser do
           Avian::Text::DialogParser::DialogText.new("Listen carefully to what I, the "),
           Avian::Text::DialogParser::DialogInstruction.new("red"),
           Avian::Text::DialogParser::DialogText.new("Deku Tree"),
-          Avian::Text::DialogParser::DialogInstruction.new("reset"),
+          Avian::Text::DialogParser::DialogInstruction.new("white"),
           Avian::Text::DialogParser::DialogText.new(", am about to tell thee"),
           Avian::Text::DialogParser::DialogInstruction.new("slow"),
           Avian::Text::DialogParser::DialogText.new("...")
@@ -76,6 +76,21 @@ fdescribe Avian::Text::DialogParser do
           Avian::Text::DialogParser::DialogInstruction.new("newline"),
           Avian::Text::DialogParser::DialogText.new("three")
         ])
+      end
+
+      context "with instructions" do
+        let(:text) { "[red]One [green]two three four" }
+
+        it "contains newlines and other instructions" do
+          expect(subject).to eq([
+          Avian::Text::DialogParser::DialogInstruction.new("red"),
+          Avian::Text::DialogParser::DialogText.new("One "),
+          Avian::Text::DialogParser::DialogInstruction.new("green"),
+          Avian::Text::DialogParser::DialogText.new("two"),
+          Avian::Text::DialogParser::DialogInstruction.new("newline"),
+          Avian::Text::DialogParser::DialogText.new("three four")
+        ])
+        end
       end
     end
   end

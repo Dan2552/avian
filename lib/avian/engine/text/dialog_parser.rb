@@ -13,6 +13,7 @@ module Avian
     class DialogParser
       class DialogText
         def initialize(text)
+          raise "Unexpected empty text" unless text.length > 0
           @text = text
         end
 
@@ -24,6 +25,14 @@ module Avian
 
         def inspect
           "<Text:\"#{text}\">"
+        end
+
+        def text?
+          true
+        end
+
+        def instruction?
+          false
         end
       end
 
@@ -40,6 +49,14 @@ module Avian
 
         def inspect
           "<Instruction:\"#{text}\">"
+        end
+
+        def text?
+          false
+        end
+
+        def instruction?
+          true
         end
       end
 
@@ -82,19 +99,23 @@ module Avian
 
       attr_reader :current_character
 
+      def add_character(character)
+        @current_characters ||= ""
+        @current_characters << character
+        @current_line ||= ""
+        @current_line << character
+      end
+
       def handling_instruction?
         @handling_instruction
       end
 
       def handle_regular
-        @current_characters ||= ""
-        @current_characters << current_character
+        add_character(current_character)
       end
 
       def handle_end_of_word
-        @current_characters ||= ""
-        @current_characters += " "
-
+        add_character(" ")
         handle_word_wont_fit if word_wont_fit?
       end
 
@@ -124,14 +145,16 @@ module Avian
       end
 
       def handle_word_wont_fit
-        words = @current_characters.split(" ")
-        parts << DialogText.new(words[0..-2].join(" "))
+        words = @current_characters.split(/(?<=[ .!])/)
+        text = words[0..-2].join("")
+        parts << DialogText.new(text.rstrip) if text.length > 0
         parts << DialogInstruction.new("newline")
-        @current_characters = words.last
+        @current_characters = words.last.lstrip
+        @current_line = ""
       end
 
       def word_wont_fit?
-        potential_words = @current_characters
+        potential_words = @current_line
         Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width
       end
     end
