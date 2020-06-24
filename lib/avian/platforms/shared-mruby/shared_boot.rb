@@ -26,6 +26,7 @@ FileUtils.mkdir_p(build_dir)
 log "--- Compiling mruby ---"
 FileUtils.cd(platform_support)
 system("bundle exec mundle install >/dev/null") || error("Compiling mruby failed")
+mrb_bin = `bundle exec mundle exec which mrbc`.chomp
 
 log "--- Copying resources ---"
 # Copy the platform support files into tmp/build
@@ -73,7 +74,7 @@ all_files =
 FileUtils.cd(build_dir)
 
 mrbc = %W(
-  mrbc
+  #{mrb_bin}
     -g
     -Bapp
     -o./app.c
