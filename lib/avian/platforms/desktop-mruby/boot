@@ -83,6 +83,7 @@ mruby_path = `bundle exec mundle path`.chomp
 FileUtils.cd(build_dir)
 
 log "\n--- Compiling c files ---"
+ENV["LD_LIBRARY_PATH"] = "#{ENV["HOME"]}/.avian/build/desktop/install/lib"
 clang = %W(
   clang
     main.c path.c
