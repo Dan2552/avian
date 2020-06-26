@@ -23,6 +23,14 @@ AVIAN_LOAD_ORDER = [
   "engine/algorithms/theta_star/**/*.rb"
 ]
 
+AVIAN_GAME_LOAD_ORDER = [
+  'lib/**/*.rb',
+  'app/values/**/*.rb',
+  'app/**/concerns/*.rb',
+  'app/**/*.rb',
+  'config/**/*.rb'
+]
+
 module Avian
   class Error < StandardError; end
 

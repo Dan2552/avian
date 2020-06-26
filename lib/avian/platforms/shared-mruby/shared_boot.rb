@@ -51,16 +51,8 @@ log "--- Preparing build files ---"
 
 require 'avian'
 
-app_load_order = [
-  'lib/**/*.rb',
-  'app/values/**/*.rb',
-  'app/**/concerns/*.rb',
-  'app/**/*.rb',
-  'config/**/*.rb'
-]
-
 avian_files = AVIAN_LOAD_ORDER.map { |glob| Dir.glob(File.join(avian_root, "lib", "avian", glob)) }.flatten
-app_files = app_load_order.map { |glob| Dir.glob(File.join(project_root, glob)) }.flatten
+app_files = AVIAN_GAME_LOAD_ORDER.map { |glob| Dir.glob(File.join(project_root, glob)) }.flatten
 prefix_files = Dir.glob(File.expand_path(File.join(__dir__, "prefix", "*.rb")))
 suffix_files = Dir.glob(File.expand_path(File.join(__dir__, "suffix", "*.rb")))
 

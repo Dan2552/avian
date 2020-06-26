@@ -10,6 +10,13 @@ module Avian
   module Specs
     module_function
 
+    def require_game
+      project_root = Bundler.root
+      app_files = AVIAN_GAME_LOAD_ORDER.map { |glob| Dir.glob(File.join(project_root, glob)) }.flatten
+
+      app_files.each { |f| require(f) }
+    end
+
     def require_all(matcher)
       Dir[File.join(Bundler.root, matcher)].each { |f| require(f) }
     end
@@ -30,11 +37,4 @@ module Avian
       config.shared_context_metadata_behavior = :apply_to_host_groups
     end
   end
-end
-
-if Bundler.rubygems.find_name('avian').first.full_gem_path != Bundler.root.to_s
-  Avian::Specs.require_all('lib/**/*.rb')
-  Avian::Specs.require_all('app/**/concerns/*.rb')
-  Avian::Specs.require_all('app/**/*.rb')
-  Avian::Specs.require_all('config/**/*.rb')
 end
