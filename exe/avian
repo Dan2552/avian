@@ -35,6 +35,11 @@ class AvianCLI < Thor
     project_root = Bundler.root.to_s
     avian_path = Bundler.rubygems.find_name('avian').first.full_gem_path.to_s
 
+    if project_root == avian_path
+      puts "avian start should be run from the game directory"
+      exit(1)
+    end
+
     case platform.to_s
     when "desktop-mruby"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "desktop-mruby", "boot"))
