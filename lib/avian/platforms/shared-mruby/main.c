@@ -278,7 +278,7 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     // Normalize 0,0 to center of screen and center of sprite
     x = x + render_screen_width * 0.5;
     y = y + render_screen_height * 0.5;
-    x = x - (width * (1 - anchor_x));
+    x = x - (width * anchor_x);
     y = y - (height * (1 - anchor_y));
 
     // Adjust for camera position
