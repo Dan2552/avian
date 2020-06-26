@@ -3,7 +3,7 @@ require 'avian/specs'
 
 # Load the game (the files we're testing)
 #
-Avian::Specs.require_all('app/**/*.rb')
+Avian::Specs.require_game
 
 # Load the spec helpers
 #
