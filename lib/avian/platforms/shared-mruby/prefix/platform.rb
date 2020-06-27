@@ -132,8 +132,8 @@ class Platform
     @screen_size ||= Size[@bridge.get_screen_width, @bridge.get_screen_height]
   end
 
-  def create_text(font_name)
-    text = PlatformText.new(font_name)
+  def create_text(font_name, anchor_point)
+    text = PlatformText.new(font_name, anchor_point)
     Platform.render_store.texts << text
     text
   end

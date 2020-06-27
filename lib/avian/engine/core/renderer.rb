@@ -95,7 +95,7 @@ class Renderer
 
   def find_or_create_text(renderable)
     text_pool[renderable.id] = (
-      text_pool[renderable.id] || Platform.create_text(renderable.font_name)
+      text_pool[renderable.id] || Platform.create_text(renderable.font_name, renderable.renderable_anchor_point)
     )
   end
 
