@@ -171,7 +171,6 @@ class GameObject::Text < GameObject::Base
   string :text
   number :font_size, default: 32
   number :font_color, default: 0xffffff
-  attribute :alignment, default: :center
 
   def renderable?
     true

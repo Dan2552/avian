@@ -11,5 +11,4 @@ class PlatformText
   attr_accessor :font_color
   attr_accessor :x
   attr_accessor :y
-  attr_accessor :alignment
 end

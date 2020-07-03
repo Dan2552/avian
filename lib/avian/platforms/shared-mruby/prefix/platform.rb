@@ -138,13 +138,12 @@ class Platform
     text
   end
 
-  def set_text_attributes(node, text, font_size, font_color, x, y, alignment)
+  def set_text_attributes(node, text, font_size, font_color, x, y)
     node.text = text
     node.font_size = font_size
     node.font_color = 0xff_000000 + font_color
     node.x = x
     node.y = y
-    node.alignment = alignment
   end
 
   def width_of_text(font_name, font_size, text)
