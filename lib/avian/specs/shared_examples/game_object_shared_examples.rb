@@ -33,6 +33,22 @@ shared_examples_for("a game object") do
         expect(subject.size.width).to eq(2)
         expect(subject.size.height).to eq(2)
       end
+
+      context "when the object has a non-central renderable_anchor_point" do
+        before do
+          described_instance.renderable_anchor_point = Vector[0, 0]
+        end
+
+        it "has the origin at the bottom-left of the object" do
+          expect(subject.origin.x).to eq(described_instance.position.x)
+          expect(subject.origin.y).to eq(described_instance.position.y)
+        end
+
+        it "has the size of the object" do
+          expect(subject.size.width).to eq(2)
+          expect(subject.size.height).to eq(2)
+        end
+      end
     end
   end
 
