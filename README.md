@@ -2,8 +2,6 @@
 
 Avian is a 2D Ruby game engine and development framework that abstracts away underlying platform-specific intricacies. Like some other well-known frameworks, Avian encourages beautiful code by favoring convention over configuration.
 
-Avian stands on the shoulders of giants, taking advantage of various pre-existing technologies such as RubyMotion (for building to iOS) and Gosu and SpriteKit (which handle drawing to screen).
-
 ## Installation
 
 Install HEAD straight from GitHub:
