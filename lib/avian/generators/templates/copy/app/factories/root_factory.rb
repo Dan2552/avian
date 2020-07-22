@@ -1,7 +1,5 @@
 module RootFactory
-  module_function
-
-  def build
+  def self.build
     root = Root.new
 
     # By setting a tag on a GameObject you can refer from anywhere in your game

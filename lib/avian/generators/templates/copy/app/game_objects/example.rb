@@ -4,5 +4,6 @@ class Example < GameObject::Base
   # Defines actions that should be performed in the game loop.
   #
   def update
+    puts "hello world | #{Time.delta}"
   end
 end

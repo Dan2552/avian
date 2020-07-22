@@ -12,7 +12,13 @@ class AvianCLI < Thor
     templates = avian_path.join("lib", "avian", "generators")
     AvianCLI.source_root(templates)
 
-    @name = app_path.split("/").last
+    full_path =
+      if app_path.start_with?("/")
+        app_path
+      else
+        Pathname.new(File.join(Dir.pwd, app_path)).expand_path.to_s
+      end
+    @name = full_path.split("/").last
 
     directory('templates/copy', app_path)
 
@@ -21,7 +27,9 @@ class AvianCLI < Thor
     template('templates/templated/platform_support/ios/Rakefile.tt', "#{app_path}/platform_support/ios/Rakefile")
 
     inside(app_path) do |_|
-      exec("bundle install")
+      Bundler.with_clean_env do
+        exec("bundle install")
+      end
     end
   end
 

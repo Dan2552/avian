@@ -34,18 +34,6 @@ Run your project:
 avian s
 ```
 
-Run your project on iOS simulator (requires Rubymotion installed):
-
-``` bash
-avian s ios
-```
-
-Run your project on iOS device (requires Rubymotion installed and an Apple Developer account):
-
-``` bash
-avian s ios device
-```
-
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

@@ -1,0 +1,8 @@
+# mruby/mruby 57a56dd
+
+conf.gembox 'default'
+
+conf.gem :mgem => 'mruby-regexp-pcre'
+conf.gem :mgem => 'mruby-iijson'
+conf.gem :mgem => 'mruby-secure-random'
+conf.gem :core => 'mruby-eval'

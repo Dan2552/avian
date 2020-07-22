@@ -1,7 +1,5 @@
 module ExampleFactory
-  module_function
-
-  def build
+  def self.build
     Example.new
   end
 end
