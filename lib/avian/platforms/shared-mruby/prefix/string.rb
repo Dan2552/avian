@@ -8,10 +8,12 @@ class String
   end
 
   def singularize
+    return sub(/es$/, '') if end_with?("hes") # e.g. torch
     sub(/s$/, '')
   end
 
   def pluralize
+    return sub(/$/, 'es') if end_with?("h") # e.g. torch
     sub(/$/, 's')
   end
 
