@@ -1,6 +1,10 @@
 class String
   def titlecase
-    downcase.to_s.gsub("_", " ").split(/(\W)/).map(&:capitalize).join
+    downcase.gsub("_", " ").split(/(\W)/).map(&:capitalize).join
+  end
+
+  def underscore
+    gsub(/([^A-Z])([A-Z]+)/, '\1_\2').downcase
   end
 
   def singularize
@@ -9,5 +13,9 @@ class String
 
   def pluralize
     sub(/$/, 's')
+  end
+
+  def demodulize
+    split("::").last
   end
 end
