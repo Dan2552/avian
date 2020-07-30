@@ -262,6 +262,7 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     width = width * 0.5;
     height = height * 0.5;
 
+
     camera_x_scale = camera_x_scale * device_scale;
     camera_y_scale = camera_y_scale * device_scale;
 
@@ -323,43 +324,6 @@ static mrb_value create_texture_for_text(mrb_state *mrb, mrb_value self) {
     return mrb_fixnum_value(textures_count - 1);
 }
 
-// static mrb_value draw_text(mrb_state *mrb, mrb_value self) {
-//     const char *text;
-//     mrb_int font_size;
-//     mrb_int x;
-//     mrb_int y;
-
-//     mrb_get_args(
-//         mrb,
-//         "ziii",
-//         &text,
-//         &font_size,
-//         &x,
-//         &y
-//     );
-
-//     printf("drawing text %s, %i, %i\n", text, x, y);
-
-//     SDL_Color textColor = { 255, 255, 255 };
-//     SDL_Surface *message = TTF_RenderText_Blended(font, text, textColor);
-//     if (message == NULL) {
-//         printf("blargh  %s! \n", TTF_GetError());
-//     }
-//     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, message);
-//     int width;
-//     int height;
-//     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-//     SDL_Rect destination = {
-//         .x = 100,
-//         .y = 100,
-//         .w = width,
-//         .h = height,
-//     };
-//     SDL_RenderCopy(renderer, texture, NULL, &destination);
-
-//     return mrb_nil_value();
-// }
-
 static mrb_value width_of_text(mrb_state *mrb, mrb_value self) {
     const char *text;
     mrb_int font_size;
@@ -402,7 +366,6 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());
-    // mrb_define_method(mrb, ruby_class_c_bridge, "draw_text", draw_text, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture_for_text", create_texture_for_text, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "pop_texture", pop_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_width", get_screen_width, MRB_ARGS_NONE());
