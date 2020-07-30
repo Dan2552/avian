@@ -29,6 +29,9 @@ int mouse_down = 0;
 int render_screen_width;
 int render_screen_height;
 
+SDL_BlendMode shadow_blend;
+
+
 static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 #if MOBILE
     window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN|SDL_WINDOW_ALLOW_HIGHDPI);
@@ -62,6 +65,15 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
         printf("No :( %s\n", TTF_GetError());
         SDL_Delay(9999999);
     }
+
+    shadow_blend = SDL_ComposeCustomBlendMode(
+      SDL_BLENDFACTOR_ONE,
+      SDL_BLENDFACTOR_ONE,
+      SDL_BLENDOPERATION_SUBTRACT,
+      SDL_BLENDFACTOR_SRC_ALPHA,
+      SDL_BLENDFACTOR_ZERO,
+      SDL_BLENDOPERATION_ADD
+    );
 
     // printf("screen size: %i, %i\n", screen_width, screen_height);
     return mrb_nil_value();
@@ -175,7 +187,7 @@ static mrb_value create_texture(mrb_state *mrb, mrb_value self) {
 
     SDL_Texture *new_texture;
     SDL_Surface *loaded_surface = IMG_Load(texture_name);
-
+    printf("%s\n", texture_name);
     if (loaded_surface == NULL) {
         printf("Unable to load image %s! SDL_image Error: %s\n", texture_name, IMG_GetError());
     } else {
@@ -257,6 +269,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     int width;
     int height;
     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+    int pre_scale_width = width;
+    int pre_scale_height = height;
 
     // images are at 2x the size, so normalize back to 1x scale
     width = width * 0.5;
@@ -293,7 +307,38 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
         .h = (height) + 1
     };
 
-    SDL_RenderCopy(renderer, texture, NULL, &destination);
+    if (texture_index == 0) { // TODO
+        // TODO: shadow_x, shadow_y, shadow_image
+        int shadow_x = -70;
+        int shadow_y = 50;
+        SDL_Surface *loaded_surface = IMG_Load("game_resources/shadow.png");
+        SDL_Texture *shadow_image = SDL_CreateTextureFromSurface(renderer, loaded_surface);
+
+        // Setup a temporary texture to blend the shadow and texture together in
+        SDL_Texture *shadow_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+        SDL_SetRenderTarget(renderer, shadow_texture);
+        SDL_RenderClear(renderer);
+
+
+
+        // Draw shadow and blend in the texture
+        SDL_Rect rect_of_shadow_image = { shadow_x, shadow_y, pre_scale_width, pre_scale_height };
+        SDL_Rect inside_shadow_texture_destination = { 0, 0, width, height };
+        SDL_Rect inside_shadow_texture_destination1 = { 0, 0, 0, 20 * y_scale };
+        SDL_RenderCopy(renderer, shadow_image, &rect_of_shadow_image, &inside_shadow_texture_destination);
+        SDL_SetTextureBlendMode(texture, shadow_blend);
+        SDL_RenderCopy(renderer, texture, NULL, &inside_shadow_texture_destination);
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
+        // Draw texture, blended with shadow, as normal onto screen
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderCopy(renderer, shadow_texture, NULL, &destination);
+
+        // Cleanup temporary texture
+        SDL_DestroyTexture(shadow_texture);
+    } else {
+      SDL_RenderCopy(renderer, texture, NULL, &destination);
+    }
 
     if (blend_factor > 0) {
         SDL_SetTextureColorMod(texture, 255, 255, 255);
