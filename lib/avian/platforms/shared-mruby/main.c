@@ -187,7 +187,7 @@ static mrb_value create_texture(mrb_state *mrb, mrb_value self) {
 
     SDL_Texture *new_texture;
     SDL_Surface *loaded_surface = IMG_Load(texture_name);
-    printf("%s\n", texture_name);
+
     if (loaded_surface == NULL) {
         printf("Unable to load image %s! SDL_image Error: %s\n", texture_name, IMG_GetError());
     } else {
