@@ -49,7 +49,10 @@ def draw(bridge, sprite)
     red,
     green,
     blue,
-    sprite.color_blend_factor
+    sprite.color_blend_factor,
+    sprite.shadow_texture || -1,
+    sprite.shadow_x.to_i,
+    sprite.shadow_y.to_i
   )
 end
 

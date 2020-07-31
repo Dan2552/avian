@@ -23,4 +23,7 @@ class PlatformSprite
   attr_accessor :visible
   attr_accessor :color
   attr_accessor :color_blend_factor
+  attr_accessor :shadow_texture
+  attr_accessor :shadow_x
+  attr_accessor :shadow_y
 end

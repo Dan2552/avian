@@ -49,6 +49,11 @@ class Renderer
     Platform.set_sprite_visible(sprite_node, renderable.visible)
     Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
     Platform.set_sprite_scale(sprite_node, renderable.x_scale, renderable.y_scale)
+
+    if renderable.shadow_overlay
+      shadow_texture = find_or_create_texture(renderable.shadow_overlay.image)
+      Platform.set_sprite_shadow_overlay(sprite_node, shadow_texture, renderable.shadow_overlay.x, renderable.shadow_overlay.y)
+    end
   end
 
   def draw_text(renderable)

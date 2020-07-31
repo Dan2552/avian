@@ -230,10 +230,13 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     mrb_int color_green;
     mrb_int color_blue;
     mrb_float blend_factor;
+    mrb_int shadow_texture;
+    mrb_int shadow_x;
+    mrb_int shadow_y;
 
     mrb_get_args(
         mrb,
-        "iiiifffffiiffiiif",
+        "iiiifffffiiffiiifiii",
         &texture_index,
         &x,
         &y,
@@ -250,7 +253,10 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
         &color_red,
         &color_green,
         &color_blue,
-        &blend_factor
+        &blend_factor,
+        &shadow_texture,
+        &shadow_x,
+        &shadow_y
     );
 
     SDL_Texture *texture = textures[texture_index];
@@ -307,10 +313,7 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
         .h = (height) + 1
     };
 
-    if (texture_index == 0) { // TODO
-        // TODO: shadow_x, shadow_y, shadow_image
-        int shadow_x = -70;
-        int shadow_y = 50;
+    if (shadow_texture != -1) {
         SDL_Surface *loaded_surface = IMG_Load("game_resources/shadow.png");
         SDL_Texture *shadow_image = SDL_CreateTextureFromSurface(renderer, loaded_surface);
 
@@ -318,8 +321,6 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
         SDL_Texture *shadow_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
         SDL_SetRenderTarget(renderer, shadow_texture);
         SDL_RenderClear(renderer);
-
-
 
         // Draw shadow and blend in the texture
         SDL_Rect rect_of_shadow_image = { shadow_x, shadow_y, pre_scale_width, pre_scale_height };

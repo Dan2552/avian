@@ -20,6 +20,7 @@ class Platform
     def set_sprite_flipped(*args); shared_instance.set_sprite_flipped(*args); end
     def set_sprite_visible(*args); shared_instance.set_sprite_visible(*args); end
     def set_sprite_color_blend(*args); shared_instance.set_sprite_color_blend(*args); end
+    def set_sprite_shadow_overlay(*args); shared_instance.set_sprite_shadow_overlay(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
     def set_sprite_scale(*args); shared_instance.set_sprite_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end
@@ -60,6 +61,12 @@ class Platform
 
   def set_sprite_texture(sprite, texture)
     sprite.texture = texture
+  end
+
+  def set_sprite_shadow_overlay(sprite, texture, x, y)
+    sprite.shadow_texture = texture
+    sprite.shadow_x = x
+    sprite.shadow_y = y
   end
 
   def set_camera_position(position)
