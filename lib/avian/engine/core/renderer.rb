@@ -42,18 +42,27 @@ class Renderer
     return if renderable.static_renderable && !is_new
 
     sprite_node = find_or_create_sprite(renderable)
-    Platform.set_sprite_texture(sprite_node, find_or_create_texture(renderable.sprite_name))
-    Platform.set_sprite_position(sprite_node, renderable.renderable_position, renderable.renderable_z_position)
-    # Platform.set_sprite_rotation(sprite_node, renderable.rotation)
-    # Platform.set_sprite_flipped(sprite_node, renderable.flipped_vertically, renderable.flipped_horizontally)
-    Platform.set_sprite_visible(sprite_node, renderable.visible)
-    Platform.set_sprite_color_blend(sprite_node, renderable.color, renderable.color_blend_factor)
-    Platform.set_sprite_scale(sprite_node, renderable.x_scale, renderable.y_scale)
 
+    shadow_overlay_texture = nil
     if renderable.shadow_overlay
-      shadow_texture = find_or_create_texture(renderable.shadow_overlay.image)
-      Platform.set_sprite_shadow_overlay(sprite_node, shadow_texture, renderable.shadow_overlay.x, renderable.shadow_overlay.y)
+      shadow_overlay_texture = find_or_create_texture(renderable.shadow_overlay.image)
     end
+
+    Platform.set_sprite_attributes(
+      sprite_node,
+      find_or_create_texture(renderable.sprite_name),
+      renderable.renderable_anchor_point,
+      renderable.position,
+      renderable.z_position,
+      renderable.visible,
+      renderable.color,
+      renderable.color_blend_factor,
+      renderable.x_scale,
+      renderable.y_scale,
+      shadow_overlay_texture,
+      renderable.shadow_overlay&.x,
+      renderable.shadow_overlay&.y
+    )
   end
 
   def draw_text(renderable)

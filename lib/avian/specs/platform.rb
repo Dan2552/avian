@@ -5,13 +5,8 @@ class Platform
     end
 
     def create_sprite(*args); shared_instance.create_sprite(*args); end
-    def create_sprite(*args); shared_instance.create_sprite(*args); end
     def create_texture(*args); shared_instance.create_texture(*args); end
-    def set_sprite_texture(*args); shared_instance.set_sprite_texture(*args); end
     def camera(*args); shared_instance.camera(*args); end
-    def set_sprite_position(*args); shared_instance.set_sprite_position(*args); end
-    def set_sprite_rotation(*args); shared_instance.set_sprite_rotation(*args); end
-    def set_sprite_flipped(*args); shared_instance.set_sprite_flipped(*args); end
     def remove_sprite(*args); shared_instance.remove_sprite(*args); end
     def set_scale(*args); shared_instance.set_scale(*args); end
     def screen_size(*args); shared_instance.screen_size(*args); end

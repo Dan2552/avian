@@ -21,7 +21,7 @@ module GameObject
       number :color_blend_factor, default: 0.0
       number :x_scale, default: 1.0
       number :y_scale, default: 1.0
-      attribute :shadow_overlay, default: false
+      attribute :shadow_overlay, default: nil
 
       def self.included(mod)
         mod.extend(RenderableClass)
