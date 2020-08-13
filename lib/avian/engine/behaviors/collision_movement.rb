@@ -11,6 +11,8 @@ class CollisionMovement < Behavior
   end
 
   def towards(target)
+    return true if game_object.position == target
+
     current_position = game_object.position
     maximum_step = game_object.movement_speed
 
@@ -22,7 +24,7 @@ class CollisionMovement < Behavior
     shortened = Collision.reduce_vector(current_position, movement_vector, &comparison)
     # => V[2, 0]
 
-    return true if game_object.position == target
+    return true if shortened.zero?
 
     game_object.position += shortened
 
