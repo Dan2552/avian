@@ -42,14 +42,33 @@ class Animation < Behavior
   # walk_right_animation.when(walking_right && walking_x_more_than_y)
   # ```
   #
-  def when(condition)
-    if condition
+  # You may also want to change face a direction, even when not specifically
+  # animating. This can be achieved with the idle_to_default_texture_condition
+  # argument. By using a non-nil value on the 2nd argument, animation requires
+  # a truthy value on both animate_condition and
+  # idle_to_default_texture_condition.
+  #
+  # E.g. To animate upwards, the following example would require both
+  # `movement.moving?` and `direction.up?` to be true. But if `movement.moving?`
+  # were false and `direction.up?` was true, then the upwards default sprite
+  # would be used.
+  #
+  # ```
+  # walk_up_animation.when(movement.moving?, direction.up?)
+  # walk_down_animation.when(movement.moving?, direction.down?)
+  # walk_left_animation.when(movement.moving?, direction.left?)
+  # walk_right_animation.when(movement.moving?, direction.right?)
+  # ```
+  #
+  def when(animate_condition, idle_to_default_texture_condition = nil)
+    using_idle = idle_to_default_texture_condition != nil
+    if animate_condition && (!using_idle || idle_to_default_texture_condition)
       update
       game_object.sprite_name = key_frame
       self.was_animating = true
     else
       reset
-      game_object.sprite_name = default_texture if was_animating
+      game_object.sprite_name = default_texture if was_animating || idle_to_default_texture_condition
       self.was_animating = false
     end
   end
