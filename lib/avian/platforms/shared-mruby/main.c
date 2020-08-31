@@ -60,7 +60,7 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 
     TTF_Init();
 
-    font = TTF_OpenFont(game_resource_path("font", "ttf"), 64);
+    font = TTF_OpenFont(game_resource_path("ankecallig-fg", "ttf"), 90);
     if (font == NULL) {
         printf("No :( %s\n", TTF_GetError());
         SDL_Delay(9999999);

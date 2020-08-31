@@ -7,7 +7,7 @@ class Rectangle
     @size = size
   end
 
-  def inside?(point)
+  def contains?(point)
     point.x > left &&
       point.x < right &&
       point.y < top &&
