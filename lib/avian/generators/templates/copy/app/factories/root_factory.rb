@@ -6,7 +6,7 @@ module RootFactory
     # code. For example by calling:
     #
     # ```
-    # GameObject::Base.tagged("root")
+    # GameObject::Base.find_by_tag("root")
     # ```
     #
     # It is not necessary to tag your game objects unless you need this
