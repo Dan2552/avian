@@ -319,13 +319,13 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
 
         // Setup a temporary texture to blend the shadow and texture together in
         SDL_Texture *shadow_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+        SDL_SetTextureBlendMode(shadow_texture, SDL_BLENDMODE_BLEND);
         SDL_SetRenderTarget(renderer, shadow_texture);
         SDL_RenderClear(renderer);
 
         // Draw shadow and blend in the texture
         SDL_Rect rect_of_shadow_image = { shadow_x, shadow_y, pre_scale_width, pre_scale_height };
         SDL_Rect inside_shadow_texture_destination = { 0, 0, width, height };
-        SDL_Rect inside_shadow_texture_destination1 = { 0, 0, 0, 20 * y_scale };
         SDL_RenderCopy(renderer, shadow_image, &rect_of_shadow_image, &inside_shadow_texture_destination);
         SDL_SetTextureBlendMode(texture, shadow_blend);
         SDL_RenderCopy(renderer, texture, NULL, &inside_shadow_texture_destination);
