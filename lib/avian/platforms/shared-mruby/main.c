@@ -314,8 +314,7 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     };
 
     if (shadow_texture != -1) {
-        SDL_Surface *loaded_surface = IMG_Load("game_resources/shadow.png");
-        SDL_Texture *shadow_image = SDL_CreateTextureFromSurface(renderer, loaded_surface);
+        SDL_Texture *shadow_image = textures[shadow_texture];
 
         // Setup a temporary texture to blend the shadow and texture together in
         SDL_Texture *shadow_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
