@@ -51,8 +51,21 @@ class GameObject::Base
   # receives.
   #
   def destroy
+    will_destroy
     RenderList.shared_instance << self if renderable?
-    did_destroy
+
+    foreign_relationship_name = self.class.send(:foreign_relationship_name)
+
+    parents.each do |parent|
+      if parent.respond_to?(:"#{foreign_relationship_name}=")
+        parent.send("#{foreign_relationship_name}=", nil)
+      else
+        parent.send("#{foreign_relationship_name.pluralize}").delete(self)
+      end
+    end
+
+    self.destroyed = true
+
     children.each(&:destroy)
     true
   end
@@ -138,9 +151,16 @@ class GameObject::Base
 
   end
 
+  # Callback for when an object is being destroyed.
+  #
+  # Subclasses should override this to provide their own functionality.
+  #
+  def will_destroy
+
+  end
+
   private
 
-  attr_accessor :will_destroy
   attr_accessor :destroyed
 
   # The parents to this GameObject.
@@ -149,20 +169,6 @@ class GameObject::Base
   #
   def parents
     self.class.parent_relationships.map { |r| self.send(r) }.compact.freeze
-  end
-
-  def did_destroy
-    foreign_relationship_name = self.class.send(:foreign_relationship_name)
-
-    parents.each do |parent|
-      if parent.respond_to?(:"#{foreign_relationship_name}=")
-        parent.send("#{foreign_relationship_name}=", nil)
-      else
-        parent.send("#{foreign_relationship_name.pluralize}").delete(self)
-      end
-    end
-
-    self.destroyed = true
   end
 end
 
