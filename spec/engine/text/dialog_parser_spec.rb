@@ -93,5 +93,46 @@ describe Avian::Text::DialogParser do
         end
       end
     end
+
+    context "when a punctuation mark would've gone to the next line because of instructions" do
+      before do
+        allow(Platform).to receive(:width_of_text) do |_, _, text|
+          text.length
+        end
+      end
+
+      context "when it would've fit without the color" do
+        let(:text) { "a [green]b[reset], c" }
+        let(:size) { Size[4, 10] }
+
+        it "sits before the newline" do
+          expect(subject).to eq([
+            Avian::Text::DialogParser::DialogText.new("a "),
+            Avian::Text::DialogParser::DialogInstruction.new("green"),
+            Avian::Text::DialogParser::DialogText.new("b"),
+            Avian::Text::DialogParser::DialogInstruction.new("reset"),
+            Avian::Text::DialogParser::DialogText.new(","),
+            Avian::Text::DialogParser::DialogInstruction.new("newline"),
+            Avian::Text::DialogParser::DialogText.new("c")
+          ])
+        end
+      end
+
+      context "when it would not have fit without the color" do
+        let(:text) { "a [green]b[reset], c" }
+        let(:size) { Size[3, 10] }
+
+        it "also moves the last word to the newline" do
+          expect(subject).to eq([
+            Avian::Text::DialogParser::DialogText.new("a "),
+            Avian::Text::DialogParser::DialogInstruction.new("green"),
+            Avian::Text::DialogParser::DialogInstruction.new("newline"),
+            Avian::Text::DialogParser::DialogText.new("b"),
+            Avian::Text::DialogParser::DialogInstruction.new("reset"),
+            Avian::Text::DialogParser::DialogText.new(", c")
+          ])
+        end
+      end
+    end
   end
 end

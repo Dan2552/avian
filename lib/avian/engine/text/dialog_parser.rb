@@ -140,22 +140,33 @@ module Avian
 
       def handle_end
         handle_word_wont_fit if word_wont_fit?
-
         parts << DialogText.new(@current_characters)
       end
 
       def handle_word_wont_fit
         words = @current_characters.split(/(?<=[ .!])/)
         text = words[0..-2].join("")
-        parts << DialogText.new(text.rstrip) if text.length > 0
-        parts << DialogInstruction.new("newline")
         @current_characters = words.last.lstrip
+
+        if punctuation?
+          index_of_last_bit_of_dialog_text = parts.rindex { |e| e.is_a?(DialogText) }
+          parts.insert(index_of_last_bit_of_dialog_text, DialogInstruction.new("newline"))
+          parts << DialogText.new(text.rstrip) if text.rstrip.length > 0
+        else
+          parts << DialogText.new(text.rstrip) if text.rstrip.length > 0
+          parts << DialogInstruction.new("newline")
+        end
+
         @current_line = ""
       end
 
       def word_wont_fit?
-        potential_words = @current_line
+        potential_words = @current_line.rstrip
         Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width
+      end
+
+      def punctuation?
+        [",", ".", "!", ";", ":", "-", "'", '"', "..."].include?(@current_characters.rstrip)
       end
     end
   end
