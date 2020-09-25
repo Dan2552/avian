@@ -1,6 +1,6 @@
 module ObjectDebugExtension
   def method_missing(meth, *args, &blk)
-    raise NoMethodError, "_EXCLUDE_FILE_AND_LINE_Undefined method '#{meth}' for #{self.class} - #{self.inspect}"
+    raise NoMethodError, "Undefined method '#{meth}' for #{self.class} - #{self.inspect}"
   end
 end
 

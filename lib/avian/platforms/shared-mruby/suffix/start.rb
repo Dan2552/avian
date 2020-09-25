@@ -148,8 +148,8 @@ rescue ExitError
   # Do nothing
 rescue Exception => e
   puts ""
-  puts e.inspect.split("_EXCLUDE_FILE_AND_LINE_").last
+  puts e.inspect
   e.backtrace.each do |line|
-    puts line.split("_EXCLUDE_FILE_AND_LINE_").last unless line.end_with?(":in method_missing")
+    puts line
   end
 end
