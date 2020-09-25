@@ -44,9 +44,18 @@ loop do
     if _input.nil? || _input.chomp == "continue" || _input.chomp == "exit"
       break
     end
+
+    if _input.chomp == "exit!" || _input.chomp == "!!!"
+      raise ExitError
+    end
+
     output = eval(_debugger_input(_input)).inspect
     puts("=> #{output}")
     output
+  rescue Exception => exc
+    raise exc if exc.is_a?(ExitError)
+    puts exc.class.to_s
+    puts exc.inspect
   end
 end
 '
