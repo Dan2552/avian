@@ -148,8 +148,9 @@ rescue ExitError
   # Do nothing
 rescue Exception => e
   puts ""
-  puts e.inspect
+  puts "\e[31m#{e.inspect}\e[0m"
   e.backtrace.each do |line|
-    puts line
+    next if line.include?("avian/platforms/shared-mruby/prefix/debugging.rb")
+    puts "\e[36m#{line}\e[0m"
   end
 end
