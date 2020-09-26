@@ -79,11 +79,9 @@ module Collision
     # - parameter game_object: GameObject instance.
     #
     def remove!(game_object)
-      old_cells = cells_for(game_object.previous_frame[:frame])
-      new_cells = cells_for(game_object.frame)
+      cells = cells_for(game_object.frame)
 
-      old_cells.each { |c| c.delete(game_object) }
-      new_cells.each { |c| c.delete(game_object) }
+      cells.each { |c| c.delete(game_object) }
     end
 
     # Returns an array of objects that are close to the given rectangle.
