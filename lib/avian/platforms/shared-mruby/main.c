@@ -19,6 +19,7 @@ SDL_Texture *textures[100];
 int textures_count = 0;
 
 TTF_Font *font;
+TTF_Font *font_outline;
 
 int screen_width;
 int screen_height;
@@ -60,11 +61,21 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 
     TTF_Init();
 
-    font = TTF_OpenFont(game_resource_path("font", "ttf"), 65);
+    const char *path = game_resource_path("font", "ttf");
+
+    font = TTF_OpenFont(path, 80);
     if (font == NULL) {
-        printf("No :( %s\n", TTF_GetError());
+        printf("No 1 :( %s\n", TTF_GetError());
         SDL_Delay(9999999);
     }
+
+    font_outline = TTF_OpenFont(path, 80);
+    if (font_outline == NULL) {
+        printf("No 2 :( %s\n", TTF_GetError());
+        SDL_Delay(9999999);
+    }
+
+    TTF_SetFontOutline(font_outline, 6);
 
     shadow_blend = SDL_ComposeCustomBlendMode(
       SDL_BLENDFACTOR_ONE,
@@ -359,12 +370,21 @@ static mrb_value create_texture_for_text(mrb_state *mrb, mrb_value self) {
     );
 
     SDL_Color textColor = { 255, 255, 255 };
+
+    SDL_Surface *outline = TTF_RenderText_Blended(font_outline, text, textColor);
     SDL_Surface *message = TTF_RenderText_Blended(font, text, textColor);
+
+    if (outline == NULL) {
+        printf("blargh %s, %s! \n", text, TTF_GetError());
+    }
+
     if (message == NULL) {
         printf("blargh %s, %s! \n", text, TTF_GetError());
     }
-    SDL_Texture *new_texture = SDL_CreateTextureFromSurface(renderer, message);
-    textures[textures_count] = new_texture;
+
+    textures[textures_count] = SDL_CreateTextureFromSurface(renderer, outline);
+    textures_count++;
+    textures[textures_count] = SDL_CreateTextureFromSurface(renderer, message);
     textures_count++;
     return mrb_fixnum_value(textures_count - 1);
 }

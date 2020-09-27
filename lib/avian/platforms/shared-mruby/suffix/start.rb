@@ -64,6 +64,16 @@ def draw_text(bridge, text)
     text.font_size
   )
 
+  outline = texture - 1
+  outline_sprite = PlatformSprite.new(outline, text.anchor_point)
+  outline_sprite.x = text.x - 3
+  outline_sprite.y = text.y - 3
+  puts text.font_color
+  outline_sprite.color = 0x000000 # text.font_color == 0x000000 ? 0xffffff : 0x000000
+  outline_sprite.color_blend_factor = 1.0
+
+  draw(bridge, outline_sprite)
+
   sprite = PlatformSprite.new(texture, text.anchor_point)
   sprite.x = text.x
   sprite.y = text.y
@@ -72,6 +82,7 @@ def draw_text(bridge, text)
 
   draw(bridge, sprite)
 
+  bridge.pop_texture
   bridge.pop_texture
 end
 
