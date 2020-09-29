@@ -129,7 +129,6 @@ def run
 
     # Profiler.shared_instance.start_of("C-render-draw")
     render_store.sprites
-      .sort_by(&:z)
       .each { |sprite| draw(bridge, sprite) }
     # Profiler.shared_instance.end_of("C-render-draw")
 

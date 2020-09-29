@@ -1,32 +1,46 @@
 # Responsible for rendering the game graph's objects on screen.
 #
 class Renderer
+  def self.set_root(root)
+    @root = root
+    @instance = nil
+  end
+
+  def self.instance
+    @instance ||= Renderer.new(@root)
+  end
+
   # parameter root: The root GameObject instance.
   #
   def initialize(root)
     @root = root
   end
 
+  def camera_updated
+    Platform.set_camera_position(camera_game_object.position)
+    Platform.set_camera_scale(camera_game_object.scale, camera_game_object.scale)
+  end
+
   # Draws a frame on the screen. The Loop should call this once per frame after
   # running through the logic.
   #
-  def draw_frame
+  # def draw_frame
     # Profiler.shared_instance.start_of("Renderer")
-    Platform.set_camera_position(camera_game_object.position)
-    Platform.set_camera_scale(camera_game_object.scale, camera_game_object.scale)
-    traverse
+    # Platform.set_camera_position(camera_game_object.position)
+    # Platform.set_camera_scale(camera_game_object.scale, camera_game_object.scale)
+    # traverse
     # Profiler.shared_instance.end_of("Renderer")
-  end
+  # end
 
-  private
+  # private
 
   attr_reader :root
 
-  def traverse
-    RenderList.shared_instance.each do |game_object|
-      draw(game_object)
-    end
-  end
+  # def traverse
+  #   RenderList.shared_instance.each do |game_object|
+  #     draw(game_object)
+  #   end
+  # end
 
   def draw(renderable)
     return draw_text(renderable) if renderable.is_a?(GameObject::Text)
@@ -116,6 +130,7 @@ class Renderer
     root.camera
   rescue
     puts "Error: The root game object must have a camera"
-    exit 1
+    eval(DEBUGGER)
+    # exit 1
   end
 end

@@ -28,12 +28,13 @@ class GameObject::Base
       return
     end
 
-    # Profiler.shared_instance.start_of("RenderList#<<")
-    if renderable? && !@rendered
-      RenderList.shared_instance << self
-      @rendered = true
-    end
-    # Profiler.shared_instance.end_of("RenderList#<<")
+    # if !@rendered
+      # RenderList.shared_instance << self
+      Renderer.instance.draw(self) if renderable?
+      # @rendered = true
+    # else
+    # end
+
 
     # Profiler.shared_instance.start_of(self.class.to_s)
 
