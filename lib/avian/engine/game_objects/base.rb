@@ -41,7 +41,7 @@ class GameObject::Base
     update
 
     # Profiler.shared_instance.end_of(self.class.to_s)
-    children.each(&:perform_update)
+    each_child(&:perform_update)
   end
 
   # Destroy the instance. This'll prevent the instance from behaving on any
@@ -66,7 +66,7 @@ class GameObject::Base
 
     self.destroyed = true
 
-    children.each(&:destroy)
+    each_child(&:destroy)
     true
   end
 
@@ -113,11 +113,18 @@ class GameObject::Base
   #
   # - returns: Array of children
   #
-  def children
-    self.class.child_relationships.map do |r|
+  def each_child(&blk)
+    self.class.child_relationships.each do |r|
       relation = self.send(r)
-      relation.respond_to?(:to_a) ? relation.to_a : relation
-    end.flatten.compact.freeze
+
+      if relation.respond_to?(:each)
+        relation.each(&blk)
+      elsif relation.nil?
+        next
+      else
+        blk.call(relation)
+      end
+    end
   end
 
   def destroyed?
