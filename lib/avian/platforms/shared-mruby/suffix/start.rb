@@ -64,7 +64,7 @@ def draw_text(bridge, text)
     text.font_size
   )
 
-  sprite = PlatformSprite.new(texture, text.anchor_point)
+  sprite = PlatformSprite.new(texture, text.anchor_point, 0)
   sprite.x = text.x
   sprite.y = text.y
   sprite.color = text.font_color

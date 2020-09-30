@@ -41,13 +41,21 @@ class Platform
 
   # Create a sprite to be stored in the renderer's sprite pool.
   #
-  def create_sprite(texture, anchor_point)
-    sprite = PlatformSprite.new(texture, anchor_point)
-    Platform.render_store.sprites << sprite
+  def create_sprite(texture, anchor_point, z)
+    sprite = PlatformSprite.new(texture, anchor_point, z)
+
+    sprites = Platform.render_store.sprites
+
+    insert_index = sprites.bsearch_index { |s| s.z >= sprite.z }
+
+    if insert_index
+      sprites.insert(insert_index, sprite)
+    else
+      sprites << sprite
+    end
 
     sprite
   end
-
 
   def set_sprite_attributes(
       sprite,

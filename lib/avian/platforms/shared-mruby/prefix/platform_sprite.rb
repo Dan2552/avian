@@ -1,11 +1,11 @@
 class PlatformSprite
-  def initialize(texture, anchor_point)
+  def initialize(texture, anchor_point, z)
     @texture = texture
     @anchor_point = anchor_point
     @visible = true
     @color_blend_factor = 0
 
-    @z = 0
+    @z = z
     @angle = 0
     @x_scale = 1
     @y_scale = 1

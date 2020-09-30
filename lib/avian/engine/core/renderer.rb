@@ -110,7 +110,7 @@ class Renderer
 
   def find_or_create_sprite(renderable)
     pool[renderable.id] = (
-      pool[renderable.id] || Platform.create_sprite(find_or_create_texture(renderable.sprite_name), renderable.renderable_anchor_point)
+      pool[renderable.id] || Platform.create_sprite(find_or_create_texture(renderable.sprite_name), renderable.renderable_anchor_point, renderable.z_position)
     )
   end
 
