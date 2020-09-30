@@ -53,7 +53,7 @@ class GameObject::Base
   #
   def destroy
     will_destroy
-    Renderer.instance.draw(self) if renderable?
+    Renderer.instance.remove(self) if renderable?
 
     foreign_relationship_name = self.class.send(:foreign_relationship_name)
 

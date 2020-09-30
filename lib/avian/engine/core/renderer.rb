@@ -42,15 +42,14 @@ class Renderer
   #   end
   # end
 
+  def remove(renderable)
+    sprite_node = find_or_create_sprite(renderable)
+    Platform.remove_sprite(sprite_node)
+    pool.delete(renderable.id)
+  end
+
   def draw(renderable)
     return draw_text(renderable) if renderable.is_a?(GameObject::Text)
-
-    if renderable.destroyed?
-      sprite_node = find_or_create_sprite(renderable)
-      Platform.remove_sprite(sprite_node)
-      pool.delete(renderable.id)
-      return
-    end
 
     is_new = pool[renderable.id].nil?
     return if renderable.static_renderable && !is_new
