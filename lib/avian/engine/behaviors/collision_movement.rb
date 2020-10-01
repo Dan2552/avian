@@ -14,7 +14,7 @@ class CollisionMovement < Behavior
     return true if game_object.position == target
 
     current_position = game_object.position
-    maximum_step = game_object.movement_speed
+    maximum_step = game_object.movement_speed * Time.delta
 
     # get vector for ideal movement
     movement_vector = Math::Vector.move_towards(current_position, target, maximum_step)
