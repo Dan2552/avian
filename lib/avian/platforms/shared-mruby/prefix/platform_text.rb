@@ -1,14 +1,55 @@
 class PlatformText
-  def initialize(font_name, anchor_point)
-    @font_name = font_name
-    @anchor_point = anchor_point
+  def initialize(renderable)
+    @renderable = renderable
   end
 
-  attr_reader :font_name
-  attr_reader :anchor_point
-  attr_accessor :text
-  attr_accessor :font_size
-  attr_accessor :font_color
-  attr_accessor :x
-  attr_accessor :y
+  attr_reader :renderable
+
+  def font_name
+    renderable.font_name
+  end
+
+  def anchor_point
+    renderable.renderable_anchor_point
+  end
+
+  def text
+    renderable.text
+  end
+
+  def font_size
+    renderable.font_size
+  end
+
+  def color
+    0xff_000000 + renderable.color
+  end
+
+  def color_blend_factor
+    renderable.color_blend_factor
+  end
+
+  def position
+    renderable.position
+  end
+
+  def x
+    renderable.position.x
+  end
+
+  def y
+    renderable.position.y
+  end
+
+  def z_position
+    renderable.z_position
+  end
+
+  def visible
+    renderable.visible
+  end
+
+  private
+
+  attr_reader :renderable
 end

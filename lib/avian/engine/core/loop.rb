@@ -5,7 +5,7 @@ class Loop
   #
   def initialize(root)
     @root = root
-    Renderer.set_root(root)
+    @renderer = Renderer.new(root)
     @frame_count = 0
     @time_count = 0
   end
@@ -45,24 +45,12 @@ class Loop
     Input.shared_instance.update
     # Profiler.shared_instance.end_of("internal input update")
     # Profiler.shared_instance.start_of("perform_update")
-    root.perform_update
+    @root.perform_update
     # Profiler.shared_instance.end_of("perform_update")
-    # renderer.draw_frame
+    @renderer.draw_frame
 
-    # time = # Profiler.shared_instance.end_of("ALL_LOGIC")
+    # Profiler.shared_instance.end_of("ALL_LOGIC")
 
     # Profiler.shared_instance.start_of("OUTSIDE OF LOOP")
   end
-
-  private
-
-  attr_reader :root
-
-  # def renderer
-  #   @renderer ||= begin
-
-  #     Renderer.instance
-  #   end
-    # @renderer ||= "Renderer".constantize.new(root)
-  # end
 end

@@ -1,29 +1,60 @@
 class PlatformSprite
-  def initialize(texture, anchor_point, z)
-    @texture = texture
-    @anchor_point = anchor_point
-    @visible = true
-    @color_blend_factor = 0
-
-    @z = z
-    @angle = 0
-    @x_scale = 1
-    @y_scale = 1
-    @visible = true
+  def initialize(renderable)
+    @renderable = renderable
   end
 
-  attr_accessor :anchor_point
   attr_accessor :texture
-  attr_accessor :x
-  attr_accessor :y
-  attr_accessor :z
-  attr_accessor :angle
-  attr_accessor :x_scale
-  attr_accessor :y_scale
-  attr_accessor :visible
-  attr_accessor :color
-  attr_accessor :color_blend_factor
   attr_accessor :shadow_texture
-  attr_accessor :shadow_x
-  attr_accessor :shadow_y
+
+  def anchor_point
+    renderable.renderable_anchor_point
+  end
+
+  def x
+    renderable.position.x
+  end
+
+  def y
+    renderable.position.y
+  end
+
+  def z
+    renderable.z_position
+  end
+
+  def angle
+    0
+  end
+
+  def x_scale
+    renderable.x_scale
+  end
+
+  def y_scale
+    renderable.y_scale
+  end
+
+  def visible
+    renderable.visible
+  end
+
+  def color
+    renderable.color
+  end
+
+  def color_blend_factor
+    renderable.color_blend_factor
+  end
+
+  def shadow_x
+    renderable.shadow_overlay&.x
+  end
+
+  def shadow_y
+    renderable.shadow_overlay&.y
+  end
+
+  private
+
+  attr_reader :renderable
 end

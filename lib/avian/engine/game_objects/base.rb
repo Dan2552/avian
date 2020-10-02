@@ -30,7 +30,7 @@ class GameObject::Base
 
     # if !@rendered
       # RenderList.shared_instance << self
-      Renderer.instance.draw(self) if renderable?
+      RenderPool.add(self) if renderable?
       # @rendered = true
     # else
     # end
@@ -53,7 +53,7 @@ class GameObject::Base
   #
   def destroy
     will_destroy
-    Renderer.instance.remove(self) if renderable?
+    RenderPool.remove(self) if renderable?
 
     foreign_relationship_name = self.class.send(:foreign_relationship_name)
 
@@ -177,16 +177,5 @@ class GameObject::Base
   #
   def parents
     self.class.parent_relationships.map { |r| self.send(r) }.compact.freeze
-  end
-end
-
-class GameObject::Text < GameObject::Base
-  string :font_name, default: "Arial"
-  string :text
-  number :font_size, default: 32
-  number :font_color, default: 0xffffff
-
-  def renderable?
-    true
   end
 end
