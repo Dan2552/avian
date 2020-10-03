@@ -36,7 +36,9 @@ module GameObject
             end
           end
 
-          instance_variable_get(:"@#{attr_name}") || empty
+          result = instance_variable_get(:"@#{attr_name}")
+          return empty if result.nil?
+          result
         end
 
         define_method("#{attr_name}=") do |new_value|
