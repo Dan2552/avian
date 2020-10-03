@@ -16,7 +16,12 @@ class PositionalMovement < Behavior
   # - returns: (boolean) true if the target has been reached.
   #
   def towards(target_position)
-    return true if game_object.position == target_position
+    if game_object.position == target_position
+      @moving = false
+      return true
+    end
+
+    @moving = true
 
     vector = Math::Vector.move_towards(
       game_object.position,
@@ -24,11 +29,18 @@ class PositionalMovement < Behavior
       speed
     )
 
-    return true if vector.zero?
+    if vector.zero?
+      @moving = false
+      return true
+    end
 
     game_object.position += vector
 
     false
+  end
+
+  def moving?
+    !!@moving
   end
 
   private
