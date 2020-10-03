@@ -50,9 +50,9 @@ class RenderPool
     end
 
     def find_or_create_sprite(renderable)
-      pool[renderable.id] = pool[renderable.id] || begin
-        Platform.create_sprite(renderable)
-      end
+      pool[renderable.id] = (
+        pool[renderable.id] || Platform.create_sprite(renderable)
+      )
     end
 
     def find_or_create_texture(texture_name)

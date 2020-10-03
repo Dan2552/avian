@@ -21,6 +21,7 @@ class Profiler
   # Prints totals, and resets for the next frame
   #
   def flush
+    puts "\n\n"
     puts "Totals (time it took):"
     totals.sort_by { |k,v| v }.each do |line|
       puts line

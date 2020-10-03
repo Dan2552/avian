@@ -14,7 +14,7 @@ class Loop
   #
   def perform_update(current_time)
     # Profiler.shared_instance.end_of("OUTSIDE OF LOOP")
-    # RenderList.shared_instance.clear!
+
     # Profiler.shared_instance.flush
     # Profiler.shared_instance.start_of("ALL_LOGIC")
     last_time = @last_time || current_time
@@ -47,7 +47,10 @@ class Loop
     # Profiler.shared_instance.start_of("perform_update")
     @root.perform_update
     # Profiler.shared_instance.end_of("perform_update")
+
+    # Profiler.shared_instance.start_of("draw_frame")
     @renderer.draw_frame
+    # Profiler.shared_instance.end_of("draw_frame")
 
     # Profiler.shared_instance.end_of("ALL_LOGIC")
 

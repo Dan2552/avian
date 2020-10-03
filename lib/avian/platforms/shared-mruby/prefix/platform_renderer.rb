@@ -36,9 +36,9 @@ class PlatformRenderer
     bridge.draw_image(
       sprite.texture,
       sprite.x.to_i,
-      0 - sprite.y.to_i,
+      -sprite.y.to_i,
       sprite.z.to_i,
-      sprite.angle.to_f,
+      0.0, # angle
       sprite.anchor_point.x,
       sprite.anchor_point.y,
       sprite.x_scale.to_f,
@@ -55,6 +55,8 @@ class PlatformRenderer
       sprite.shadow_x.to_i,
       sprite.shadow_y.to_i
     )
+
+    sprite.reset!
   end
 
   def draw_text(text)
