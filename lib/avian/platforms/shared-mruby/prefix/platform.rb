@@ -17,20 +17,14 @@ class Platform
       File.join("game_resources", resource)
     end
 
+    def create_shape(renderable)
+      shape = PlatformShape.new(renderable)
+      render_store << shape
+    end
+
     def create_sprite(renderable)
       sprite = PlatformSprite.new(renderable)
-
-      sprites = render_store.sprites
-
-      insert_index = sprites.bsearch_index { |s| s.z >= sprite.z }
-
-      if insert_index
-        sprites.insert(insert_index, sprite)
-      else
-        sprites << sprite
-      end
-
-      sprite
+      render_store << sprite
     end
 
     def set_sprite_textures(sprite, texture, shadow_texture)
@@ -50,7 +44,7 @@ class Platform
     end
 
     def remove_sprite(sprite)
-      render_store.sprites.delete(sprite)
+      render_store.delete(sprite)
     end
 
     def screen_size
@@ -59,8 +53,7 @@ class Platform
 
     def create_text(renderable)
       text = PlatformText.new(renderable)
-      render_store.texts << text
-      text
+      render_store << text
     end
 
     def width_of_text(font_name, font_size, text)

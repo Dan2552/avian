@@ -7,8 +7,21 @@ class PlatformRenderer
 
   def draw_frame
     bridge.clear_screen
-    render_store.sprites.each { |sprite| draw(sprite) }
-    render_store.texts.each { |text| draw_text(text) }
+
+    render_store.each do |element|
+      # TODO: if the object isn't in the camera's view, don't draw it
+
+      next unless element.visible
+
+      if element.is_a?(PlatformSprite)
+        draw(element)
+      elsif element.is_a?(PlatformShape)
+        draw_shape(element)
+      else
+        draw_text(element)
+      end
+    end
+
     bridge.render
   end
 
@@ -19,10 +32,6 @@ class PlatformRenderer
   attr_reader :camera
 
   def draw(sprite)
-    # TODO: if the object isn't in the camera's view, don't draw it
-
-    return unless sprite.visible
-
     red = 0
     green = 0
     blue = 0
@@ -57,6 +66,42 @@ class PlatformRenderer
     )
 
     sprite.reset!
+  end
+
+  def draw_shape(shape)
+    red = 0
+    green = 0
+    blue = 0
+
+    if shape.color_blend_factor > 0
+      red = (shape.color >> 16) & 255
+      green = (shape.color >> 8) & 255
+      blue = shape.color & 255
+    end
+# puts """
+#     bridge.draw_rectangle(
+#       #{shape.x},
+#       #{shape.y},
+#       #{shape.width},
+#       #{shape.height},
+#       #{red},
+#       #{green},
+#       #{blue},
+#       #{shape.color_blend_factor}
+#     )
+# """
+
+
+    bridge.draw_rectangle(
+      shape.x,
+      shape.y,
+      shape.width,
+      shape.height,
+      red,
+      green,
+      blue,
+      shape.color_blend_factor
+    )
   end
 
   def draw_text(text)

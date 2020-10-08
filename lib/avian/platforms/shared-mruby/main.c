@@ -212,6 +212,53 @@ static mrb_value pop_texture(mrb_state *mrb, mrb_value self) {
     return mrb_nil_value();
 }
 
+static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
+  mrb_int x;
+  mrb_int y;
+  mrb_int width;
+  mrb_int height;
+  mrb_int color_red;
+  mrb_int color_green;
+  mrb_int color_blue;
+  mrb_float blend_factor;
+
+  // SDL_Rect rectangle = {
+  //     .x = x,
+  //     .y = y,
+  //     .w = width,
+  //     .h = height
+  // };
+
+
+    SDL_Rect rectangle = {
+      .x = 100,
+      .y = 100,
+      .w = 100,
+      .h = 100
+  };
+
+  if (blend_factor > 0) {
+      int red;
+      int green;
+      int blue;
+      red = ((255-color_red)*(1-blend_factor))+color_red;
+      green = ((255-color_green)*(1-blend_factor))+color_green;
+      blue = ((255-color_blue)*(1-blend_factor))+color_blue;
+
+      SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
+  }
+
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  // SDL_RenderDrawRect(renderer, &rectangle);
+  SDL_RenderFillRect(renderer, &rectangle);
+
+  if (blend_factor > 0) {
+      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  }
+
+  return mrb_nil_value();
+}
+
 static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     mrb_int texture_index;
     mrb_int x;
@@ -411,6 +458,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "draw_rectangle", draw_rectangle, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture_for_text", create_texture_for_text, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "pop_texture", pop_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "get_screen_width", get_screen_width, MRB_ARGS_NONE());

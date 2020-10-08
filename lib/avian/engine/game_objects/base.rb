@@ -28,13 +28,7 @@ class GameObject::Base
       return
     end
 
-    # if !@rendered
-      # RenderList.shared_instance << self
-      RenderPool.add(self) if renderable?
-      # @rendered = true
-    # else
-    # end
-
+    RenderPool.add(self) if renderable?
 
     # Profiler.shared_instance.start_of(self.class.to_s)
 

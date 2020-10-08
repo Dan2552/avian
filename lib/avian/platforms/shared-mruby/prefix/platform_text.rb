@@ -41,7 +41,7 @@ class PlatformText
     renderable.position.y
   end
 
-  def z_position
+  def z
     renderable.z_position
   end
 

@@ -3,6 +3,8 @@ class RenderPool
     def add(renderable)
       if renderable.is_a?(GameObject::Text)
         find_or_create_text(renderable)
+      elsif renderable.is_a?(GameObject::Shape)
+        find_or_create_shape(renderable)
       else
         is_new = pool[renderable.id].nil?
         return if renderable.static_renderable && !is_new
@@ -33,6 +35,7 @@ class RenderPool
       @pool = nil
       @texture_pool = nil
       @text_pool = nil
+      @shape_pool = nil
     end
 
     private
@@ -47,6 +50,10 @@ class RenderPool
 
     def text_pool
       @text_pool ||= {}
+    end
+
+    def shape_pool
+      @shape_pool ||= {}
     end
 
     def find_or_create_sprite(renderable)
@@ -64,6 +71,12 @@ class RenderPool
     def find_or_create_text(renderable)
       text_pool[renderable.id] = (
         text_pool[renderable.id] || Platform.create_text(renderable)
+      )
+    end
+
+    def find_or_create_shape(renderable)
+      shape_pool[renderable.id] = (
+        shape_pool[renderable.id] || Platform.create_shape(renderable)
       )
     end
   end
