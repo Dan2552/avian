@@ -146,24 +146,13 @@ shared_examples_for("a game object") do
     context "when the GameObject is destroyed" do
       before { described_instance.destroy }
 
-      context "first time" do
-        it "does nothing special" do
-          expect { subject }.to_not raise_error
-        end
-      end
-      context "second time" do
-        before do
-          described_instance.perform_update
-        end
-
-        it "raises an exception" do
-          expect { subject }.to raise_error("#perform_update called on destroyed GameObject")
-        end
+      it "raises an exception" do
+        expect { subject }.to raise_error("#perform_update called on destroyed GameObject")
       end
     end
 
     context "when the GameObject is renderable" do
-      it "adds to the render list" do
+      xit "adds to the render list" do
         if described_instance.renderable?
           allow(described_instance)
             .to receive(:update)
@@ -179,7 +168,7 @@ shared_examples_for("a game object") do
     end
 
     context "when the GameObject is not renderable" do
-      it "does not add to the render list" do
+      xit "does not add to the render list" do
         unless described_instance.renderable?
           allow(described_instance)
             .to receive(:update)

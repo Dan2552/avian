@@ -18,12 +18,6 @@ describe Loop do
       subject
     end
 
-    it "clears the render list" do
-      expect(RenderList.shared_instance).to receive(:clear!)
-
-      subject
-    end
-
     xcontext "when called for the first time" do
       it "calls the root_object" do
         expect(root_object).to receive(:perform_update)

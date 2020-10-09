@@ -474,7 +474,7 @@ static mrb_value width_of_text(mrb_state *mrb, mrb_value self) {
     int height;
     TTF_SizeText(font, text, &width, &height);
 
-    return mrb_fixnum_value(width * 0.5);
+    return mrb_fixnum_value(width);
 }
 
 static mrb_value render(mrb_state *mrb, mrb_value self) {

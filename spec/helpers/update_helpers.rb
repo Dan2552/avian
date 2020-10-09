@@ -3,7 +3,7 @@ def _disable_instance_update!
 end
 
 def _disable_child_update!
-  described_instance.children.each do |child|
+  described_instance.each_child do |child|
     allow(child).to receive(:update)
   end
 end

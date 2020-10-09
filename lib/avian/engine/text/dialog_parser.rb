@@ -162,7 +162,7 @@ module Avian
 
       def word_wont_fit?
         potential_words = @current_line.rstrip
-        Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width * 0.5
+        Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width
       end
 
       def punctuation?
