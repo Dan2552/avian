@@ -1,8 +1,9 @@
 module GameObject
   module Internals
     module RenderableClass
-      def renderable
+      def renderable(relative_to_camera: true)
         boolean :renderable, default: true
+        boolean :relative_to_camera, default: relative_to_camera
       end
     end
 
