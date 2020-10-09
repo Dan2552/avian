@@ -25,6 +25,8 @@ class TextBox < GameObject::Base
 
   number :color, default: 0xffffff
 
+  vector :renderable_anchor_point, default: Vector[0.0, 1.0]
+
   attr_reader :lines
 
   def initialize
