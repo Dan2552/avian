@@ -20,13 +20,7 @@ class GameObject::Base
   # behaviour for updates.
   #
   def perform_update
-    if destroyed
-      if @updated_once
-        raise "#perform_update called on destroyed GameObject"
-      end
-      @updated_once = true
-      return
-    end
+    raise "#perform_update called on destroyed GameObject" if @destroyed
 
     RenderPool.add(self) if renderable?
 
@@ -59,7 +53,7 @@ class GameObject::Base
       end
     end
 
-    self.destroyed = true
+    @destroyed = true
 
     each_child(&:destroy)
     true
@@ -123,7 +117,7 @@ class GameObject::Base
   end
 
   def destroyed?
-    !!destroyed
+    !!@destroyed
   end
 
   def tag=(set)
@@ -162,8 +156,6 @@ class GameObject::Base
   end
 
   private
-
-  attr_accessor :destroyed
 
   # The parents to this GameObject.
   #
