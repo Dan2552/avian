@@ -5,6 +5,7 @@ AVIAN_LOAD_ORDER = [
   "engine/values/**/*.rb",
   "engine/game_objects/internals/attributes.rb",
   "engine/game_objects/internals/*.rb",
+  "engine/game_objects/**/base.rb",
   "engine/game_objects/**/*.rb",
   "engine/behaviors/behavior.rb",
   "engine/behaviors/**/*.rb",
