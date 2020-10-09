@@ -78,19 +78,6 @@ class PlatformRenderer
       green = (shape.color >> 8) & 255
       blue = shape.color & 255
     end
-# puts """
-#     bridge.draw_rectangle(
-#       #{shape.x},
-#       #{shape.y},
-#       #{shape.width},
-#       #{shape.height},
-#       #{red},
-#       #{green},
-#       #{blue},
-#       #{shape.color_blend_factor}
-#     )
-# """
-
 
     bridge.draw_rectangle(
       shape.x,

@@ -222,19 +222,24 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
   mrb_int color_blue;
   mrb_float blend_factor;
 
-  // SDL_Rect rectangle = {
-  //     .x = x,
-  //     .y = y,
-  //     .w = width,
-  //     .h = height
-  // };
+  mrb_get_args(
+      mrb,
+      "iiiiiiif",
+      &x,
+      &y,
+      &width,
+      &height,
+      &color_red,
+      &color_green,
+      &color_blue,
+      &blend_factor
+  );
 
-
-    SDL_Rect rectangle = {
-      .x = 100,
-      .y = 100,
-      .w = 100,
-      .h = 100
+  SDL_Rect rectangle = {
+      .x = x,
+      .y = y,
+      .w = width * 2,
+      .h = height
   };
 
   if (blend_factor > 0) {
