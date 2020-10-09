@@ -60,7 +60,7 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 
     TTF_Init();
 
-    font = TTF_OpenFont(game_resource_path("font", "ttf"), 65);
+    font = TTF_OpenFont(game_resource_path("font", "ttf"), 32 * 2);
     if (font == NULL) {
         printf("No :( %s\n", TTF_GetError());
         SDL_Delay(9999999);
@@ -217,6 +217,14 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
   mrb_int y;
   mrb_int width;
   mrb_int height;
+  mrb_float anchor_x;
+  mrb_float anchor_y;
+  mrb_float x_scale;
+  mrb_float y_scale;
+  mrb_int camera_x;
+  mrb_int camera_y;
+  mrb_float camera_x_scale;
+  mrb_float camera_y_scale;
   mrb_int color_red;
   mrb_int color_green;
   mrb_int color_blue;
@@ -224,21 +232,55 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
 
   mrb_get_args(
       mrb,
-      "iiiiiiif",
+      "iiiiffffiiffiiif",
       &x,
       &y,
       &width,
       &height,
+      &anchor_x,
+      &anchor_y,
+      &x_scale,
+      &y_scale,
+      &camera_x,
+      &camera_y,
+      &camera_x_scale,
+      &camera_y_scale,
       &color_red,
       &color_green,
       &color_blue,
       &blend_factor
   );
 
+  // width = width * 2;
+  // height = height * 2;
+
+  camera_x_scale = camera_x_scale * device_scale;
+  camera_y_scale = camera_y_scale * device_scale;
+
+  x_scale = x_scale * camera_x_scale;
+  y_scale = y_scale * camera_y_scale;
+
+  width = width * x_scale;
+  height = height * y_scale;
+
+  // Scale position in general by camera scale
+  x = x * camera_x_scale;
+  y = y * camera_y_scale;
+
+  // Normalize 0,0 to center of screen and center of sprite
+  x = x + render_screen_width * 0.5;
+  y = y + render_screen_height * 0.5;
+  x = x - (width * anchor_x);
+  y = y - (height * (1 - anchor_y));
+
+  // Adjust for camera position
+  x = x - camera_x * camera_x_scale;
+  y = y - camera_y * camera_y_scale;
+
   SDL_Rect rectangle = {
       .x = x,
       .y = y,
-      .w = width * 2,
+      .w = width,
       .h = height
   };
 
@@ -268,8 +310,6 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     mrb_int texture_index;
     mrb_int x;
     mrb_int y;
-    mrb_int z;
-    mrb_float angle;
     mrb_float anchor_x;
     mrb_float anchor_y;
     mrb_float x_scale;
@@ -288,12 +328,10 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
 
     mrb_get_args(
         mrb,
-        "iiiifffffiiffiiifiii",
+        "iiiffffiiffiiifiii",
         &texture_index,
         &x,
         &y,
-        &z,
-        &angle,
         &anchor_x,
         &anchor_y,
         &x_scale,
@@ -436,7 +474,7 @@ static mrb_value width_of_text(mrb_state *mrb, mrb_value self) {
     int height;
     TTF_SizeText(font, text, &width, &height);
 
-    return mrb_fixnum_value(width / 2);
+    return mrb_fixnum_value(width * 0.5);
 }
 
 static mrb_value render(mrb_state *mrb, mrb_value self) {

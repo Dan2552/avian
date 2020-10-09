@@ -157,12 +157,12 @@ module Avian
           parts << DialogInstruction.new("newline")
         end
 
-        @current_line = ""
+        @current_line = @current_characters.dup
       end
 
       def word_wont_fit?
         potential_words = @current_line.rstrip
-        Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width
+        Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width * 0.5
       end
 
       def punctuation?

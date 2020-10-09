@@ -46,8 +46,6 @@ class PlatformRenderer
       sprite.texture,
       sprite.x.to_i,
       -sprite.y.to_i,
-      sprite.z.to_i,
-      0.0, # angle
       sprite.anchor_point.x,
       sprite.anchor_point.y,
       sprite.x_scale.to_f,
@@ -81,9 +79,17 @@ class PlatformRenderer
 
     bridge.draw_rectangle(
       shape.x,
-      shape.y,
+      -shape.y,
       shape.width,
       shape.height,
+      shape.anchor_point.x,
+      shape.anchor_point.y,
+      shape.x_scale.to_f,
+      shape.y_scale.to_f,
+      camera.x.to_i,
+      -camera.y.to_i,
+      camera.x_scale.to_f,
+      camera.y_scale.to_f,
       red,
       green,
       blue,

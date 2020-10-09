@@ -34,4 +34,16 @@ class PlatformShape
   def visible
     @renderable.visible
   end
+
+  def anchor_point
+    @renderable.renderable_anchor_point
+  end
+
+  def x_scale
+    @renderable.x_scale
+  end
+
+  def y_scale
+    @renderable.y_scale
+  end
 end
