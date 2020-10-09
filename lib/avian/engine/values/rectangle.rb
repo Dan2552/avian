@@ -89,4 +89,11 @@ class Rectangle
   def bottom_right
     Vector[right, bottom]
   end
+
+  def center
+    Vector[
+      origin.x + (size.width * 0.5),
+      origin.y + (size.height * 0.5)
+    ]
+  end
 end
