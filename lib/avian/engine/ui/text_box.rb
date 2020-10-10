@@ -46,6 +46,11 @@ class TextBox < GameObject::Base
     @font_size = value
   end
 
+  def size=(new_size)
+    @size = new_size
+    reset_text_box_parts!
+  end
+
   def line_height
     line_height = @line_height || -1
     if line_height == -1
@@ -59,6 +64,8 @@ class TextBox < GameObject::Base
   private
 
   def reset_text_box_parts!
+    return if @skip_reset
+
     @lines = 1
 
     dialog_parser = Avian::Text::DialogParser.new(
@@ -97,11 +104,18 @@ class TextBox < GameObject::Base
           y = y - line_height
           x = 0
           @lines = @lines + 1
+        else
+          if part.text.start_with?("#")
+            color_as_string = "0x#{part.text[1..-1]}"
+            current_color = eval(color_as_string)
+          end
         end
       end
     end
 
+    @skip_reset = true
     self.size = Size[size.width, line_height * lines.to_f]
+    @skip_reset = false
   end
 
   def prepare_children(target_count)
