@@ -69,6 +69,8 @@ module Avian
         @font_name = font_name
         @font_size = font_size
         @size = size
+        @current_line = ""
+        @current_characters = ""
 
         text.each_char do |char|
           @current_character = char
@@ -134,11 +136,16 @@ module Avian
 
       def handle_closing_of_instruction
         parts << DialogInstruction.new(@current_instruction)
+        # TODO: spec newline handling here
+        @current_line = "" if @current_instruction == "newline"
         @current_instruction = ""
         @handling_instruction = false
       end
 
       def handle_end
+        # TODO: add test that needed this line
+        return unless @current_characters.length > 0
+
         handle_word_wont_fit if word_wont_fit?
         parts << DialogText.new(@current_characters)
       end
