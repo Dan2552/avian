@@ -295,8 +295,6 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
       SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
   }
 
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-  // SDL_RenderDrawRect(renderer, &rectangle);
   SDL_RenderFillRect(renderer, &rectangle);
 
   if (blend_factor > 0) {
