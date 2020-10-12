@@ -51,6 +51,11 @@ class TextBox < GameObject::Base
     reset_text_box_parts!
   end
 
+  def color=(new_color)
+    @color = new_color
+    reset_text_box_parts!
+  end
+
   def line_height
     line_height = @line_height || -1
     if line_height == -1
@@ -108,6 +113,8 @@ class TextBox < GameObject::Base
           if part.text.start_with?("#")
             color_as_string = "0x#{part.text[1..-1]}"
             current_color = eval(color_as_string)
+          else
+            # TODO: allow to set instruction handler
           end
         end
       end
