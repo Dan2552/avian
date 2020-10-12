@@ -96,4 +96,20 @@ class Rectangle
       origin.y + (size.height * 0.5)
     ]
   end
+
+  def top_center
+    Vector[origin.x + (size.width * 0.5), top]
+  end
+
+  def bottom_center
+    Vector[origin.x + (size.width * 0.5), bottom]
+  end
+
+  def left_center
+    Vector[left, origin.y + (size.height * 0.5)]
+  end
+
+  def right_center
+    Vector[left, origin.y + (size.height * 0.5)]
+  end
 end
