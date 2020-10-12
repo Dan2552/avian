@@ -7,4 +7,12 @@ class TextBoxPart < GameObject::Text
   def position
     text_box.position + relative_position
   end
+
+  def z_position
+    text_box.z_position
+  end
+
+  def visible
+    text_box.visible
+  end
 end
