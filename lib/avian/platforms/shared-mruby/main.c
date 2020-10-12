@@ -75,6 +75,8 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
       SDL_BLENDOPERATION_ADD
     );
 
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
     // printf("screen size: %i, %i\n", screen_width, screen_height);
     return mrb_nil_value();
 }
@@ -229,10 +231,11 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
   mrb_int color_green;
   mrb_int color_blue;
   mrb_float blend_factor;
+  mrb_float opacity;
 
   mrb_get_args(
       mrb,
-      "iiiiffffiiffiiif",
+      "iiiiffffiiffiiiff",
       &x,
       &y,
       &width,
@@ -248,11 +251,9 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
       &color_red,
       &color_green,
       &color_blue,
-      &blend_factor
+      &blend_factor,
+      &opacity
   );
-
-  // width = width * 2;
-  // height = height * 2;
 
   camera_x_scale = camera_x_scale * device_scale;
   camera_y_scale = camera_y_scale * device_scale;
@@ -292,12 +293,14 @@ static mrb_value draw_rectangle(mrb_state *mrb, mrb_value self) {
       green = ((255-color_green)*(1-blend_factor))+color_green;
       blue = ((255-color_blue)*(1-blend_factor))+color_blue;
 
-      SDL_SetRenderDrawColor(renderer, red, green, blue, 255);
+      SDL_SetRenderDrawColor(renderer, red, green, blue, opacity * 255);
+  } else if (opacity < 1) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, opacity * 255);
   }
 
   SDL_RenderFillRect(renderer, &rectangle);
 
-  if (blend_factor > 0) {
+  if (blend_factor > 0 || opacity < 1) {
       SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   }
 

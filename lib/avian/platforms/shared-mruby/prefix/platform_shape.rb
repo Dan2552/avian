@@ -46,4 +46,8 @@ class PlatformShape
   def y_scale
     @renderable.y_scale
   end
+
+  def opacity
+    @renderable.opacity
+  end
 end

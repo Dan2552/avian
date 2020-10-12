@@ -93,7 +93,8 @@ class PlatformRenderer
       red,
       green,
       blue,
-      shape.color_blend_factor
+      shape.color_blend_factor,
+      shape.opacity
     )
   end
 
