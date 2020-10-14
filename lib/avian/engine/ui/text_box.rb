@@ -29,9 +29,43 @@ class TextBox < GameObject::Base
 
   attr_reader :lines
 
+  attr_reader :visual_text
+
   def initialize
     self.font_size = font_size
     @lines = 1
+  end
+
+  def fully_revealed?
+    !@hiding_index || @hiding_index >= visual_text.length
+  end
+
+  def reveal_next_character
+    return if fully_revealed?
+    return unless @hiding_index
+
+    hide_characters_beyond(@hiding_index + 1)
+  end
+
+  def hide_all_characters
+    hide_characters_beyond(0)
+  end
+
+  def hide_characters_beyond(to_hide_index)
+    reset_text_box_parts!
+    @hiding_index = to_hide_index
+    current_index = 0
+    hiding = false
+    text_box_parts.each do |part|
+      part.text = "" if hiding
+      part.text.each_char.with_index do |char, index_within_part|
+        if current_index == to_hide_index
+          part.text = part.text[0...index_within_part]
+          hiding = true
+        end
+        current_index = current_index + 1
+      end
+    end
   end
 
   # See `#text`.
@@ -123,6 +157,11 @@ class TextBox < GameObject::Base
     @skip_reset = true
     self.size = Size[size.width, line_height * lines.to_f]
     @skip_reset = false
+
+    @visual_text = ""
+    text_box_parts.each do |part|
+      @visual_text = @visual_text + part.text
+    end
   end
 
   def prepare_children(target_count)
@@ -134,7 +173,7 @@ class TextBox < GameObject::Base
       additional_count.times { text_box_parts << TextBoxPart.new }
     else # target_count < current_count
       to_remove = text_box_parts[target_count..-1]
-      to_remove.each { |label| text_box_parts.delete(label) }
+      to_remove.each { |label| label.destroy }
     end
   end
 
