@@ -26,9 +26,19 @@ class RenderPool
     end
 
     def remove(renderable)
-      sprite_node = find_or_create_sprite(renderable)
-      Platform.remove_sprite(sprite_node)
-      pool.delete(renderable.id)
+      if renderable.is_a?(GameObject::Text)
+        text = find_or_create_text(renderable)
+        Platform.remove_sprite(text)
+        text_pool.delete(renderable.id)
+      elsif renderable.is_a?(GameObject::Shape)
+        shape = find_or_create_shape
+        Platform.remove_sprite(shape)
+        shape_pool.delete(renderable.id)
+      else
+        sprite_node = find_or_create_sprite(renderable)
+        Platform.remove_sprite(sprite_node)
+        pool.delete(renderable.id)
+      end
     end
 
     def reset
