@@ -26,7 +26,7 @@ class Loop
     if milliseconds_delta < 8
       sleep_time = 8 - milliseconds_delta
       Platform.delay(sleep_time * 0.001)
-      milliseconds_delta += sleep_time
+      milliseconds_delta = current_time - last_time
     end
 
     seconds_delta = milliseconds_delta * 0.001
