@@ -155,6 +155,59 @@ class GameObject::Base
 
   end
 
+  # TODO: spec
+  # For example can be used like:
+  #
+  # ```
+  # holding = input.phase != :ended
+  #
+  # once(holding, for: 0.5.seconds) do
+  #   puts "held"
+  # end
+  # ```
+  #
+  def once(condition, key = nil, options = {}, &blk)
+    key = key || caller.first.hash
+    duration = options[:for]
+
+    if condition
+      every(duration, key, &blk)
+    else
+      @every_time_accrued[key] = 0.0
+    end
+  end
+
+  # TODO: spec
+  # For example can be used like:
+  #
+  # ```
+  # every(10.seconds) do
+  #   puts Time.now
+  # end
+  # ```
+  #
+  def every(duration, key = nil, &blk)
+    key = key || caller.first.hash
+    @every_time_accrued ||= {}
+    accrued = @every_time_accrued[key]
+
+    if accrued
+      accrued = accrued + Time.delta
+    else
+      accrued = 0.0
+    end
+
+    @every_time_accrued[key] = accrued
+
+    if accrued > duration.to_f
+      @every_time_accrued[key] = 0.0
+      blk.call
+      return
+    end
+
+    key
+  end
+
   private
 
   # The parents to this GameObject.
