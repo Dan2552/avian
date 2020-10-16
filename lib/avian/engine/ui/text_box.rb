@@ -27,6 +27,8 @@ class TextBox < GameObject::Base
 
   vector :renderable_anchor_point, default: Vector[0.0, 1.0]
 
+  attribute :instruction_handler
+
   attr_reader :lines
 
   attr_reader :visual_text
@@ -49,23 +51,6 @@ class TextBox < GameObject::Base
 
   def hide_all_characters
     hide_characters_beyond(0)
-  end
-
-  def hide_characters_beyond(to_hide_index)
-    reset_text_box_parts!
-    @hiding_index = to_hide_index
-    current_index = 0
-    hiding = false
-    text_box_parts.each do |part|
-      part.text = "" if hiding
-      part.text.each_char.with_index do |char, index_within_part|
-        if current_index == to_hide_index
-          part.text = part.text[0...index_within_part]
-          hiding = true
-        end
-        current_index = current_index + 1
-      end
-    end
   end
 
   # See `#text`.
@@ -102,6 +87,31 @@ class TextBox < GameObject::Base
 
   private
 
+  def hide_characters_beyond(to_hide_index)
+    reset_text_box_parts!
+    old_hiding_index = @hiding_index
+
+    return if old_hiding_index == to_hide_index
+
+    @hiding_index = to_hide_index
+    current_index = 0
+    hiding = false
+    text_box_parts.each do |part|
+      part.text = "" if hiding
+      part.text.each_char.with_index do |char, index_within_part|
+        if current_index == old_hiding_index && to_hide_index > old_hiding_index
+          if instruction_handler.respond_to?(:will_reveal_character_in_part)
+            instruction_handler.will_reveal_character_in_part(index_within_part, part)
+          end
+        elsif current_index == to_hide_index
+          part.text = part.text[0...index_within_part]
+          hiding = true
+        end
+        current_index = current_index + 1
+      end
+    end
+  end
+
   def reset_text_box_parts!
     return if @skip_reset
 
@@ -123,6 +133,8 @@ class TextBox < GameObject::Base
     x = 0
     y = 0
 
+    instructions = []
+
     dialog_parser.parts.each do |part|
       child = text_box_parts[current_index]
 
@@ -138,6 +150,7 @@ class TextBox < GameObject::Base
 
         current_index = current_index + 1
       elsif part.instruction?
+        instructions << part.text
         case part.text
         when "newline"
           y = y - line_height
@@ -148,10 +161,14 @@ class TextBox < GameObject::Base
             color_as_string = "0x#{part.text[1..-1]}"
             current_color = eval(color_as_string)
           else
-            # TODO: allow to set instruction handler
+            if instruction_handler.respond_to?(:handle_instruction)
+              instruction_handler.handle_instruction(part.text, for_part)
+            end
           end
         end
       end
+
+      child.instructions = instructions.dup
     end
 
     @skip_reset = true

@@ -4,6 +4,8 @@ class TextBoxPart < GameObject::Text
   vector :renderable_anchor_point, default: Vector[0.0, 1.0]
   vector :relative_position, default: Vector[0, 0]
 
+  attribute :instructions, default: []
+
   def position
     text_box.position + relative_position
   end
