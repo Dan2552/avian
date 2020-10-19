@@ -117,8 +117,8 @@ module Avian
       end
 
       def handle_end_of_word
-        add_character(" ")
         handle_word_wont_fit if word_wont_fit?
+        add_character(" ")
       end
 
       def handle_opening_of_instruction
@@ -169,6 +169,9 @@ module Avian
 
       def word_wont_fit?
         potential_words = @current_line.rstrip
+        # puts potential_words
+        # puts "#{Platform.width_of_text(@font_name, @font_size, potential_words)} > #{@size.width}"
+        # puts "#{Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width}"
         Platform.width_of_text(@font_name, @font_size, potential_words) > @size.width
       end
 
