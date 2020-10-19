@@ -166,18 +166,16 @@ class GameObject::Base
   # end
   # ```
   #
-  def once(condition, key = nil, options = {}, &blk)
-    key = key || caller.first.hash
+  def once(condition, options = {}, &blk)
+    key = caller.first.hash
     duration = options[:for]
 
     if condition
-      puts "CALLING EVERY"
       every(duration, key, &blk)
     else
-      puts "RESET"
+      @every_time_accrued ||= {}
       @every_time_accrued[key] = 0.0
     end
-    puts "#{@every_time_accrued[key]}"
   end
 
   # TODO: spec
@@ -202,7 +200,6 @@ class GameObject::Base
 
     @every_time_accrued[key] = accrued
 
-    puts "#{accrued} > #{duration.to_f}"
     if accrued > duration.to_f
       @every_time_accrued[key] = 0.0
       blk.call
