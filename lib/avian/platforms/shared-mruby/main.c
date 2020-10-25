@@ -209,8 +209,18 @@ static mrb_value create_texture(mrb_state *mrb, mrb_value self) {
     return mrb_fixnum_value(textures_count - 1);
 }
 
+static mrb_value clear_textures(mrb_state *mrb, mrb_value self) {
+  for (int i = 0; i < textures_count; ++i) {
+    SDL_DestroyTexture(textures[i]);
+  }
+
+  textures_count = 0;
+  return mrb_nil_value();
+}
+
 static mrb_value pop_texture(mrb_state *mrb, mrb_value self) {
     textures_count--;
+    SDL_DestroyTexture(textures[textures_count]);
     return mrb_nil_value();
 }
 
@@ -501,6 +511,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "update_inputs", update_inputs, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "clear_textures", clear_textures, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_rectangle", draw_rectangle, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture_for_text", create_texture_for_text, MRB_ARGS_ANY());

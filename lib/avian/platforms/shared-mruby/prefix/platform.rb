@@ -36,6 +36,10 @@ class Platform
       bridge.create_texture(resource_path("#{texture_name}.png"))
     end
 
+    def clear_textures
+      bridge.clear_textures
+    end
+
     def set_camera_attributes(position, x_scale, y_scale)
       camera.x = position.x
       camera.y = position.y

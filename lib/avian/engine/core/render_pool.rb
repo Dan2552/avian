@@ -42,6 +42,14 @@ class RenderPool
     end
 
     def reset
+      [pool, text_pool, shape_pool].each do |p|
+        p.each do |_, sprite|
+          Platform.remove_sprite(sprite)
+        end
+      end
+
+      Platform.clear_textures
+
       @pool = nil
       @texture_pool = nil
       @text_pool = nil
