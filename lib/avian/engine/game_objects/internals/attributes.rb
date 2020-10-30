@@ -1,6 +1,11 @@
 module GameObject
   module Internals
     module Attributes
+      # TODO: spec
+      def attributes
+        (@attributes ||= []).dup.freeze
+      end
+
       # - parameter attr_name: The same of the attribute. This will be used to
       #   define the getter and setter method names.
       #
@@ -18,6 +23,11 @@ module GameObject
         default = options.fetch(:default, nil)
         empty = options.fetch(:empty, nil)
         type = options.fetch(:type, (default && default.class) || (empty && empty.class))
+        class_name = self.name
+
+        if type.nil?
+          raise "When defining an attribute in a game object, it must be typed. This can be inferred from the default or empty value and if it's unable to (like in your case right now) it must be supplied as type."
+        end
 
         if default == nil && empty != nil
           raise "The default value (#{default}) for #{attr_name} cannot be nil"
@@ -26,6 +36,9 @@ module GameObject
         if empty && !empty.is_a?(type)
           raise "The empty value (#{empty}) for #{attr_name} does not match the type (#{type})"
         end
+
+        @attributes ||= []
+        @attributes << attr_name
 
         define_method(attr_name) do
           unless instance_variable_defined?(:"@#{attr_name}")
@@ -47,7 +60,11 @@ module GameObject
           end
 
           if type && new_value && !new_value.is_a?(type)
-            raise "The :#{attr_name} attribute expects the type of #{type} and therefore cannot be assigned the value: #{new_value} of type #{new_value.class}"
+            if type == Fixnum && new_value.is_a?(Float) || type == Float && new_value.is_a?(Fixnum)
+              # allow interchangable Fixnum/Float
+            else
+              raise "The :#{attr_name} attribute for #{class_name} expects the type of #{type} and therefore cannot be assigned the value: #{new_value} of type #{new_value.class}"
+            end
           end
 
           instance_variable_set(:"@#{attr_name}", new_value)

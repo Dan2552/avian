@@ -8,12 +8,14 @@ class String
   end
 
   def singularize
-    return sub(/es$/, '') if end_with?("hes") # e.g. torch
+    return sub(/children$/, 'child') if end_with?("children") # e.g. grandchildren -> grandchild
+    return sub(/es$/, '') if end_with?("hes") # e.g. torches -> torch
     sub(/s$/, '')
   end
 
   def pluralize
-    return sub(/$/, 'es') if end_with?("h") # e.g. torch
+    return sub(/$/, 'ren') if end_with?("child") # e.g. grandchild -> grandchildren
+    return sub(/$/, 'es') if end_with?("h") # e.g. torch -> torches
     sub(/$/, 's')
   end
 

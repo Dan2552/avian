@@ -27,7 +27,7 @@ class TextBox < GameObject::Base
 
   vector :renderable_anchor_point, default: Vector[0.0, 1.0]
 
-  attribute :instruction_handler
+  attribute :instruction_handler, type: Object
 
   attr_reader :lines
 

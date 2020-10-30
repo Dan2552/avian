@@ -25,6 +25,8 @@ shared_boot =
 
 load(shared_boot)
 
+FileUtils.mkdir_p(File.join(build_dir, "documents"))
+
 FileUtils.mkdir_p(File.join(build_dir, "desktop"))
 sdl_install = File.join(build_dir, "desktop", "install")
 FileUtils.mkdir_p(sdl_install)

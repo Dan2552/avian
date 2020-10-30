@@ -11,6 +11,7 @@ class GameObject::Base
   extend GameObject::Internals::Relationships
   include GameObject::Internals::Positional
   include GameObject::Internals::Renderable
+  include GameObject::Internals::Serialization
 
   # Should be called to perform an update on the GameObject and it's children.
   #
@@ -93,6 +94,10 @@ class GameObject::Base
   #
   def id
     @id ||= SecureRandom.uuid
+  end
+
+  def id=(set)
+    @id = set
   end
 
   # The children to this GameObject.

@@ -17,6 +17,10 @@ class Platform
       File.join("game_resources", resource)
     end
 
+    def documents_path(resource = "")
+      File.join(bridge.documents_path, resource)
+    end
+
     def create_shape(renderable)
       shape = PlatformShape.new(renderable)
       render_store << shape

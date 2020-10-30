@@ -60,7 +60,7 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 
     TTF_Init();
 
-    font = TTF_OpenFont(game_resource_path("font", "ttf"), 32 * 2);
+    font = TTF_OpenFont(platform_game_resource_path("font", "ttf"), 32 * 2);
     if (font == NULL) {
         printf("No :( %s\n", TTF_GetError());
         SDL_Delay(9999999);
@@ -501,6 +501,17 @@ static mrb_value delay(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
+static mrb_value documents_path(mrb_state *mrb, mrb_value self) {
+  // return mrb_string_value();
+  const char * path = platform_documents_path("test", "json");
+  // printf("%s\n", path);
+  // return mrb_str_new_lit(mrb, "hello"); # <- well that works
+
+  return mrb_str_new(mrb, path, strlen(path));
+
+  // return mrb_str_cat_cstr(mrb, mrb_value str, const char *ptr)
+}
+
 int main(int argc, char *argv[]) {
     mrb_state *mrb = mrb_open();
     struct RClass *ruby_module_avian = mrb_define_module(mrb, "Avian");
@@ -521,6 +532,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "width_of_text", width_of_text, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "render", render, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "delay", delay, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "documents_path", documents_path, MRB_ARGS_ANY());
 
     mrb_load_irep(mrb, app);
     if (mrb->exc) mrb_print_error(mrb);
