@@ -13,7 +13,7 @@ module GameObject
 
       # The z-position of the game object.
       #
-      attribute :z_position, default: ZPosition.new
+      number :z_position, default: 0
 
       # The size of the game object.
       #
