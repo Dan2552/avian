@@ -15,7 +15,7 @@ class RenderPool
 
         sprite = find_or_create_sprite(renderable)
 
-        texture = find_or_create_texture(renderable.sprite_name)
+        texture = find_or_create_texture(renderable.sprite_name.value)
         if renderable.shadow_overlay
           shadow_image = renderable.shadow_overlay.image
           shadow_texture = find_or_create_texture(shadow_image)

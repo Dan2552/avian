@@ -1,14 +1,15 @@
-class TestSerializationParent < GameObject::Base
-  serializable
+class MyValue
+  include Value
+end
 
+class TestSerializationParent < GameObject::Base
   has_one :test_serialization_child
 
   number :test_number, default: 25
+  attribute :my_value, default: MyValue.new(25)
 end
 
 class TestSerializationChild < GameObject::Base
-  serializable
-
   belongs_to :test_serialization_parent
   has_many :test_serialization_grand_children
 
@@ -16,8 +17,6 @@ class TestSerializationChild < GameObject::Base
 end
 
 class TestSerializationGrandChild < GameObject::Base
-  serializable
-
   belongs_to :test_serialization_child
 
   boolean :test_boolean, default: true
@@ -27,34 +26,38 @@ describe GameObject::Internals::ClassSerialization do
   describe ".from_as_json" do
     let(:as_json) do
       {
-        id: "1",
-        type: "TestSerializationParent",
-        attributes: {
-          test_number: 50
+        "id" => "1",
+        "type" => "TestSerializationParent",
+        "attributes" => {
+          "test_number" => 50,
+          "my_value" => {
+            "type" => "MyValue",
+            "value" => "52"
+          }
         },
-        children: [
+        "children" => [
           {
-            id: "2",
-            type: "TestSerializationChild",
-            attributes: {
-              test_string: "Phone"
+            "id" => "2",
+            "type" => "TestSerializationChild",
+            "attributes" => {
+              "test_string" => "Phone"
             },
-            children: [
+            "children" => [
               {
-                id: "3",
-                type: "TestSerializationGrandChild",
-                attributes: {
-                  test_boolean: false
+                "id" => "3",
+                "type" => "TestSerializationGrandChild",
+                "attributes" => {
+                  "test_boolean" => false
                 },
-                children: []
+                "children" => []
               },
               {
-                id: "4",
-                type: "TestSerializationGrandChild",
-                attributes: {
-                  test_boolean: true
+                "id" => "4",
+                "type" => "TestSerializationGrandChild",
+                "attributes" => {
+                  "test_boolean" => true
                 },
-                children: []
+                "children" => []
               }
             ]
           }
@@ -101,36 +104,66 @@ describe GameObject::Internals::ClassSerialization do
       child.test_serialization_grand_children << grand_child2
     end
 
+    let(:default_game_object_attributes) do
+      {
+        :relative_to_camera=>false,
+        :flipped_horizontally=>false,
+        :flipped_vertically=>false,
+        :renderable=>false,
+        :static_renderable=>false,
+        :visible=>true,
+        :renderable_anchor_point=>{:type=>"Vector", :value=>[0.5, 0.5]},
+        :sprite_name=>"OVERRIDE",
+        :color=>0,
+        :color_blend_factor=>0.0,
+        :x_scale=>1.0,
+        :y_scale=>1.0,
+        :shadow_overlay=>nil,
+        :position=>{:type=>"Vector", :value=>[0, 0]},
+        :rotation=>{:type=>"Vector", :value=>[0, 1]},
+        :z_position=>0,
+        :size=>{:type=>"Size", :value=>[0, 0]}
+      }
+    end
+
     it "returns a hash of itself, and it's children" do
       expect(subject).to eq(
         {
           id: described_instance.id,
           type: "TestSerializationParent",
-          attributes: {
-            test_number: 25
-          },
+          attributes: default_game_object_attributes.merge({
+            sprite_name: "test_serialization_parent",
+            test_number: 25,
+            my_value: {
+              type: "MyValue",
+              value: 25
+            }
+          }),
           children: [
             {
               id: child.id,
               type: "TestSerializationChild",
-              attributes: {
+              attributes: default_game_object_attributes.merge({
+                sprite_name: "test_serialization_child",
                 test_string: "Banana"
-              },
+              }),
               children: [
                 {
                   id: grand_child1.id,
                   type: "TestSerializationGrandChild",
-                  attributes: {
+                  attributes: default_game_object_attributes.merge({
+                    sprite_name: "test_serialization_grand_child",
                     test_boolean: true
-                  },
+                  }),
                   children: []
                 },
                 {
                   id: grand_child2.id,
                   type: "TestSerializationGrandChild",
-                  attributes: {
+                  attributes: default_game_object_attributes.merge({
+                    sprite_name: "test_serialization_grand_child",
                     test_boolean: true
-                  },
+                  }),
                   children: []
                 }
               ]

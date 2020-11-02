@@ -2,6 +2,10 @@ class Vector
   attr_reader :x
   attr_reader :y
 
+  def self.from_value(value)
+    new(value[0], value[1])
+  end
+
   def initialize(x, y)
     @x = x
     @y = y
@@ -72,5 +76,9 @@ class Vector
 
   def inspect
     to_s
+  end
+
+  def value
+    [x, y]
   end
 end

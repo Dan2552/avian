@@ -1,6 +1,13 @@
 module ObjectDebugExtension
   def method_missing(meth, *args, &blk)
-    raise NoMethodError, "Undefined method '#{meth}' for #{self.class} - #{self.inspect}"
+    if Kernel.respond_to?("started")
+      raise NoMethodError, "Undefined method '#{meth}' for #{self.class} - #{self.inspect}"
+    end
+    puts ""
+    puts "\e[31mUndefined method '#{meth}' for #{self.class} - #{self.inspect}\e[0m"
+    puts "\e[36m#{caller.join("\n")}\e[0m"
+    puts ""
+    super
   end
 end
 

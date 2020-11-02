@@ -1,6 +1,5 @@
 class ExitError < StandardError; end
 
-
 class PlatformInput
   def initialize
     @x = 1
@@ -54,6 +53,10 @@ def run
 end
 
 begin
+  module Kernel
+    def self.started
+    end
+  end
   run
 rescue ExitError
   # Do nothing

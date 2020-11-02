@@ -1,6 +1,7 @@
 require "avian/version"
 
 AVIAN_LOAD_ORDER = [
+  "engine/values/value.rb",
   "engine/values/vector.rb",
   "engine/values/**/*.rb",
   "engine/game_objects/internals/attributes.rb",
@@ -9,6 +10,8 @@ AVIAN_LOAD_ORDER = [
   "engine/game_objects/**/*.rb",
   "engine/behaviors/behavior.rb",
   "engine/behaviors/**/*.rb",
+  "engine/animations/constume.rb",
+  "engine/animations/**/*.rb",
   "engine/collision/**/*.rb",
   "engine/math/**/*.rb",
   "engine/text/**/*.rb",
@@ -29,6 +32,8 @@ AVIAN_GAME_LOAD_ORDER = [
   'lib/**/*.rb',
   'app/values/**/*.rb',
   'app/**/concerns/*.rb',
+  'app/behaviors/*.rb',
+  'app/costumes/*.rb',
   'app/**/*.rb',
   'config/**/*.rb'
 ]

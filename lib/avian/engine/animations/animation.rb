@@ -1,15 +1,28 @@
-class Animation < Behavior
+class Animation
   # - parameter default_texture: The image that should be used when not
   #   animating
   # - parameter texture_names: Array of texture names
   # - parameter time_per_prame: e.g. 0.12
   #
-  def initialize(game_object, default_texture, texture_names, time_per_frame)
-    @game_object = game_object
+  def initialize(default_texture, texture_names, time_per_frame)
     @default_texture = default_texture
     @texture_names = texture_names
     @time_per_frame = time_per_frame
     reset
+  end
+
+  # Set the animation to animate.
+  #
+  def animate!
+    update
+    self.value = key_frame
+  end
+
+  # Set the animation to idle.
+  #
+  def idle!
+    reset
+    self.value = default_texture
   end
 
   # This can be used to conditionally animate. Can be used for example like:
@@ -60,28 +73,28 @@ class Animation < Behavior
   # walk_right_animation.when(movement.moving?, direction.right?)
   # ```
   #
-  def when(animate_condition, idle_to_default_texture_condition = nil)
-    using_idle = idle_to_default_texture_condition != nil
-    if animate_condition && (!using_idle || idle_to_default_texture_condition)
-      update
-      game_object.sprite_name = key_frame
-      self.was_animating = true
-    else
-      reset
-      game_object.sprite_name = default_texture if was_animating || idle_to_default_texture_condition
-      self.was_animating = false
-    end
-  end
+  # def when(animate_condition, idle_to_default_texture_condition = nil)
+  #   using_idle = idle_to_default_texture_condition != nil
+  #   if animate_condition && (!using_idle || idle_to_default_texture_condition)
+  #     update
+  #     game_object.sprite_name = key_frame
+  #     self.was_animating = true
+  #   else
+  #     reset
+  #     game_object.sprite_name = default_texture if was_animating || idle_to_default_texture_condition
+  #     self.was_animating = false
+  #   end
+  # end
 
   private
 
-  attr_reader :game_object
   attr_reader :default_texture
   attr_reader :time_per_frame
   attr_reader :texture_names
   attr_accessor :key_frame_index
   attr_accessor :time
   attr_accessor :was_animating
+  attr_accessor :value
 
   def update_key_frame
     while time > time_per_frame

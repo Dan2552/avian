@@ -1,9 +1,19 @@
 module GameObject
   module Internals
     module Attributes
+      module Registry
+        def self.register
+          @register ||= {}
+        end
+      end
+
       # TODO: spec
       def attributes
-        (@attributes ||= []).dup.freeze
+        attributes = []
+        ancestors.each do |ancestor|
+          attributes = attributes + (Registry.register[ancestor] || [])
+        end
+        attributes.uniq.freeze
       end
 
       # - parameter attr_name: The same of the attribute. This will be used to
@@ -19,13 +29,13 @@ module GameObject
       # - parameter options[:type]: The type of the attribute. If this is set,
       #   the attribute will be type checked on assignment.
       #
-      def attribute(attr_name, options = {})
+      def attribute(attr_name, options = {}, &blk)
         default = options.fetch(:default, nil)
         empty = options.fetch(:empty, nil)
         type = options.fetch(:type, (default && default.class) || (empty && empty.class))
         class_name = self.name
 
-        if type.nil?
+        if type.nil? && !block_given?
           raise "When defining an attribute in a game object, it must be typed. This can be inferred from the default or empty value and if it's unable to (like in your case right now) it must be supplied as type."
         end
 
@@ -37,37 +47,42 @@ module GameObject
           raise "The empty value (#{empty}) for #{attr_name} does not match the type (#{type})"
         end
 
-        @attributes ||= []
-        @attributes << attr_name
+        attributes = Registry.register[self] ||= []
+        attributes << attr_name unless attributes.include?(attr_name)
 
-        define_method(attr_name) do
-          unless instance_variable_defined?(:"@#{attr_name}")
-            if default.respond_to?(:call)
-              return default.call
-            else
-              return default
+        if block_given?
+          define_method(attr_name, &blk)
+          define_method("#{attr_name}=") { |_| }
+        else
+          define_method(attr_name) do
+            unless instance_variable_defined?(:"@#{attr_name}")
+              if default.respond_to?(:call)
+                return default.call
+              else
+                return default
+              end
             end
+
+            result = instance_variable_get(:"@#{attr_name}")
+            return empty if result.nil?
+            result
           end
 
-          result = instance_variable_get(:"@#{attr_name}")
-          return empty if result.nil?
-          result
-        end
-
-        define_method("#{attr_name}=") do |new_value|
-          if new_value.nil? && !empty.nil?
-            raise "#{attr_name} cannot be assigned a nil value"
-          end
-
-          if type && new_value && !new_value.is_a?(type)
-            if type == Fixnum && new_value.is_a?(Float) || type == Float && new_value.is_a?(Fixnum)
-              # allow interchangable Fixnum/Float
-            else
-              raise "The :#{attr_name} attribute for #{class_name} expects the type of #{type} and therefore cannot be assigned the value: #{new_value} of type #{new_value.class}"
+          define_method("#{attr_name}=") do |new_value|
+            if new_value.nil? && !empty.nil?
+              raise "#{attr_name} cannot be assigned a nil value"
             end
-          end
 
-          instance_variable_set(:"@#{attr_name}", new_value)
+            if type && new_value && !new_value.is_a?(type)
+              if type == Fixnum && new_value.is_a?(Float) || type == Float && new_value.is_a?(Fixnum)
+                # allow interchangable Fixnum/Float
+              else
+                raise "The :#{attr_name} attribute for #{class_name} expects the type of #{type} and therefore cannot be assigned the value: #{new_value} of type #{new_value.class}"
+              end
+            end
+
+            instance_variable_set(:"@#{attr_name}", new_value)
+          end
         end
       end
 
@@ -89,15 +104,6 @@ module GameObject
           value = send(:"#{attr_name}")
           value != false && value != nil
         end
-      end
-
-      def behavior(attr_name, options = {})
-        options = { type: "Behavior".constantize }.merge(options)
-        attribute(attr_name, options)
-      end
-
-      def behaviors(*attr_names)
-        attr_names.each { |attr_name| behavior(attr_name) }
       end
 
       def vector(attr_name, options = {})

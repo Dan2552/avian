@@ -2,9 +2,26 @@ class Rectangle
   attr_reader :origin,
               :size
 
+  def self.from_value(value)
+    new(
+      Vector[
+        value[0][0],
+        value[0][1]
+      ],
+      Size[
+        value[1][0],
+        value[1][1]
+      ]
+    )
+  end
+
   def initialize(origin, size)
     @origin = origin.clone
     @size = size
+  end
+
+  def value
+    [origin.value, size.value]
   end
 
   def contains?(point)

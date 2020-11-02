@@ -14,7 +14,27 @@ module GameObject
           next if attribute_name == "pathfinder"
           next if attribute_name == "direction"
           setter = :"#{attribute_name}="
-          instance.send(setter, attribute_value)
+
+          is_value_object =
+            attribute_value.is_a?(Hash) &&
+            attribute_value.key?("type") &&
+            attribute_value.key?("value")
+
+          if is_value_object
+            value_class = attribute_value["type"].constantize
+            value = attribute_value["value"]
+
+            value_instance = value_class.from_value(value)
+
+            begin
+              instance.send(setter, value_instance)
+            rescue => e
+              puts e
+              eval(DEBUGGER)
+            end
+          else
+            instance.send(setter, attribute_value)
+          end
         end
 
         as_json["children"].each do |child_as_json|
@@ -35,6 +55,14 @@ module GameObject
     end
 
     module Serialization
+      JSON_TYPES = [
+        Numeric,
+        Hash,
+        String,
+        NilClass,
+        Boolean
+      ].freeze
+
       def self.included(mod)
         mod.extend(ClassSerialization)
       end
@@ -43,7 +71,15 @@ module GameObject
         json_attributes = {}
         self.class.attributes.each do |attribute_name|
           value = send(attribute_name)
-          json_attributes[attribute_name] = value
+          json_attributes[attribute_name] =
+          if JSON_TYPES.any? { |json_type| value.is_a?(json_type) }
+            json_attributes[attribute_name] = value
+          else
+            {
+              type: value.class.to_s,
+              value: value.value
+            }
+          end
         end
 
         children = []

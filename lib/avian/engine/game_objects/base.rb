@@ -8,6 +8,7 @@
 #
 class GameObject::Base
   extend GameObject::Internals::Attributes
+  extend GameObject::Internals::Behaviors
   extend GameObject::Internals::Relationships
   include GameObject::Internals::Positional
   include GameObject::Internals::Renderable
