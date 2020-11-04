@@ -35,7 +35,7 @@ class PlatformSprite
   end
 
   def z
-    @z ||= renderable.z_position
+    @z ||= renderable.z_position.value
   end
 
   def x_scale

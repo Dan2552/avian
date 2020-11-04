@@ -42,7 +42,7 @@ class PlatformText
   end
 
   def z
-    renderable.z_position
+    renderable.z_position.value
   end
 
   def visible

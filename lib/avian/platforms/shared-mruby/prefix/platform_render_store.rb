@@ -1,7 +1,7 @@
 class PlatformRenderStore
   def <<(new_element)
     insert_index = store.bsearch_index do |existing_element|
-      existing_element.z.value >= new_element.z.value
+      existing_element.z >= new_element.z
     end
 
     if insert_index
