@@ -57,9 +57,9 @@ module GameObject
           define_method(attr_name) do
             unless instance_variable_defined?(:"@#{attr_name}")
               if default.respond_to?(:call)
-                return default.call
+                instance_variable_set(:"@#{attr_name}", default.call)
               else
-                return default
+                instance_variable_set(:"@#{attr_name}", default)
               end
             end
 
