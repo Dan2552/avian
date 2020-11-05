@@ -7,7 +7,7 @@ class Animation
   def initialize(default_texture, texture_names, time_per_frame)
     @default_texture = default_texture
     @texture_names = texture_names
-    @time_per_frame = time_per_frame
+    @time_per_frame = time_per_frame.to_f
     reset
   end
 
