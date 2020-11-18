@@ -28,6 +28,11 @@ module GameObject
         mod.extend(RenderableClass)
       end
 
+      def scale=(set)
+        self.x_scale = set
+        self.y_scale = set
+      end
+
       def sprite_name
         @sprite_name ||= self.class.to_s.demodulize.underscore.downcase
       end
