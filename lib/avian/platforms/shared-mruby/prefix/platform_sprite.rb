@@ -1,7 +1,12 @@
 class PlatformSprite
-  def initialize(renderable)
+  def initialize(renderable, z)
     @renderable = renderable
+    @z = z
+
+    raise "z required" if z.nil?
   end
+
+  attr_reader :z
 
   attr_accessor :texture
   attr_accessor :shadow_texture
@@ -12,7 +17,6 @@ class PlatformSprite
     @anchor_point = nil
     @x = nil
     @y = nil
-    @z = nil
     @x_scale = nil
     @y_scale = nil
     @visible = nil
@@ -32,10 +36,6 @@ class PlatformSprite
 
   def y
     @y ||= renderable.position.y
-  end
-
-  def z
-    @z ||= renderable.z_position.value
   end
 
   def x_scale

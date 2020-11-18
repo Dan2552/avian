@@ -22,19 +22,16 @@ class PlatformRenderStore
       # we've found it
       break if store[deletion_index] == element_to_delete
 
-      if store[deletion_index].z != element_to_delete.z
+      # it's not in here
+      if store[deletion_index].nil? || store[deletion_index].z != element_to_delete.z
         deletion_index = nil
         break
       end
+
       deletion_index = deletion_index + 1
     end
 
-    if deletion_index.nil?
-      previous_store = store.dup
-      it_was_there = store.delete(element_to_delete)
-      eval(DEBUGGER) if it_was_there
-      return
-    end
+    return if deletion_index.nil?
 
     store.delete_at(deletion_index)
   end

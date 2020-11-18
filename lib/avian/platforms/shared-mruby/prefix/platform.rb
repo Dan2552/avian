@@ -27,7 +27,7 @@ class Platform
     end
 
     def create_sprite(renderable)
-      sprite = PlatformSprite.new(renderable)
+      sprite = PlatformSprite.new(renderable, renderable.z_position.value)
       render_store << sprite
     end
 
