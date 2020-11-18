@@ -13,10 +13,30 @@ class PlatformRenderStore
     new_element
   end
 
-  def delete(element)
-    # TODO: make it use bsearch_index like insertion
+  def delete(element_to_delete)
+    deletion_index = store.bsearch_index do |element|
+      element.z >= element_to_delete.z
+    end
 
-    store.delete(element)
+    loop do
+      # we've found it
+      break if store[deletion_index] == element_to_delete
+
+      if store[deletion_index].z != element_to_delete.z
+        deletion_index = nil
+        break
+      end
+      deletion_index = deletion_index + 1
+    end
+
+    if deletion_index.nil?
+      previous_store = store.dup
+      it_was_there = store.delete(element_to_delete)
+      eval(DEBUGGER) if it_was_there
+      return
+    end
+
+    store.delete_at(deletion_index)
   end
 
   def each(&blk)
