@@ -177,7 +177,19 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
 }
 
 static mrb_value clear_screen(mrb_state *mrb, mrb_value self) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    mrb_int color_red;
+    mrb_int color_green;
+    mrb_int color_blue;
+
+    mrb_get_args(
+        mrb,
+        "iii",
+        &color_red,
+        &color_green,
+        &color_blue
+    );
+
+    SDL_SetRenderDrawColor(renderer, color_red, color_green, color_blue, 255);
     SDL_RenderClear(renderer);
 
     return mrb_nil_value();
@@ -520,7 +532,7 @@ int main(int argc, char *argv[]) {
     // C functions for Ruby to call defined here
     mrb_define_method(mrb, ruby_class_c_bridge, "provision_sdl", provision_sdl, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "update_inputs", update_inputs, MRB_ARGS_NONE());
-    mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_NONE());
+    mrb_define_method(mrb, ruby_class_c_bridge, "clear_screen", clear_screen, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "create_texture", create_texture, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "clear_textures", clear_textures, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "draw_image", draw_image, MRB_ARGS_ANY());

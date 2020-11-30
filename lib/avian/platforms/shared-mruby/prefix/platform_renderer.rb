@@ -6,7 +6,7 @@ class PlatformRenderer
   end
 
   def draw_frame
-    bridge.clear_screen
+    clear_screen
 
     render_store.each do |element|
       # TODO: if the object isn't in the camera's view, don't draw it
@@ -30,6 +30,19 @@ class PlatformRenderer
   attr_reader :bridge
   attr_reader :render_store
   attr_reader :camera
+
+  def config
+    @config ||= Avian::Application.main.config
+  end
+
+  def clear_screen
+    color = config.background_color
+    red = (color >> 16) & 255
+    green = (color >> 8) & 255
+    blue = color & 255
+
+    bridge.clear_screen(red, green, blue)
+  end
 
   def draw(sprite)
     red = 0
