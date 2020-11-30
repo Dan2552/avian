@@ -106,7 +106,7 @@ class PlatformRenderer
       text.font_size
     )
 
-    sprite = PlatformSprite.new(text.renderable, text.z_position.value)
+    sprite = PlatformSprite.new(text.renderable, text.z)
     sprite.texture = texture
 
     draw(sprite)
