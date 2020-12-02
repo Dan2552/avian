@@ -38,4 +38,14 @@ class Costume
       end
     end
   end
+
+  def idle!(animation_name)
+    self.class.animations.each do |iteration_animation_name, animation|
+      animation.idle!
+
+      if animation_name == iteration_animation_name
+        @value = animation.value
+      end
+    end
+  end
 end
