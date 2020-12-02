@@ -422,8 +422,8 @@ static mrb_value draw_image(mrb_state *mrb, mrb_value self) {
     SDL_Rect destination = {
         .x = x,
         .y = y,
-        .w = (width) + 1, // TODO: instead of +1 try rounding
-        .h = (height) + 1
+        .w = round(width),
+        .h = round(height)
     };
 
     if (shadow_texture != -1) {
