@@ -25,6 +25,27 @@ class RenderPool
       end
     end
 
+    # Basically to be called when the Z index of a renderable changes. Notably
+    # an expensive move.
+    #
+    def update(renderable)
+      if renderable.is_a?(GameObject::Text)
+        return unless text_pool[renderable.id]
+      elsif renderable.is_a?(GameObject::Shape)
+        shape = find_or_create_shape
+        return unless shape_pool[renderable.id]
+      else
+        return unless pool[renderable.id]
+      end
+
+      remove(renderable)
+      yield
+      has_yielded = true
+      add(renderable)
+    ensure
+      yield unless has_yielded
+    end
+
     def remove(renderable)
       if renderable.is_a?(GameObject::Text)
         text = find_or_create_text(renderable)
