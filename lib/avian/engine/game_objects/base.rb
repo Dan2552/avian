@@ -14,6 +14,13 @@ class GameObject::Base
   include GameObject::Internals::Renderable
   include GameObject::Internals::Serialization
 
+  # Tag is defined as an attribute to ensure it's serialized. See below `#tag=`
+  # for actual tagging behavior.
+  #
+  # Also see `.find_by_tag(tag)`.
+  #
+  string :tag, default: nil
+
   # Should be called to perform an update on the GameObject and it's children.
   #
   # Children will be updated after this instance of GameObject.
@@ -131,7 +138,6 @@ class GameObject::Base
     @tag = set
     GameObject::Base.tagged(self)
   end
-  attr_reader :tag
 
   protected
 

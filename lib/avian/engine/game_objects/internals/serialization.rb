@@ -26,12 +26,7 @@ module GameObject
 
             value_instance = value_class.from_value(value)
 
-            begin
-              instance.send(setter, value_instance)
-            rescue => e
-              puts e
-              eval(DEBUGGER)
-            end
+            instance.send(setter, value_instance)
           else
             instance.send(setter, attribute_value)
           end
