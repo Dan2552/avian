@@ -23,6 +23,8 @@ class TextBox < GameObject::Base
 
   vector :size, default: Size[200, 0]
 
+  boolean :dynamic_width, default: false
+
   number :color, default: 0xffffff
 
   vector :renderable_anchor_point, default: Vector[0.0, 1.0]
@@ -119,7 +121,7 @@ class TextBox < GameObject::Base
 
     dialog_parser = Avian::Text::DialogParser.new(
       text,
-      size,
+      dynamic_width ? Size[9999999999, 0] : size,
       "TODO",
       font_size
     )
@@ -132,6 +134,8 @@ class TextBox < GameObject::Base
     previous = nil
     x = 0
     y = 0
+
+    maximum_width = 0
 
     instructions = []
 
@@ -146,6 +150,7 @@ class TextBox < GameObject::Base
         child.font_size = font_size
 
         x = x + child.size.width
+        maximum_width = x if x > maximum_width
         previous = child
 
         current_index = current_index + 1
@@ -172,7 +177,15 @@ class TextBox < GameObject::Base
     end
 
     @skip_reset = true
-    self.size = Size[size.width, line_height * lines.to_f]
+    height = line_height * lines.to_f
+    width =
+      if dynamic_width
+        maximum_width
+      else
+        size.width
+      end
+
+    self.size = Size[width, height]
     @skip_reset = false
 
     @visual_text = ""
