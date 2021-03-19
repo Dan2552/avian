@@ -67,6 +67,7 @@ unless File.directory?(File.join(build_dir, "desktop", "sdl_ttf"))
 
   log "\n--- Compiling SDL ttf ---"
   FileUtils.cd(File.join(build_dir, "desktop", "sdl_ttf"))
+  system("brew list freetype || brew install freetype")
   system("./autogen.sh && ./configure --prefix=#{sdl_install} && make -j4 && make install") || begin
     FileUtils.remove_dir(File.join(build_dir, "desktop", "sdl_ttf"))
     error("Failed to compile SDL ttf")
