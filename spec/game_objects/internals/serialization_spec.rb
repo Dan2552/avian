@@ -122,7 +122,8 @@ describe GameObject::Internals::ClassSerialization do
         :position=>{:type=>"Vector", :value=>[0, 0]},
         :rotation=>{:type=>"Vector", :value=>[0, 1]},
         :z_position=>0,
-        :size=>{:type=>"Size", :value=>[0, 0]}
+        :size=>{:type=>"Size", :value=>[0, 0]},
+        :tag=>nil
       }
     end
 
