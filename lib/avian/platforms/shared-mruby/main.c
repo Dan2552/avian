@@ -52,7 +52,7 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
     // printf("SCREEN %i %i\n", screen_width, screen_height);
 
     window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI);
-    renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     // SDL_RenderSetScale(renderer, 0.6666666, 0.6666666);
     SDL_GetRendererOutputSize(renderer, &render_screen_width, &render_screen_height);
     // printf("SCREEN %i %i\n", screen_width, screen_height);
@@ -514,14 +514,8 @@ static mrb_value delay(mrb_state *mrb, mrb_value self) {
 }
 
 static mrb_value documents_path(mrb_state *mrb, mrb_value self) {
-  // return mrb_string_value();
   const char * path = platform_documents_path("test", "json");
-  // printf("%s\n", path);
-  // return mrb_str_new_lit(mrb, "hello"); # <- well that works
-
   return mrb_str_new(mrb, path, strlen(path));
-
-  // return mrb_str_cat_cstr(mrb, mrb_value str, const char *ptr)
 }
 
 int main(int argc, char *argv[]) {
