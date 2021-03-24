@@ -31,7 +31,6 @@ int render_screen_height;
 
 SDL_BlendMode shadow_blend;
 
-
 static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 #if MOBILE
     window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN|SDL_WINDOW_ALLOW_HIGHDPI);
@@ -518,6 +517,36 @@ static mrb_value documents_path(mrb_state *mrb, mrb_value self) {
   return mrb_str_new(mrb, path, strlen(path));
 }
 
+static mrb_value create_screenshot(mrb_state *mrb, mrb_value self) {
+    const char *filepath;
+
+    mrb_get_args(mrb, "z", &filepath);
+
+    SDL_Surface *surface = SDL_CreateRGBSurface(
+      0,
+      render_screen_width,
+      render_screen_height,
+      32,
+      0x00ff0000,
+      0x0000ff00,
+      0x000000ff,
+      0xff000000
+    );
+
+    SDL_RenderReadPixels(
+      renderer,
+      NULL,
+      SDL_PIXELFORMAT_ARGB8888,
+      surface->pixels,
+      surface->pitch
+    );
+
+    SDL_SaveBMP(surface, filepath);
+    SDL_FreeSurface(surface);
+
+    return mrb_nil_value();
+}
+
 int main(int argc, char *argv[]) {
     mrb_state *mrb = mrb_open();
     struct RClass *ruby_module_avian = mrb_define_module(mrb, "Avian");
@@ -539,6 +568,7 @@ int main(int argc, char *argv[]) {
     mrb_define_method(mrb, ruby_class_c_bridge, "render", render, MRB_ARGS_NONE());
     mrb_define_method(mrb, ruby_class_c_bridge, "delay", delay, MRB_ARGS_ANY());
     mrb_define_method(mrb, ruby_class_c_bridge, "documents_path", documents_path, MRB_ARGS_ANY());
+    mrb_define_method(mrb, ruby_class_c_bridge, "create_screenshot", create_screenshot, MRB_ARGS_ANY());
 
     mrb_load_irep(mrb, app);
     if (mrb->exc) mrb_print_error(mrb);

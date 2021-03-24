@@ -1,0 +1,18 @@
+source "https://rubygems.org"
+
+def local_or_remote(name)
+  if File.file?(Bundler.root.join("..", name, "#{name}.gemspec"))
+    gem name, path: "../#{name}"
+  else
+    gem name, git: "git@github.com:Dan2552/#{name}.git"
+  end
+end
+
+gem "avian", path: "../.."
+local_or_remote "mundler"
+
+group :spec do
+  gem 'rspec'
+  gem 'pry'
+  gem 'activesupport'
+end
