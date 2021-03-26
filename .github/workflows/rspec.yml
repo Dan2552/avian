@@ -15,6 +15,6 @@ jobs:
         ruby-version: 2.6.x
     - name: Build and test with Rake
       run: |
-        gem install bundler -v '1.17.3' 
+        gem install bundler
         bundle install --jobs 4 --retry 3
-        bundle exec rspec
+        bundle exec rspec --exclude-pattern "spec/integration/**/*_spec.rb"
