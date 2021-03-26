@@ -10,33 +10,108 @@ def find_and_replace(path, old, new)
   end
 end
 
-def launch_taking_a_screenshot(after:)
+# - parameter dir: temp directory
+# - parameter project: e.g. "shape-motion"
+# - parameter after: Duration or FrameCount
+#
+def craft_project(dir, project, after, filepath)
+  project_dir = File.join(dir, "spec_fixtures", "_project")
+  to_import = File.join(dir, "spec_fixtures", project)
+  screenshotter = File.join(project_dir, "app", "game_objects", "screenshotter.rb")
+
+  if after.is_a?(Duration)
+    find_and_replace(screenshotter, "SCREENSHOT_TYPE = :frames", "SCREENSHOT_TYPE = :duration")
+  end
+
+  find_and_replace(screenshotter, "SCREENSHOT_AFTER = 1", "SCREENSHOT_AFTER = #{after.to_i}")
+
+  FileTransaction.relative_files_in(to_import).each do |file|
+    FileUtils.cp(File.join(to_import, file), File.join(project_dir, file))
+  end
+
+  FileUtils.cd(File.join(project_dir))
+end
+
+def truthy?(input)
+  [
+    "y",
+    "yes",
+    "ok",
+    "okay",
+    "sure",
+    "true",
+    "affirmative",
+    "1",
+    "fine",
+    "whatever",
+    "mkay",
+    "confirm",
+    "confirmed",
+    "true",
+    "alright"
+  ].include?(input.downcase.chomp.strip)
+end
+
+def launch_taking_a_screenshot(project, after, filepath, threshold)
+  return unless `which compare`.chomp.length > 1
+
   previous = Dir.pwd
-
-  screenshot_code = """
-    every(#{after.to_i.to_s}.seconds) do
-      bridge = Avian::CBridge.new
-      bridge.create_screenshot('/tmp/avian.bmp')
-      raise ExitError
-    end
-  """
-
   File.transaction(Bundler.root) do |dir|
-    find_and_replace(
-      File.join(dir, "spec_fixtures", "TestGame", "app", "game_objects", "example.rb"),
-      "{{ screenshot_code_here }}",
-      screenshot_code
-    )
+    craft_project(dir, project, after, filepath)
 
     Bundler.with_clean_env do
-      FileUtils.cd(File.join(dir, "spec_fixtures", "TestGame"))
+      FileUtils.rm("/tmp/avian.bmp") rescue nil
+      FileUtils.rm("/tmp/avian.png") rescue nil
       system("bundle exec avian start") || raise("Failed to launch avian")
+      File.file?("/tmp/avian.bmp") || raise("No screenshot found")
       system("cd /tmp && convert avian.bmp avian.png") || raise("Failed to launch convert")
+
+      filepath = filepath.to_s + ".png"
+      if File.file?(filepath)
+        a = filepath
+        b = "/tmp/avian.png"
+        system("compare -verbose -metric PAE -subimage-search -dissimilarity-threshold #{threshold} #{a} #{b} /dev/null")
+        code = $?.exitstatus
+        case code
+        when 0
+          puts "s'all good 🥇"
+        when 1
+          puts "good enough 🥈"
+        when 2
+          system("open #{filepath}")
+          system("open /tmp/avian.png")
+
+          puts "Image isn't the same. Type \"yes\" to override"
+          print "> "
+
+          if truthy?(STDIN.gets)
+            FileUtils.cp("/tmp/avian.png", filepath)
+          else
+            raise "Not ok"
+          end
+        end
+      else
+        puts "New picture. Look ok?"
+        system("open /tmp/avian.png")
+        print "> "
+
+        if truthy?(STDIN.gets)
+          FileUtils.cp("/tmp/avian.png", filepath)
+        else
+          raise "Not ok"
+        end
+      end
     end
 
+    FileUtils.cd(previous)
     raise RollbackTransaction
   end
 rescue RollbackTransaction
+rescue Exception => e
+  puts "!!!!"
+  puts e
+  puts "!!!!"
+  raise e
 ensure
   FileUtils.cd(previous)
 end
@@ -50,6 +125,10 @@ class FrameCount
 
   def to_i
     count
+  end
+
+  def inspect
+    "#{count} frames"
   end
 end
 
@@ -67,32 +146,35 @@ class Integer
   include FrameHelpers
 end
 
-def expect_looks_same(after:)
-  launch_taking_a_screenshot(after: after)
+class Example
+  def self.current
+    @current
+  end
 
-  # TODO
-  # filename = rspec_stuff
-
-  # if File.file?(filename)
-  #   system("compare . .. .... .")
-  #   code = $?.exitstatus
-
-  #   case code
-  #   when 0
-  #     puts "s'all good"
-  #   when 1
-  #     puts "good enough"
-  #   when 2
-  #     raise "oh noes"
-  #   end
-  # else
-  #   puts "New picture. Look ok?"
-  #   response = gets.chomp
-  #   if response == "y"
-  #     save
-  #   else
-  #     raise "blah"
-  #   end
-  # end
+  def self.current=(set)
+    @current = set
+  end
 end
 
+require 'rspec/expectations'
+RSpec.configure do |config|
+  config.before(:each) do |ex|
+    example = ex.respond_to?(:metadata) ? ex : ex.example
+    Example.current = example
+  end
+end
+
+RSpec::Matchers.define :look_correct_after do |time|
+  match do |actual|
+    example_description = Example.current.metadata[:full_description]
+    filepath = Bundler.root.join("spec_fixtures", "_images", example_description.gsub(" ", "-"))
+    threshold = Example.current.metadata[:threshold] || 0
+
+    begin
+      launch_taking_a_screenshot(actual, time, filepath, threshold)
+      true
+    rescue Exception
+      false
+    end
+  end
+end

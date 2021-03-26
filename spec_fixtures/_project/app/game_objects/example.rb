@@ -4,6 +4,6 @@ class Example < GameObject::Base
   # Defines actions that should be performed in the game loop.
   #
   def update
-    {{ screenshot_code_here }}
+
   end
 end

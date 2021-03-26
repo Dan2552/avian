@@ -14,6 +14,7 @@ module RootFactory
     root.tag = "root"
 
     root.camera = Camera.new
+    root.screenshotter = Screenshotter.new
 
     root
   end

@@ -15,4 +15,5 @@ class Root < GameObject::Base
   # current frame's update on the player.
   #
   has_one :camera
+  has_one :screenshotter
 end
