@@ -14,6 +14,12 @@ class GameObject::Base
   include GameObject::Internals::Renderable
   include GameObject::Internals::Serialization
 
+  def initialize(attrs = {})
+    attrs.each do |key, value|
+      send("#{key}=", value) if respond_to?("#{key}=")
+    end
+  end
+
   # Tag is defined as an attribute to ensure it's serialized. See below `#tag=`
   # for actual tagging behavior.
   #
