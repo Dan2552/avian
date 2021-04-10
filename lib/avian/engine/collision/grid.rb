@@ -43,7 +43,7 @@ module Collision
     #
     # - parameter game_object: GameObject instance.
     #
-    def add!(game_object)
+    def add(game_object)
       if game_object.size.zero?
         raise "A game object that has no size cannot be added to a collision grid"
       end
@@ -62,7 +62,7 @@ module Collision
     #
     # - parameter game_object: GameObject instance.
     #
-    def move!(game_object)
+    def move(game_object)
       old_cells = cells_for(game_object.previous_frame[:frame])
       new_cells = cells_for(game_object.frame)
 
@@ -78,7 +78,7 @@ module Collision
     #
     # - parameter game_object: GameObject instance.
     #
-    def remove!(game_object)
+    def remove(game_object)
       cells = cells_for(game_object.frame)
 
       cells.each { |c| c.delete(game_object) }
@@ -110,6 +110,10 @@ module Collision
         .map(&:all)
         .flatten
         .uniq
+    end
+
+    def inspect
+      "#<Collision::Grid>"
     end
 
     private

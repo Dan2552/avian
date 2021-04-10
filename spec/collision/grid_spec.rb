@@ -3,9 +3,9 @@ describe Collision::Grid do
   let(:cell_size) { Size[2, 2] }
   let(:described_instance) { described_class.new(size, cell_size) }
 
-  describe "#add!" do
+  describe "#add" do
     let(:game_object) { GameObject::Base.new }
-    subject { described_instance.add!(game_object) }
+    subject { described_instance.add(game_object) }
 
     context "when the size of the object is zero" do
       before do
@@ -33,7 +33,7 @@ describe Collision::Grid do
     xit "..."
   end
 
-  describe "#remove!" do
+  describe "#remove" do
     xit "..."
   end
 
@@ -75,8 +75,8 @@ describe Collision::Grid do
         another1.position = Vector[1.5, 5.5]
         another2.position = Vector[2.5, 4.5]
 
-        described_instance.add!(another1)
-        described_instance.add!(another2)
+        described_instance.add(another1)
+        described_instance.add(another2)
       end
 
       it "returns an empty array" do
@@ -97,8 +97,8 @@ describe Collision::Grid do
         another1.position = Vector[3.5, 3.5]
         another2.position = Vector[2.5, 4.5]
 
-        described_instance.add!(another1)
-        described_instance.add!(another2)
+        described_instance.add(another1)
+        described_instance.add(another2)
       end
 
       context "with 1x1 size" do

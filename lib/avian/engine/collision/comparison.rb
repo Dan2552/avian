@@ -1,6 +1,11 @@
 module Collision
   module Comparison
-    def self.frame(size)
+    # Returns a `Proc` that can be used as a block argument to
+    # `Collision.reduce_vector`.
+    #
+    # See `Collision::IncrementalMovement.reduce_vector`.
+    #
+    def self.frame(collision_grid, size)
       -> (potential_position) do
         bottom_left = Vector[
           potential_position.x - (size.width / 2.0),
@@ -10,7 +15,7 @@ module Collision
         potential_rectangle = Rectangle.new(bottom_left, size)
         frame = potential_rectangle
 
-        Collision.nearest_objects_to(potential_rectangle).none? do |nearby|
+        collision_grid.nearest_objects_to(potential_rectangle).none? do |nearby|
           nearby.frame.intersects?(potential_rectangle)
         end
       end
