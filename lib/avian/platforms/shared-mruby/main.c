@@ -31,6 +31,18 @@ int render_screen_height;
 
 SDL_BlendMode shadow_blend;
 
+static int INPUT_QUIT = -1;
+static int INPUT_EMPTY = 0;
+static int INPUT_TOUCH_UP = 1;
+static int INPUT_TOUCH_DOWN = 2;
+static int INPUT_TOUCH_MOVE = 3;
+static int INPUT_KEY_DOWN = 4;
+static int INPUT_KEY_UP = 5;
+
+static int INPUT_RETURN_TYPE_QUIT = -1;
+static int INPUT_RETURN_TYPE_TOUCH = 0;
+static int INPUT_RETURN_TYPE_KEY = 1;
+
 static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 #if MOBILE
     window = SDL_CreateWindow(NULL, 0, 0, NULL, NULL, SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN|SDL_WINDOW_ALLOW_HIGHDPI);
@@ -92,18 +104,18 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
     int x = 0;
     int y = 0;
     long id = 0;
-    char *state = "empty";
+    int state = INPUT_EMPTY;
 
 #if MOBILE
     if (SDL_PollEvent(&event)) {
         switch(event.type){
             case SDL_QUIT:
-                state = "quit";
+                state = INPUT_QUIT;
                 break;
             case SDL_FINGERDOWN:
                 if (mouse_down == 0) {
                     mouse_down = 1;
-                    state = "touch_down";
+                    state = INPUT_TOUCH_DOWN;
                     id = event.tfinger.fingerId;
                     x = event.tfinger.x * screen_width;
                     y = event.tfinger.y * screen_height;
@@ -111,7 +123,7 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 break;
             case SDL_FINGERMOTION:
                 if (mouse_down == 1) {
-                  state = "touch_move";
+                  state = INPUT_TOUCH_MOVE;
                   id = event.tfinger.fingerId;
                   x = event.tfinger.x * screen_width;
                   y = event.tfinger.y * screen_height;
@@ -121,7 +133,7 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
             case SDL_FINGERUP:
                 if (mouse_down == 1) {
                   mouse_down = 0;
-                  state = "touch_up";
+                  state = INPUT_TOUCH_UP;
                   id = event.tfinger.fingerId;
                   x = event.tfinger.x * screen_width;
                   y = event.tfinger.y * screen_height;
@@ -133,12 +145,12 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
     if (SDL_PollEvent(&event)) {
         switch(event.type){
             case SDL_QUIT:
-                state = "quit";
+                state = INPUT_QUIT;
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (mouse_down == 0) {
                     mouse_down = 1;
-                    state = "touch_down";
+                    state = INPUT_TOUCH_DOWN;
                     id = 1;
                     x = event.motion.x;
                     y = event.motion.y;
@@ -146,7 +158,7 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
                 break;
             case SDL_MOUSEMOTION:
                 if (mouse_down == 1) {
-                    state = "touch_move";
+                    state = INPUT_TOUCH_MOVE;
                     id = 1;
                     x = event.motion.x;
                     y = event.motion.y;
@@ -155,24 +167,48 @@ static mrb_value update_inputs(mrb_state *mrb, mrb_value self) {
             case SDL_MOUSEBUTTONUP:
                 if (mouse_down == 1) {
                     mouse_down = 0;
-                    state = "touch_up";
+                    state = INPUT_TOUCH_UP;
                     id = 1;
                     x = event.motion.x;
                     y = event.motion.y;
                 }
+                break;
+            case SDL_KEYDOWN:
+                state = INPUT_KEY_DOWN;
+                break;
+            case SDL_KEYUP:
+                state = INPUT_KEY_UP;
                 break;
         }
     }
 #endif
 
     int more = SDL_PollEvent(NULL);
-    mrb_value values[5];
-    values[0] = mrb_fixnum_value(more);
-    values[1] = mrb_symbol_value(mrb_intern_cstr(mrb, state));
-    values[2] = mrb_fixnum_value(id);
-    values[3] = mrb_fixnum_value(x);
-    values[4] = mrb_fixnum_value(y);
-    return mrb_ary_new_from_values(mrb, 5, values);
+
+    if (state == INPUT_EMPTY) {
+      return mrb_nil_value();
+    } else if (state == INPUT_QUIT) {
+      mrb_value values[1];
+      values[0] = mrb_fixnum_value(INPUT_RETURN_TYPE_QUIT);
+      return mrb_ary_new_from_values(mrb, 1, values);
+    } else if (state == INPUT_TOUCH_DOWN || state == INPUT_TOUCH_MOVE || state == INPUT_TOUCH_UP) {
+      mrb_value values[6];
+      values[0] = mrb_fixnum_value(INPUT_RETURN_TYPE_TOUCH);
+      values[1] = mrb_fixnum_value(more);
+      values[2] = mrb_fixnum_value(state);
+      values[3] = mrb_fixnum_value(id);
+      values[4] = mrb_fixnum_value(x);
+      values[5] = mrb_fixnum_value(y);
+      return mrb_ary_new_from_values(mrb, 6, values);
+    } else {
+      mrb_value values[5];
+      values[0] = mrb_fixnum_value(INPUT_RETURN_TYPE_KEY);
+      values[1] = mrb_fixnum_value(more);
+      values[2] = mrb_fixnum_value(state);
+      values[3] = mrb_fixnum_value(event.key.keysym.sym);
+      values[4] = mrb_fixnum_value(event.key.repeat);
+      return mrb_ary_new_from_values(mrb, 5, values);
+    }
 }
 
 static mrb_value clear_screen(mrb_state *mrb, mrb_value self) {

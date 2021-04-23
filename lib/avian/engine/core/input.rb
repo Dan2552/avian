@@ -11,6 +11,10 @@ class Input
     shared_instance.touch_count
   end
 
+  def self.get_keypresses
+    shared_instance.get_keypresses
+  end
+
   def initialize
     @touches = []
   end
@@ -20,6 +24,12 @@ class Input
   #
   def get_touch(index)
     touches[index]
+  end
+
+  # - returns: [KeyPress]
+  #
+  def get_keypresses
+
   end
 
   # - returns: Integer
@@ -56,6 +66,18 @@ class Input
     queue << [:touch_did_move, id, position]
   end
 
+  def key_did_begin(key)
+    queue << [:key_did_begin, key]
+  end
+
+  def key_did_repeat(key)
+    queue << [:key_did_repeat, key]
+  end
+
+  def key_did_end(key)
+    queue << [:key_did_end, key]
+  end
+
   def update
     touches.delete_if { |touch| touch.phase == :ended }
     touches.each { |touch| touch.phase = :stationary }
@@ -88,7 +110,18 @@ class Input
     touches.find { |touch| touch.id == id }
   end
 
+  def handle_key_event(event)
+    action, key = event
+    puts "KEY EVENT: #{action}, #{key}"
+  end
+
   def handle_queue_event(event)
+    is_key_event = event[0] == :key_did_begin ||
+      event[0] == :key_did_repeat ||
+      event[0] == :key_did_end
+
+    return handle_key_event(event) if is_key_event
+
     action, id, position = event
 
     if action == :touch_did_begin
@@ -146,4 +179,12 @@ class Touch
   # Integer to track which tick the touch was last updated in.
   #
   attr_accessor :last_updated
+end
+
+class KeyPress
+  attr_accessor :id
+
+  # :up, :down
+  #
+  attr_accessor :phase
 end
