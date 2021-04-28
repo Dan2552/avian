@@ -62,7 +62,7 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
 
     // printf("SCREEN %i %i\n", screen_width, screen_height);
 
-    window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI);
+    window = SDL_CreateWindow(NULL, 0, 0, screen_width, screen_height, SDL_WINDOW_ALLOW_HIGHDPI);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     // SDL_RenderSetScale(renderer, 0.6666666, 0.6666666);
     SDL_GetRendererOutputSize(renderer, &render_screen_width, &render_screen_height);
@@ -85,6 +85,15 @@ static mrb_value provision_sdl(mrb_state *mrb, mrb_value self) {
       SDL_BLENDFACTOR_ZERO,
       SDL_BLENDOPERATION_ADD
     );
+
+    SDL_RendererInfo renderer_info;
+    SDL_GetRendererInfo(renderer, &renderer_info);
+    printf("%s\n", renderer_info.name);
+
+    int result = SDL_SetRenderDrawBlendMode(renderer, shadow_blend);
+    if (result == -1) {
+      printf("WARNING: Shadow blend not supported\n");
+    }
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
