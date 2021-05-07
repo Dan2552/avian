@@ -32,9 +32,8 @@ class Main
       _, more, state, id, x, y = input
       handle_touch_inputs(state, id, x, y)
     when INPUT_RETURN_TYPE_KEY
-      puts "GOT A KEYPRESS"
       _, more, state, key, repeat = input
-      handle_keypress_input(state, key.chr, repeat)
+      handle_keypress_input(state, key, repeat)
     end
   end
 
@@ -55,9 +54,9 @@ class Main
 
   def handle_keypress_input(state, key, repeat)
     case state
-    when :key_up
+    when INPUT_KEY_UP
       Input.shared_instance.key_did_end(key)
-    when :key_down
+    when INPUT_KEY_DOWN
       if repeat == 1
         Input.shared_instance.key_did_repeat(key)
       else

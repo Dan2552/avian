@@ -17,6 +17,7 @@ class Input
 
   def initialize
     @touches = []
+    @keypresses = {}
   end
 
   # - parameter index: Integer
@@ -26,10 +27,10 @@ class Input
     touches[index]
   end
 
-  # - returns: [KeyPress]
+  # - returns: { key => KeyPress }
   #
   def get_keypresses
-
+    keypresses.dup
   end
 
   # - returns: Integer
@@ -79,6 +80,7 @@ class Input
   end
 
   def update
+    keypresses.delete_if { |_, keypress| keypress.phase == :ended }
     touches.delete_if { |touch| touch.phase == :ended }
     touches.each { |touch| touch.phase = :stationary }
     queue.each { |event| handle_queue_event(event) }
@@ -90,6 +92,7 @@ class Input
   private
 
   attr_reader :touches
+  attr_reader :keypresses
 
   attr_accessor :tick
   def tick
@@ -112,7 +115,26 @@ class Input
 
   def handle_key_event(event)
     action, key = event
-    puts "KEY EVENT: #{action}, #{key}"
+
+    phase = case action
+    when :key_did_begin
+      :began
+    when :key_did_repeat
+      :repeat
+    when :key_did_end
+      :ended
+    end
+
+    keypress = KeyPress.new
+    keypress.key = key
+    keypress.phase = phase
+
+    if phase == :began
+      eval(DEBUGGER) if !keypresses.empty?
+      phase = :repeat if keypresses[key]&.phase == :began
+    end
+
+    keypresses[key] = keypress
   end
 
   def handle_queue_event(event)
@@ -182,9 +204,8 @@ class Touch
 end
 
 class KeyPress
-  attr_accessor :id
+  attr_accessor :key
 
-  # :up, :down
-  #
+  # :began, :ended, :repeat
   attr_accessor :phase
 end
