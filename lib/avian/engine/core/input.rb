@@ -81,6 +81,7 @@ class Input
 
   def update
     keypresses.delete_if { |_, keypress| keypress.phase == :ended }
+    keypresses.each { |_, keypress| keypress.phase = :stationary }
     touches.delete_if { |touch| touch.phase == :ended }
     touches.each { |touch| touch.phase = :stationary }
     queue.each { |event| handle_queue_event(event) }
@@ -128,11 +129,6 @@ class Input
     keypress = KeyPress.new
     keypress.key = key
     keypress.phase = phase
-
-    if phase == :began
-      eval(DEBUGGER) if !keypresses.empty?
-      phase = :repeat if keypresses[key]&.phase == :began
-    end
 
     keypresses[key] = keypress
   end
@@ -206,6 +202,6 @@ end
 class KeyPress
   attr_accessor :key
 
-  # :began, :ended, :repeat
+  # :began, :ended, :repeat, :stationary
   attr_accessor :phase
 end
