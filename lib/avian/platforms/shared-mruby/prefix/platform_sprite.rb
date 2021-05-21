@@ -31,11 +31,11 @@ class PlatformSprite
   end
 
   def x
-    @x ||= renderable.position.x
+    @x ||= renderable.renderable_position.x
   end
 
   def y
-    @y ||= renderable.position.y
+    @y ||= renderable.renderable_position.y
   end
 
   def x_scale
