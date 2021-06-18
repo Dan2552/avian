@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'json'
+require 'fileutils'
 
 def verbose?
   (ENV['VERBOSE'] || "").length > 0
