@@ -15,6 +15,7 @@ class Costume
   end
 
   def initialize(value = nil)
+    # TODO: animation objects need to be duped specifically for each instance
     @value = value
   end
 
