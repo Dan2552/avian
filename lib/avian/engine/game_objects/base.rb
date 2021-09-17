@@ -145,6 +145,11 @@ class GameObject::Base
     GameObject::Base.tagged(self)
   end
 
+  # TODO: spec
+  def self.clear_tags!
+    @tagged = {}
+  end
+
   protected
 
   def self.tagged(object)
