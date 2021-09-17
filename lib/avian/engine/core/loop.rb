@@ -6,14 +6,18 @@ class Loop
   end
 
   def initialize
-    @renderer = Renderer.new(root)
     @frame_count = 0
     @time_count = 0
   end
 
   # Root game object instance.
   #
-  attr_accessor :root
+  attr_reader :root
+
+  def root=(set)
+    @root = set
+    @renderer = Renderer.new(root)
+  end
 
   # - parameter current_time: current time in milliseconds.
   #
