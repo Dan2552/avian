@@ -75,7 +75,8 @@ class Main
     config = Avian::Application.main.config
     primary_scene = config.primary_scene
     scenario = primary_scene.new
-    game_loop = Loop.new(scenario.root)
+    game_loop = Loop.shared_instance
+    game_loop.root = scenario.root
 
 
     loop do

@@ -1,18 +1,25 @@
 # The game loop.
 #
 class Loop
-  # - parameter root: GameObject::Root instance.
-  #
-  def initialize(root)
-    @root = root
+  def self.shared_instance
+    @shared_instance ||= Loop.new
+  end
+
+  def initialize
     @renderer = Renderer.new(root)
     @frame_count = 0
     @time_count = 0
   end
 
+  # Root game object instance.
+  #
+  attr_accessor :root
+
   # - parameter current_time: current time in milliseconds.
   #
   def perform_update(current_time)
+    raise "There is no root node for the game" unless root
+
     # Profiler.shared_instance.end_of("OUTSIDE OF LOOP")
 
     # Profiler.shared_instance.flush

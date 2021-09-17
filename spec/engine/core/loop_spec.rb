@@ -1,14 +1,18 @@
 describe Loop do
   let(:root_object) { double(perform_update: 0) }
-  let(:described_instance) { described_class.new(root_object) }
+  let(:described_instance) { described_class.shared_instance }
 
   describe "#update" do
     let(:current_time) { 1737681.899217 }
     subject { described_instance.perform_update(current_time) }
 
     before do
+      Loop.instance_variable_set(:@shared_instance, nil)
+
       allow_any_instance_of(Renderer)
         .to receive(:draw_frame)
+
+      Loop.shared_instance.root = root_object
     end
 
     it "calls to the renderer to draw a frame" do
