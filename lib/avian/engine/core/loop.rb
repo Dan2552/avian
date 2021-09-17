@@ -1,6 +1,7 @@
 # The game loop.
 #
 class Loop
+  class Break < StandardError; end
   def self.shared_instance
     @shared_instance ||= Loop.new
   end
@@ -67,5 +68,6 @@ class Loop
     # Profiler.shared_instance.end_of("ALL_LOGIC")
 
     # Profiler.shared_instance.start_of("OUTSIDE OF LOOP")
+  rescue Break
   end
 end
