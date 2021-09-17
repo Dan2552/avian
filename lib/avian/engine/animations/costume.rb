@@ -15,7 +15,12 @@ class Costume
   end
 
   def initialize(value = nil)
-    # TODO: animation objects need to be duped specifically for each instance
+    @animations = {}
+
+    self.class.animations.each do |animation_name, animation|
+      @animations[animation_name] = animation.dup
+    end
+
     @value = value
   end
 
@@ -30,7 +35,7 @@ class Costume
   end
 
   def animate!(animation_name)
-    self.class.animations.each do |iteration_animation_name, animation|
+    @animations.each do |iteration_animation_name, animation|
       if animation_name == iteration_animation_name
         animation.animate!
         @value = animation.value
@@ -41,7 +46,7 @@ class Costume
   end
 
   def idle!(animation_name)
-    self.class.animations.each do |iteration_animation_name, animation|
+    @animations.each do |iteration_animation_name, animation|
       animation.idle!
 
       if animation_name == iteration_animation_name
