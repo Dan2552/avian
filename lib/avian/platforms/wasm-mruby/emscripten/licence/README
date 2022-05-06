@@ -1,0 +1,5 @@
+Avian uses emscripten and anything emscripten relies on. See LICENCE and AUTHORS
+in this directory for the licence of emscripten parts.
+
+Everything not emscripten specific is still a part of the main LICENCE in the
+root directory of this project.

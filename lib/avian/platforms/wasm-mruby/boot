@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+project_root = ENV['GAME_ROOT']
+avian_root = ENV['AVIAN_ROOT']
+build_dir = File.join(ENV["HOME"], ".avian", "build")
+platform_support = File.join(project_root, "platform_support", "mruby")
+script_dir = __dir__
+shared_dir = File.join(avian_root, "lib", "avian", "platforms", "shared-mruby")
+
+shared_boot =
+  File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
+
+load(shared_boot)
+
+FileUtils.mkdir_p(File.join(build_dir, "wasm"))
+wasm_dir = File.join(build_dir, "wasm")
+
+FileUtils.cp(
+  File.join(script_dir, "emscripten", "app.html"),
+  File.join(wasm_dir, "app.html")
+)
+
+log "\n--- Preparing c files ---"
+FileUtils.cp(File.join(build_dir, "app.c"), File.join(wasm_dir, "app.h"))
+FileUtils.cp(File.join(shared_dir, "main.c"), File.join(wasm_dir, "main.c"))
+FileUtils.cp(File.join(script_dir, "options.h"), File.join(wasm_dir, "options.h"))
+FileUtils.cp(File.join(script_dir, "path.h"), File.join(wasm_dir, "path.h"))
+FileUtils.cp(File.join(script_dir, "path.c"), File.join(wasm_dir, "path.c"))
+FileUtils.cp_r(File.join(build_dir, "game_resources"), File.join(wasm_dir, "game_resources"))
+FileUtils.cd(platform_support)
+mruby_path = `bundle exec mundle path`.chomp
+
+emcc = %W(
+  emcc -O3 -v -s WASM=1
+    -I #{mruby_path}/include
+    #{mruby_path}/build/wasm/lib/libmruby.a
+    -o #{wasm_dir}/app.js
+    -s USE_SDL=2
+    -lSDL2
+    -s USE_SDL_IMAGE=2
+    -s USE_SDL_TTF=2
+    -s ASYNCIFY
+    -s ALLOW_MEMORY_GROWTH=1
+    -s SDL2_IMAGE_FORMATS=["bmp","png"]
+    --embed-file game_resources
+    main.c
+    path.c
+)
+
+FileUtils.cd(wasm_dir)
+system(*emcc) || error("Compiling failed")
+
+Thread.new do
+  sleep 1
+  system("open http://localhost:8080/app.html")
+end
+
+system("ruby -run -e httpd")

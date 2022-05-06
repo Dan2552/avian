@@ -58,6 +58,14 @@ class AvianCLI < Thor
         "AVIAN_ROOT" => avian_path,
         "AVIAN_BUILD" => "run_#{type}"
       }, boot_file)
+    when "wasm-mruby"
+      boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "wasm-mruby", "boot"))
+
+      system({
+        "GAME_ROOT" => project_root,
+        "AVIAN_ROOT" => avian_path,
+        "AVIAN_BUILD" => "run_#{type}"
+      }, boot_file)
     when "macos"
       boot_file = File.expand_path(File.join(avian_path, "lib", "avian", "platforms", "gosu", "boot"))
       system(
