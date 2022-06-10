@@ -6,7 +6,8 @@ build_dir = File.join(ENV["HOME"], ".avian", "build")
 platform_support = File.join(project_root, "platform_support", "mruby")
 script_dir = __dir__
 shared_dir = File.join(avian_root, "lib", "avian", "platforms", "shared-mruby")
-support_file = File.join(project_root, "platform_support", "wasm", "support.js")
+js_support_file = File.join(project_root, "platform_support", "wasm", "support.js")
+html_support_file = File.join(project_root, "platform_support", "wasm", "support.html")
 
 shared_boot =
   File.join(avian_root, "lib", "avian", "platforms", "shared-mruby", "shared_boot.rb")
@@ -48,11 +49,19 @@ emcc = %W(
     path.c
 )
 
-if File.file?(support_file)
-  FileUtils.cp(support_file, File.join(wasm_dir, "support.js"))
+if File.file?(js_support_file)
+  FileUtils.cp(js_support_file, File.join(wasm_dir, "support.js"))
 else
   FileUtils.rm(File.join(wasm_dir, "support.js"))
   FileUtils.touch(File.join(wasm_dir, "support.js"))
+end
+
+if File.file?(html_support_file)
+  support_data = File.open(html_support_file).read
+  app_data = File.open("#{wasm_dir}/app.html").read
+
+  app_and_support_data = app_data.sub("<!-- insert support.html here -->", "<!-- insert support.html here -->\r\n" + support_data)
+  File.write("#{wasm_dir}/app.html", app_and_support_data)
 end
 
 FileUtils.cd(wasm_dir)
