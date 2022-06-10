@@ -36,11 +36,13 @@ load(File.join(script_dir, "build_steps", "sdl.rb"))
 unless File.directory?(File.join(build_dir, "desktop", "sdl_image"))
   FileUtils.cd(File.join(build_dir, "desktop"))
   log "\n--- Cloning SDL image ---"
-  system("git clone https://github.com/libsdl-org/SDL_image.git sdl_image") ||
+  system("git clone https://github.com/SDL-mirror/SDL_image.git sdl_image") ||
     error("Failed to clone SDL")
 
   log "\n--- Compiling SDL image ---"
   FileUtils.cd(File.join(build_dir, "desktop", "sdl_image"))
+  system("git reset --hard f4f5caf") || raise("Failed to reset to known commit for sdl_image")
+
   system("./autogen.sh && ./configure --prefix=#{sdl_install} && make -j4 && make install") || begin
     FileUtils.remove_dir(File.join(build_dir, "desktop", "sdl_image"))
     error("Failed to compile SDL image")
@@ -56,6 +58,7 @@ unless File.directory?(File.join(build_dir, "desktop", "sdl_ttf"))
   log "\n--- Compiling SDL ttf ---"
   FileUtils.cd(File.join(build_dir, "desktop", "sdl_ttf"))
   system("brew list freetype || brew install freetype")
+  system("git reset --hard 3e702ed") || raise("Failed to reset to known commit for sdl_ttf")
   system("./autogen.sh && ./configure --prefix=#{sdl_install} && make -j4 && make install") || begin
     FileUtils.remove_dir(File.join(build_dir, "desktop", "sdl_ttf"))
     error("Failed to compile SDL ttf")
