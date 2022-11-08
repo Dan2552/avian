@@ -53,14 +53,14 @@ emcc = %W(
 if File.file?(js_support_file)
   FileUtils.cp(js_support_file, File.join(wasm_dir, "support.js"))
 else
-  FileUtils.rm(File.join(wasm_dir, "support.js"))
+  FileUtils.rm(File.join(wasm_dir, "support.js")) if File.file?(File.join(wasm_dir, "support.js"))
   FileUtils.touch(File.join(wasm_dir, "support.js"))
 end
 
 if File.file?(css_support_file)
   FileUtils.cp(css_support_file, File.join(wasm_dir, "support.css"))
 else
-  FileUtils.rm(File.join(wasm_dir, "support.css"))
+  FileUtils.rm(File.join(wasm_dir, "support.css")) if File.file?(File.join(wasm_dir, "support.css"))
   FileUtils.touch(File.join(wasm_dir, "support.css"))
 end
 
